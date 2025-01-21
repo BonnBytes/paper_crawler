@@ -8,7 +8,7 @@ import pickle
 import json
 
 
-from _argparse_code import _parse_args
+from ._argparse_code import _parse_args
 
 def process_paper_links(links: list[str]) -> list[str]:
     """

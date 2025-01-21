@@ -5,7 +5,7 @@ from tqdm import tqdm
 from multiprocessing import Pool
 import json
 
-from crawl_links_soup import process_link
+from .crawl_links_soup import process_link
 
 def get_openreview_submissions(venueid: str) -> list[str]:
     # API V2

@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from multiprocessing import Pool
 from collections import Counter
 
-from _argparse_code import _parse_args
+from ._argparse_code import _parse_args
 
 def search_folders_and_files(str) -> list[str]:
     pass
