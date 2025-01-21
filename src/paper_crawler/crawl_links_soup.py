@@ -35,15 +35,17 @@ def process_link(url: str) -> list[str]:
     Raises:
         Exception: If there is an error during the processing of the PDF.
     """
-
     try:
         reader = pdfx.PDFx(url)
         urls = list(reader.get_references_as_dict()['url'])
         urls_filter_broken = list(filter(lambda url: "http" in url, urls))
         urls_filter_github = list(filter(lambda url: "github" in url, urls_filter_broken))
         if urls_filter_github:
-            github_links.extend([urllib.parse.urlparse(cl) for cl in urls_filter_github])
-        return github_links
+            github_links = [urllib.parse.urlparse(cl) for cl in urls_filter_github]
+            return github_links
+        else:
+            raise ValueError("No GitHub-Links found.")
+
     except Exception as e:
         print(f"{url}, throws {e}")
         return None
@@ -57,7 +59,6 @@ if __name__ == "__main__":
     link_soup = [list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[-1][1:-1] for pdf_soup_el in pdf_soup]
 
     # loop through paper links find pdfs
-    github_links = []
     with Pool(10) as p:
         res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
 
