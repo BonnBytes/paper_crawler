@@ -9,6 +9,7 @@ import time
 
 def process_paper_links(links: list[str]) -> list[str]:
     filtered = []
+    github_link = None
     try:
         for paper_link in links:
             github_link = urllib.parse.urlunparse(paper_link)
@@ -20,9 +21,12 @@ def process_paper_links(links: list[str]) -> list[str]:
             if has_branch_picker:
                 filtered.append(page)
     except Exception as e:
-        print(f"Page {github_link} produced an error {e}.")
+        if github_link:
+            print(f"Page {github_link} produced an error {e}.")
+        else:
+            print(f"Error: {e}.")
     # prevent too many requests compaint from GitHub
-    time.sleep(1.)
+    time.sleep(.5)
     return filtered
 
 
