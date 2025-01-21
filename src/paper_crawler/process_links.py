@@ -4,6 +4,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from multiprocessing import Pool
+import time
 
 
 def process_paper_links(links: list[str]) -> list[str]:
@@ -19,7 +20,9 @@ def process_paper_links(links: list[str]) -> list[str]:
             if has_branch_picker:
                 filtered.append(page)
     except Exception as e:
-            print(f"Page {github_link} produced an error {e}.")
+        print(f"Page {github_link} produced an error {e}.")
+    # prevent too many requests compaint from GitHub
+    time.sleep(1.)
     return filtered
 
 
@@ -33,7 +36,12 @@ if __name__ == '__main__':
     # for papers_links in tqdm(links):
     #    filtered_pages.extend(process_paper_links(papers_links))
 
-    with Pool(2) as p:
+    with Pool(1) as p:
         filtered_pages.extend(tqdm(p.imap(process_paper_links, links), total=len(links)))
+
+
+    with open("./storage/icml2024_filtered.json", 'w') as f:
+        f.write(json.dumps(filtered_pages))
+
 
     pass
