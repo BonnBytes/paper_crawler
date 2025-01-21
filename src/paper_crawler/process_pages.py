@@ -1,18 +1,70 @@
 import pickle
 from bs4 import BeautifulSoup
 from multiprocessing import Pool
+from collections import Counter
 
-from ._argparse_code import _parse_args
+from _argparse_code import _parse_args
+
+def search_folders_and_files(str) -> list[str]:
+    pass
+
 
 if __name__ == "__main__":
     args = _parse_args()
     id = "_".join(args.id.split("/"))
-    print(f"Loading from: ./storage/{id}.json")
+    print(f"./storage/{id}_filtered.pkl")
 
     with open(f"./storage/{id}_filtered.pkl", 'rb') as f:
         paper_pages = pickle.load(f)
 
-    soups = []
-    for paper in paper_pages:
-        for page in paper:
-            soups.append(BeautifulSoup(page, 'html.parser'))
+    results = []
+    for paper_soup in paper_pages:
+        # for page in paper:
+            # find file list
+        # folders and files exists once per page.
+        folders_and_files = list(filter(lambda table: 'folders-and-files' in str(table), paper_soup.find_all("table")))[0]
+        cells = list(filter(lambda td: 'row-name-cell' in str(td), folders_and_files.find_all("td")))
+
+        folders = []
+        files = []
+        for cell in cells:
+            if 'icon-directory' in str(cell):
+                folders.append(cell.text)
+            else:
+                files.append(cell.text)
+
+        interesting_files = ["requirements.txt", "noxfile.py", "LICENSE", "README", "tox.toml", "tox.ini",  "setup.py", "setup.cfg", "pyproject.toml"]
+        interesting_folders = ["test", "tests", ".github/workflows"]
+
+        result_dict = {}
+        result_dict['files'] = {}
+        result_dict['folders'] = {}
+        for interesting_file in interesting_files:
+            result_dict['files'][interesting_file] = interesting_file in files
+
+        for interesting_folder in interesting_folders:
+            result_dict['folders'][interesting_folder] = interesting_folder in folders
+    
+        results.append(result_dict)
+    
+    files = []
+    for res in results:
+        files.extend(list(filter(lambda res: res[1] == True, list(res['files'].items()))))
+
+    file_counter = Counter(files)
+    page_total = len(results)
+    print("Files:")
+    print(f"total: {file_counter.most_common()} of {page_total}")
+    print(f"ratios: {[(mc[0], mc[1]/float(page_total)) for mc in file_counter.most_common()]}")
+
+
+    folders = []
+    for res in results:
+        folders.extend(list(filter(lambda res: res[1] == True, list(res['folders'].items()))))
+
+    folders_counter = Counter(folders)
+    print("Folders")
+    print(f"total: {folders_counter.most_common()} of {page_total}")
+    print(f"ratios: {[(mc[0], mc[1]/float(page_total)) for mc in folders_counter.most_common()]}")
+
+    pass
