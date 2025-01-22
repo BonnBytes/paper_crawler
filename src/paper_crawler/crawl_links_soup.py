@@ -9,8 +9,10 @@ import urllib
 from multiprocessing import Pool
 
 import pdfx
+import argparse
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+from ._argparse_code import _parse_args
 
 
 def get_icml_2024_pdf():
@@ -21,14 +23,19 @@ def get_icml_2024_pdf():
     Returns:
         list: A list of BeautifulSoup tag objects that contain the PDF links.
     """
+    return get_icml("https://proceedings.mlr.press/v235/")
 
-    def open_icml24():
-        return urllib.request.urlopen("https://proceedings.mlr.press/v235/")
+def get_icml_2023_pdf():
+    """Fetch the PDF links from the ICML 2023 proceedings page.
+    Returns:
+        list: A list of BeautifulSoup tag objects.
+    """
+    return get_icml("https://proceedings.mlr.press/v202/")
 
-    soup = BeautifulSoup(open_icml24(), "html.parser")
 
+def get_icml(url: str) -> None:
+    soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
-
     return pdf_soup
 
 
@@ -63,9 +70,29 @@ def process_link(url: str) -> list[str]:
         return None
 
 
+def _parse_args():
+    """Parse cmd line args for filtering and downloading github-repository pages."""
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument(
+        "--id",
+        type=str,
+        default="icml2024",
+        help="Specify the venueid.",
+    )
+    return parser.parse_args()
+
+
+
+
 if __name__ == "__main__":
 
-    pdf_soup = get_icml_2024_pdf()
+    args = _parse_args()
+    if args.id == 'icml2024':
+        pdf_soup = get_icml_2024_pdf()
+    elif args.id == 'icml2023':
+        pdf_soup = get_icml_2023_pdf()
+    else:
+        raise ValueError("Unkown conference.")
 
     link_soup = [
         list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[-1][

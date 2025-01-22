@@ -53,7 +53,7 @@ if __name__ == "__main__":
     storage_id = "_".join(args.id.split("/"))
     storage_file = f"./storage/{storage_id}.json"
     venueid = args.id
-    print("getting pdf-linkes from {venueid}, saving at {storage_file}")
+    print(f"getting pdf-linkes from {venueid}, saving at {storage_file}")
 
     links = get_openreview_submissions(venueid)
 
