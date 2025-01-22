@@ -1,25 +1,31 @@
+"""Filter the GitHub links and download the front page for each link."""
+
+import json
+import pickle
+import time
 import urllib
 import urllib.request
+from multiprocessing import Pool
+
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from multiprocessing import Pool
-import time
-import pickle
-import json
-
 
 from ._argparse_code import _parse_args
 
+
 def process_paper_links(links: list[str]) -> list[str]:
     """
-    Processes a list of paper links, filters out those that contain a branch picker on GitHub, 
-    and returns the filtered list of links.
+    Process a list of links to GitHub, filters out those that contain a branch picker.
+
     Args:
         links (list[str]): A list of URLs to process.
+
     Returns:
         list[str]: A list of filtered URLs that contain a branch picker on GitHub.
-    Raises:
-        Exception: If an error occurs while processing a link, it will be caught and printed.
+
+    Raises: # noqa: DAR402
+        Exception: If an error occurs while processing a link,
+            it will be caught and printed.
     """
     filtered = []
     github_link = None
@@ -27,7 +33,7 @@ def process_paper_links(links: list[str]) -> list[str]:
         for paper_link in links:
             github_link = urllib.parse.urlunparse(paper_link)
             page = urllib.request.urlopen(github_link)
-            soup = BeautifulSoup(page, 'html.parser')
+            soup = BeautifulSoup(page, "html.parser")
             # look for the branch picker.
             buttons = soup.find_all("button")
             has_branch_picker = any(map(lambda bs: "branch-picker" in str(bs), buttons))
@@ -39,19 +45,17 @@ def process_paper_links(links: list[str]) -> list[str]:
         else:
             print(f"Error: {e}.")
     # prevent too many requests compaint from GitHub
-    time.sleep(.5)
+    time.sleep(0.5)
     return filtered
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = _parse_args()
     id = "_".join(args.id.split("/"))
     print(f"Loading from: ./storage/{id}.json")
 
-    with open(f"./storage/{id}.json", 'r') as f:
+    with open(f"./storage/{id}.json", "r") as f:
         links = json.load(f)
-
 
     # clean the data.
     filtered_pages = []
@@ -59,10 +63,12 @@ if __name__ == '__main__':
     #    filtered_pages.extend(process_paper_links(papers_links))
 
     with Pool(1) as p:
-        filtered_pages.extend(tqdm(p.imap(process_paper_links, links), total=len(links)))
+        filtered_pages.extend(
+            tqdm(p.imap(process_paper_links, links), total=len(links))
+        )
         # filtered_pages = []
         # for link in links:
         #     filtered_pages.extend(process_paper_links(link))
 
-    with open(f"./storage/{id}_filtered.pkl", 'wb') as f:
+    with open(f"./storage/{id}_filtered.pkl", "wb") as f:
         pickle.dump(filtered_pages, f)

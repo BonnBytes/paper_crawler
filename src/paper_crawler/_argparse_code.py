@@ -1,5 +1,6 @@
 import argparse
 
+
 def _parse_args():
     """Parse cmd line args for filtering and downloading github-repository pages."""
     parser = argparse.ArgumentParser(description="")

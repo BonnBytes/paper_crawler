@@ -1,3 +1,5 @@
+"""The automatic test definition file."""
+
 import nox
 
 
@@ -6,8 +8,6 @@ def run_test(session):
     """Run pytest."""
     session.install(".[tests]")
     session.run("pytest")
-
-
 
 
 @nox.session(name="lint")
@@ -24,7 +24,6 @@ def lint(session):
         "darglint",
     )
     session.run("flake8", "src", "tests", "noxfile.py")
-
     session.install("sphinx", "doc8")
     session.run("doc8", "--max-line-length", "120", "docs/")
 
