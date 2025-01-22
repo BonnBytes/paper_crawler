@@ -105,5 +105,5 @@ if __name__ == "__main__":
     with Pool(10) as p:
         res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
 
-    with open("./storage/icml2024.json", "w") as f:
+    with open(f"./storage/{args.id}.json", "w") as f:
         f.write(json.dumps(res))
