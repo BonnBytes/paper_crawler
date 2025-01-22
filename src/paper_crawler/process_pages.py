@@ -23,31 +23,34 @@ if __name__ == "__main__":
         # for page in paper:
             # find file list
         # folders and files exists once per page.
-        folders_and_files = list(filter(lambda table: 'folders-and-files' in str(table), paper_soup.find_all("table")))[0]
-        cells = list(filter(lambda td: 'row-name-cell' in str(td), folders_and_files.find_all("td")))
+        try:
+            folders_and_files = list(filter(lambda table: 'folders-and-files' in str(table), paper_soup.find_all("table")))[0]
+            cells = list(filter(lambda td: 'row-name-cell' in str(td), folders_and_files.find_all("td")))
 
-        folders = []
-        files = []
-        for cell in cells:
-            if 'icon-directory' in str(cell):
-                folders.append(cell.text)
-            else:
-                files.append(cell.text)
+            folders = []
+            files = []
+            for cell in cells:
+                if 'icon-directory' in str(cell):
+                    folders.append(cell.text)
+                else:
+                    files.append(cell.text)
 
-        interesting_files = ["requirements.txt", "noxfile.py", "LICENSE", "README.md", "README.rst", "tox.toml", "tox.ini",  "setup.py", "setup.cfg", "pyproject.toml"]
-        interesting_folders = ["test", "tests", ".github/workflows"]
+            interesting_files = ["requirements.txt", "noxfile.py", "LICENSE", "README.md", "README.rst", "tox.toml", "tox.ini",  "setup.py", "setup.cfg", "pyproject.toml"]
+            interesting_folders = ["test", "tests", ".github/workflows"]
 
-        result_dict = {}
-        result_dict['files'] = {}
-        result_dict['folders'] = {}
-        for interesting_file in interesting_files:
-            result_dict['files'][interesting_file] = interesting_file in files
+            result_dict = {}
+            result_dict['files'] = {}
+            result_dict['folders'] = {}
+            for interesting_file in interesting_files:
+                result_dict['files'][interesting_file] = interesting_file in files
 
-        for interesting_folder in interesting_folders:
-            result_dict['folders'][interesting_folder] = interesting_folder in folders
-    
-        results.append(result_dict)
-    
+            for interesting_folder in interesting_folders:
+                result_dict['folders'][interesting_folder] = interesting_folder in folders
+
+            results.append(result_dict)
+        except Exception as e:
+                print(f"Error: {e}")
+
     files = []
     for res in results:
         files.extend(list(filter(lambda res: res[1] == True, list(res['files'].items()))))
