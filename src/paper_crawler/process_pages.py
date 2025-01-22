@@ -33,7 +33,7 @@ if __name__ == "__main__":
             else:
                 files.append(cell.text)
 
-        interesting_files = ["requirements.txt", "noxfile.py", "LICENSE", "README", "tox.toml", "tox.ini",  "setup.py", "setup.cfg", "pyproject.toml"]
+        interesting_files = ["requirements.txt", "noxfile.py", "LICENSE", "README.md", "README.rst", "tox.toml", "tox.ini",  "setup.py", "setup.cfg", "pyproject.toml"]
         interesting_folders = ["test", "tests", ".github/workflows"]
 
         result_dict = {}
@@ -54,8 +54,8 @@ if __name__ == "__main__":
     file_counter = Counter(files)
     page_total = len(results)
     print("Files:")
-    print(f"total: {file_counter.most_common()} of {page_total}")
-    print(f"ratios: {[(mc[0], mc[1]/float(page_total)) for mc in file_counter.most_common()]}")
+    print(f"total: {file_counter.items()} of {page_total}")
+    print(f"ratios: {[(mc[0], mc[1]/float(page_total)) for mc in file_counter.items()]}")
 
 
     folders = []
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     folders_counter = Counter(folders)
     print("Folders")
-    print(f"total: {folders_counter.most_common()} of {page_total}")
-    print(f"ratios: {[(mc[0], mc[1]/float(page_total)) for mc in folders_counter.most_common()]}")
+    print(f"total: {folders_counter.items()} of {page_total}")
+    print(f"ratios: {[(mc[0], mc[1]/float(page_total)) for mc in folders_counter.items()]}")
 
     pass
