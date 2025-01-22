@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 
 from .crawl_links_soup import process_link
+from ._argparse_code import _parse_args
 
 
 def get_openreview_submissions(venueid: str) -> list[str]:
@@ -48,8 +49,11 @@ def get_openreview_submissions(venueid: str) -> list[str]:
 
 if __name__ == "__main__":
     load_dotenv()
-
-    venueid = "ICLR.cc/2024/Conference"
+    args = _parse_args()
+    storage_id = "_".join(args.id.split("/"))
+    storage_file = f"./storage/{storage_id}.json"
+    venueid = args.id
+    print("getting pdf-linkes from {venueid}, saving at {storage_file}")
 
     links = get_openreview_submissions(venueid)
 
@@ -57,5 +61,5 @@ if __name__ == "__main__":
     with Pool(2) as p:
         res = list(tqdm(p.imap(process_link, links), total=len(links)))
 
-    with open(f"./storage/{"_".join(venueid.split("/"))}.json", "w") as f:
+    with open(storage_file, "w") as f:
         f.write(json.dumps(res, indent=1))
