@@ -1,12 +1,11 @@
 """The automatic test definition file."""
-
 import nox
 
 
 @nox.session(name="test")
 def run_test(session):
     """Run pytest."""
-    session.install(".[tests]")
+    session.install(".[dev]")
     session.run("pytest")
 
 
@@ -31,7 +30,7 @@ def lint(session):
 @nox.session(name="typing")
 def mypy(session):
     """Check type hints."""
-    session.install(".[tests]")
+    session.install(".[dev]")
     session.run(
         "mypy",
         "--install-types",

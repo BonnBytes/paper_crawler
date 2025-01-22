@@ -1,7 +1,7 @@
 
 ### Getting Started
 To use the code in this project you need to configure an environment. 
-To do that create a `.env`-file with the following contnet
+To do that create a `.env`-file with the following content
 
 ```bash
 PYTHONPATH=.

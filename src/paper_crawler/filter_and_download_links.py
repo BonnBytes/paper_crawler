@@ -48,7 +48,6 @@ def process_paper_links(links: list[str]) -> list[str]:
     time.sleep(0.5)
     return filtered
 
-
 if __name__ == "__main__":
     args = _parse_args()
     id = "_".join(args.id.split("/"))
@@ -57,6 +56,11 @@ if __name__ == "__main__":
     with open(f"./storage/{id}.json", "r") as f:
         links = json.load(f)
 
+
+    if id == 'ICLR.cc_2024_Conference':
+        # this one is broken.
+        links.pop(1808)
+
     # clean the data.
     filtered_pages = []
     # for papers_links in tqdm(links):
@@ -64,11 +68,9 @@ if __name__ == "__main__":
 
     with Pool(1) as p:
         filtered_pages.extend(
-            tqdm(p.imap(process_paper_links, links), total=len(links))
+            tqdm(p.imap(process_paper_links, links), total=len(links), timeout=20)
         )
-        # filtered_pages = []
-        # for link in links:
-        #     filtered_pages.extend(process_paper_links(link))
+
 
     with open(f"./storage/{id}_filtered.pkl", "wb") as f:
         pickle.dump(filtered_pages, f)

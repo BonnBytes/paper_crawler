@@ -10,6 +10,55 @@ from ._argparse_code import _parse_args
 # def search_folders_and_files(str) -> list[str]:
 #    pass
 
+def extract_stats(paper_soup) -> list[dict[str, bool]]:
+    folders_and_files = list(
+        filter(
+            lambda table: "folders-and-files" in str(table),
+            paper_soup.find_all("table"),
+        )
+    )[0]
+    cells = list(
+        filter(
+            lambda td: "row-name-cell" in str(td),
+            folders_and_files.find_all("td"),
+        )
+    )
+
+    folders = []
+    files = []
+    for cell in cells:
+        if "icon-directory" in str(cell):
+            folders.append(cell.text)
+        else:
+            files.append(cell.text)
+
+    interesting_files = [
+        "requirements.txt",
+        "noxfile.py",
+        "LICENSE",
+        "README.md",
+        "README.rst",
+        "tox.toml",
+        "tox.ini",
+        "setup.py",
+        "setup.cfg",
+        "pyproject.toml",
+    ]
+    interesting_folders = ["test", "tests", ".github/workflows"]
+
+    result_dict = {}
+    result_dict["files"] = {}
+    result_dict["folders"] = {}
+    for interesting_file in interesting_files:
+        result_dict["files"][interesting_file] = interesting_file in files
+
+    for interesting_folder in interesting_folders:
+        result_dict["folders"][interesting_folder] = (
+            interesting_folder in folders
+        )
+    results.append(result_dict)
+    return results
+
 
 if __name__ == "__main__":
     args = _parse_args()
@@ -25,57 +74,9 @@ if __name__ == "__main__":
         # paper_soup = paper_soup_and_link[0]
 
         paper_soup = paper_soup_and_link
-        # for page in paper:
-        # find file list
         # folders and files exists once per page.
         try:
-            folders_and_files = list(
-                filter(
-                    lambda table: "folders-and-files" in str(table),
-                    paper_soup.find_all("table"),
-                )
-            )[0]
-            cells = list(
-                filter(
-                    lambda td: "row-name-cell" in str(td),
-                    folders_and_files.find_all("td"),
-                )
-            )
-
-            folders = []
-            files = []
-            for cell in cells:
-                if "icon-directory" in str(cell):
-                    folders.append(cell.text)
-                else:
-                    files.append(cell.text)
-
-            interesting_files = [
-                "requirements.txt",
-                "noxfile.py",
-                "LICENSE",
-                "README.md",
-                "README.rst",
-                "tox.toml",
-                "tox.ini",
-                "setup.py",
-                "setup.cfg",
-                "pyproject.toml",
-            ]
-            interesting_folders = ["test", "tests", ".github/workflows"]
-
-            result_dict = {}
-            result_dict["files"] = {}
-            result_dict["folders"] = {}
-            for interesting_file in interesting_files:
-                result_dict["files"][interesting_file] = interesting_file in files
-
-            for interesting_folder in interesting_folders:
-                result_dict["folders"][interesting_folder] = (
-                    interesting_folder in folders
-                )
-
-            results.append(result_dict)
+            results = extract_stats(paper_soup)
         except Exception as e:
             print(f"Error: {e}")
             error_counter += 1
@@ -108,5 +109,3 @@ if __name__ == "__main__":
         f"ratios: {[(mc[0], mc[1] / float(page_total))
                    for mc in folders_counter.items()]}"
     )
-
-    pass

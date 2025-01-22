@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "paper_crawler"
 version = "0.0.1-dev"
-description = "ML-Paper crawler supplementary code"
+description = "Supplementary code for our ICML 2024 position paper on the state of the software Engineering ecosystem in ML."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { file = "LICENSE" }
 keywords = ["Machine Learning", "Paper", "Crawler"]
 classifiers = [
@@ -21,6 +21,12 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Scientific/Engineering"
+]
+authors = [
+  {name = "Moritz Wolter", email = "moritz@wolter.tech"}
+]
+maintainers = [
+  {name = "Moritz Wolter", email = "brett@wolter.tech"}
 ]
 dependencies = [
     "openreview-py",
@@ -36,6 +42,8 @@ dev = [
     "nox",
     "build"
 ]
+
+
 
 [project.urls]
 homepage = "https://github.com/v0lta/position_we_need_more_tests_in_ml"
