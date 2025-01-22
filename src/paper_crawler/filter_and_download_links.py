@@ -59,10 +59,10 @@ if __name__ == '__main__':
     #    filtered_pages.extend(process_paper_links(papers_links))
 
     with Pool(1) as p:
-        # filtered_pages.extend(tqdm(p.imap(process_paper_links, links), total=len(links)))
-        filtered_pages = []
-        for link in links:
-            filtered_pages.extend(process_paper_links(link))
+        filtered_pages.extend(tqdm(p.imap(process_paper_links, links), total=len(links)))
+        # filtered_pages = []
+        # for link in links:
+        #     filtered_pages.extend(process_paper_links(link))
 
     with open(f"./storage/{id}_filtered.pkl", 'wb') as f:
         pickle.dump(filtered_pages, f)
