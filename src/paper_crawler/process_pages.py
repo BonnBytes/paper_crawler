@@ -2,6 +2,7 @@ import pickle
 from bs4 import BeautifulSoup
 from multiprocessing import Pool
 from collections import Counter
+from tqdm import tqdm
 
 from ._argparse_code import _parse_args
 
@@ -18,7 +19,7 @@ if __name__ == "__main__":
         paper_pages = pickle.load(f)
 
     results = []
-    for paper_soup in paper_pages:
+    for paper_soup in tqdm(paper_pages):
         # for page in paper:
             # find file list
         # folders and files exists once per page.
