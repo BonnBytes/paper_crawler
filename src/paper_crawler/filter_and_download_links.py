@@ -13,7 +13,7 @@ from tqdm import tqdm
 from ._argparse_code import _parse_args
 
 
-def process_paper_links(links: list[str]) -> list[str]:
+def process_paper_links(links: list[str]) -> list:
     """
     Process a list of links to GitHub, filters out those that contain a branch picker.
 
@@ -21,7 +21,7 @@ def process_paper_links(links: list[str]) -> list[str]:
         links (list[str]): A list of URLs to process.
 
     Returns:
-        list[str]: A list of filtered URLs that contain a branch picker on GitHub.
+        list: A list of url and soups with a branch picker.
 
     Raises: # noqa: DAR402
         Exception: If an error occurs while processing a link,
@@ -31,6 +31,8 @@ def process_paper_links(links: list[str]) -> list[str]:
     github_link = None
     try:
         for paper_link in links:
+            if paper_link[2].split('.')[-1] in ['pth', 'pkl']:
+                raise ValueError("Pickled or model file found.")
             github_link = urllib.parse.urlunparse(paper_link)
             page = urllib.request.urlopen(github_link)
             soup = BeautifulSoup(page, "html.parser")

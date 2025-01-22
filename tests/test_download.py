@@ -1,19 +1,27 @@
+# TODO: remove sys when done.
+import sys
+sys.path.append("./src")
+
 import json
-from src.paper_crawler.filter_and_download_links import process_paper_links
+import pytest
+import urllib
+from paper_crawler.filter_and_download_links import process_paper_links
 
 
 def test_download():
-    openid = "ICLR.cc/2024/Conference"
-    id = "_".join(openid.split("/"))
-    print(f"Loading from: ./storage/{id}.json")
+    links = [['https', 'github.com', '/huggingface/', '', '', ''],
+             ['https', 'github.com', '/Ryan0v0/multilingual_borders', '', '', ''], 
+             ['https', 'github.com', '/huggingface/peft', '', '', '']]
 
-    with open(f"./storage/{id}.json", "r") as f:
-        links = json.load(f)
+    res = process_paper_links(links)
 
-    results = []
-    # for i in range(1800, 1820):
-    #     print(i)
-    res = process_paper_links(links[1809])
-    results.append(res)
-    pass
+    # huggingface in an organization, we do not need it.
+    assert urllib.parse.urlunparse(links[1]) == res[0][1]
+    assert urllib.parse.urlunparse(links[2]) == res[1][1]
+    assert len(res) == 2
 
+
+def test_pth():
+    links = [['https', 'github.com', '/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_p16_224-80ecf9dd.pth', '', '', '']]
+    res = process_paper_links(links)
+    assert len(res) == 0
