@@ -1,6 +1,7 @@
 """See if the openreview crawler works as we would expect."""
-from paper_crawler.crawl_links_openreview import get_openreview_submissions
 from dotenv import load_dotenv
+from src.paper_crawler.crawl_links_openreview import get_openreview_submissions
+
 
 def test_iclr24() -> None:
     """Check if we got all ICLR 2024 papers."""

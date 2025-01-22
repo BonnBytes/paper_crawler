@@ -1,6 +1,6 @@
 """Test the pdfs from html crawl code."""
 
-from paper_crawler.crawl_links_soup import get_icml_2024_pdf, get_icml_2023_pdf
+from src.paper_crawler.crawl_links_soup import get_icml_2024_pdf, get_icml_2023_pdf
 
 
 def test_icml24() -> None:

@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     if id == 'ICLR.cc_2024_Conference':
         # this one is broken.
-        links.pop(1808)
+        links.pop(1809)
 
     # clean the data.
     filtered_pages = []
@@ -68,7 +68,8 @@ if __name__ == "__main__":
 
     with Pool(1) as p:
         filtered_pages.extend(
-            tqdm(p.imap(process_paper_links, links), total=len(links))
+            tqdm(p.imap(process_paper_links, links),
+                 total=len(links), desc=f"downloading {id}.")
         )
 
 
