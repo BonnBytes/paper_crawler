@@ -20,7 +20,10 @@ if __name__ == "__main__":
 
     results = []
     error_counter = 0
-    for paper_soup in tqdm(paper_pages):
+    for paper_soup_and_link in tqdm(paper_pages):
+        # paper_soup = paper_soup_and_link[0]
+        
+        paper_soup = paper_soup_and_link
         # for page in paper:
             # find file list
         # folders and files exists once per page.

@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paper_crawler"
+version = "0.0.1-dev"
+description = "ML-Paper crawler supplementary code"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+keywords = ["Machine Learning", "Paper", "Crawler"]
+classifiers = [
+    "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering"
+]
+dependencies = [
+    "openreview-py",
+    "pdfx",
+    "beautifulsoup4",
+    "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = [
+    "setuptools",
+    "pytest",
+    "nox",
+    "build"
+]
+
+[project.urls]
+homepage = "https://github.com/v0lta/position_we_need_more_tests_in_ml"
+download = "https://github.com/v0lta/position_we_need_more_tests_in_ml/releases"
+bug-tracker = "https://github.com/v0lta/position_we_need_more_tests_in_ml/issues"
+source = "https://github.com/v0lta/position_we_need_more_tests_in_ml"
+
+
+
+
+[tool.setuptools.packages.find]
+where = ["./src"]
