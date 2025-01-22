@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     with Pool(1) as p:
         filtered_pages.extend(
-            tqdm(p.imap(process_paper_links, links,  timeout=20), total=len(links))
+            tqdm(p.imap(process_paper_links, links), total=len(links))
         )
 
 
