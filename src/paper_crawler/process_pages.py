@@ -19,6 +19,7 @@ if __name__ == "__main__":
         paper_pages = pickle.load(f)
 
     results = []
+    error_counter = 0
     for paper_soup in tqdm(paper_pages):
         # for page in paper:
             # find file list
@@ -50,7 +51,9 @@ if __name__ == "__main__":
             results.append(result_dict)
         except Exception as e:
                 print(f"Error: {e}")
+                error_counter += 1
 
+    print(f"Problems {error_counter}.")
     files = []
     for res in results:
         files.extend(list(filter(lambda res: res[1] == True, list(res['files'].items()))))
