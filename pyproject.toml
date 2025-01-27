@@ -33,7 +33,6 @@ dependencies = [
     "pdfx",
     "beautifulsoup4",
     "python-dotenv"
-    "wrapt-timeout-decorator"
 ]
 
 [project.optional-dependencies]

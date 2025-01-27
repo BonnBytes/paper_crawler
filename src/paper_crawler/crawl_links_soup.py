@@ -126,19 +126,19 @@ if __name__ == "__main__":
 
         # loop through paper links find pdfs
         res = []
-        for link_soup in (bar := tqdm(link_soup)):
-            bar.set_description(link_soup)
-            res.append(process_link(link_soup))
-        # with Pool(2) as p:
+        # for link_soup in (bar := tqdm(link_soup)):
+        #     bar.set_description(link_soup)
+        #     res.append(process_link(link_soup))
+        with Pool(4) as p:
         # res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
-        # res = []
-        # multiple_results = [p.apply_async(process_link, (soup,)) for soup in link_soup]
-        # for mres in tqdm(multiple_results, desc=f"crawling {args.id}"):
-        #     try:
-        #         done = mres.get(timeout=60)
-        #         res.append(done) 
-        #     except TimeoutError as e:
-        #         print(f"Timeout of {e}.")
+            res = []
+            multiple_results = [p.apply_async(process_link, (soup,)) for soup in link_soup]
+            for mres in tqdm(multiple_results, desc=f"crawling {args.id}"):
+                try:
+                    done = mres.get(timeout=60)
+                    res.append(done) 
+                except TimeoutError as e:
+                    print(f"Timeout of {e}.")
 
         with open(f"./storage/{args.id}.json", "w") as f:
             f.write(json.dumps(res))
