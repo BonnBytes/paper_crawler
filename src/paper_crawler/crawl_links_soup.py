@@ -129,7 +129,7 @@ if __name__ == "__main__":
         ]
 
         # loop through paper links find pdfs
-        with Pool(12) as p:
+        with Pool(2) as p:
             res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
             # res = []
             # multiple_results = [p.apply_async(process_link, (soup,)) for soup in link_soup]
