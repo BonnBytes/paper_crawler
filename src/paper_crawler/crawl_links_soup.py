@@ -6,7 +6,8 @@ It processes each PDF to extract GitHub links, and to stores the results in a JS
 
 import json
 import urllib
-from multiprocessing import Pool, TimeoutError
+from multiprocessing import Pool
+from wrapt_timeout_decorator import timeout
 import os
 from pathlib import Path
 
@@ -53,6 +54,16 @@ def get_icml(url: str) -> list:
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
     return pdf_soup
 
+@timeout(60)
+def get_urls(url: str):
+    reader = pdfx.PDFx(url)
+    urls = list(reader.get_references_as_dict()["url"])
+    urls_filter_broken = list(filter(lambda url: "http" in url, urls))
+    urls_filter_github = list(
+        filter(lambda url: "github" in url, urls_filter_broken)
+    )
+    return urls_filter_github
+
 
 def process_link(url: str) -> list[str]:
     """Process a given URL to extract and filter GitHub links from a PDF.
@@ -69,12 +80,8 @@ def process_link(url: str) -> list[str]:
         Exception: If there is an error during the processing of the PDF. # noqa: DAR402
     """
     try:
-        reader = pdfx.PDFx(url)
-        urls = list(reader.get_references_as_dict()["url"])
-        urls_filter_broken = list(filter(lambda url: "http" in url, urls))
-        urls_filter_github = list(
-            filter(lambda url: "github" in url, urls_filter_broken)
-        )
+        urls_filter_github = get_urls(url)
+
         if urls_filter_github:
             github_links = [urllib.parse.urlparse(cl) for cl in urls_filter_github]
             return github_links
@@ -125,15 +132,15 @@ if __name__ == "__main__":
 
         # loop through paper links find pdfs
         with Pool(12) as p:
-            # res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
-            res = []
-            multiple_results = [p.apply_async(process_link, (soup,)) for soup in link_soup]
-            for mres in tqdm(multiple_results, desc=f"crawling {args.id}"):
-                try:
-                    done = mres.get(timeout=60)
-                    res.append(done) 
-                except TimeoutError as e:
-                    print(f"Timeout of {e}.")
+            res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
+            # res = []
+            # multiple_results = [p.apply_async(process_link, (soup,)) for soup in link_soup]
+            # for mres in tqdm(multiple_results, desc=f"crawling {args.id}"):
+            #     try:
+            #         done = mres.get(timeout=60)
+            #         res.append(done) 
+            #     except TimeoutError as e:
+            #         print(f"Timeout of {e}.")
 
         with open(f"./storage/{args.id}.json", "w") as f:
             f.write(json.dumps(res))
