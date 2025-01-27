@@ -147,4 +147,5 @@ if __name__ == "__main__":
     with open(f"./storage/stored_counters_{id}.pkl", "wb") as f:
         pickle.dump({"files": file_counter,
                      "folders": folders_counter,
-                     "language":  python_counter}, f)
+                     "language":  python_counter,
+                     "page_total": page_total}, f)

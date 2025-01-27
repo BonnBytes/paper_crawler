@@ -33,6 +33,14 @@ def get_icml_2023_pdf():
     return get_icml("https://proceedings.mlr.press/v202/")
 
 
+def get_icml_2022_pdf():
+    """Fetch the PDF links from the ICML 2022 proceedings page.
+    Returns:
+        list: A list of BeautifulSoup tag objects.
+    """
+    return get_icml("https://proceedings.mlr.press/v162/")
+
+
 def get_icml(url: str) -> None:
     soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
@@ -91,6 +99,8 @@ if __name__ == "__main__":
         pdf_soup = get_icml_2024_pdf()
     elif args.id == 'icml2023':
         pdf_soup = get_icml_2023_pdf()
+    elif args.id == 'icml2021':
+        pdf_soup = get_icml_2022_pdf()
     else:
         raise ValueError("Unkown conference.")
 
