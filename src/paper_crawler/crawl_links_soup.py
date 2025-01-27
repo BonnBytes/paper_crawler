@@ -7,7 +7,6 @@ It processes each PDF to extract GitHub links, and to stores the results in a JS
 import json
 import urllib
 from multiprocessing import Pool
-from wrapt_timeout_decorator import timeout
 import os
 from pathlib import Path
 
@@ -54,7 +53,7 @@ def get_icml(url: str) -> list:
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
     return pdf_soup
 
-@timeout(60)
+# DODO timeout pdfx
 def get_urls(url: str):
     reader = pdfx.PDFx(url)
     urls = list(reader.get_references_as_dict()["url"])
