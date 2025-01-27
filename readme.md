@@ -17,7 +17,10 @@ After cloning and navigating into this repository, you can install the code in t
 pip install .
 ```
 
-
+### Download the data run
+``` bash
+./run_all.sh
+```
 
 https://peps.python.org/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds
 

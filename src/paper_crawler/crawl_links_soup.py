@@ -6,7 +6,7 @@ It processes each PDF to extract GitHub links, and to stores the results in a JS
 
 import json
 import urllib
-from multiprocessing import Pool
+from multiprocessing import Pool, TimeoutError
 import os
 from pathlib import Path
 
@@ -81,7 +81,7 @@ def process_link(url: str) -> list[str]:
         else:
             raise ValueError("No GitHub-Links found.")
     except Exception as e:
-        print(f"{url}, throws {e}")
+        tqdm.write(f"{url}, throws {e}")
         return None
 
 
@@ -124,8 +124,10 @@ if __name__ == "__main__":
         ]
 
         # loop through paper links find pdfs
-        with Pool(12) as p:
-            res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
+        with Pool(20) as p:
+            # res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
+            multiple_results = [p.apply_async(process_link, soup) for soup in link_soup]
+            res = tqdm([res.get(timeout=600) for es in multiple_results], desc=f"crawling {args.id}")
 
         with open(f"./storage/{args.id}.json", "w") as f:
             f.write(json.dumps(res))
