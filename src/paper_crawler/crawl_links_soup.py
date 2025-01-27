@@ -124,11 +124,11 @@ if __name__ == "__main__":
         ]
 
         # loop through paper links find pdfs
-        with Pool(20) as p:
+        with Pool(12) as p:
             # res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
             try:
                 multiple_results = [p.apply_async(process_link, soup) for soup in link_soup]
-                res = tqdm([res.get(timeout=600) for es in multiple_results], desc=f"crawling {args.id}")
+                res = tqdm([mres.get(timeout=120) for mres in multiple_results], desc=f"crawling {args.id}")
             except TimeoutError as e:
                 print(f"Timeout of {e}.")
 
