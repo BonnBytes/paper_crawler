@@ -127,7 +127,7 @@ if __name__ == "__main__":
         with Pool(12) as p:
             # res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
             res = []
-            multiple_results = [p.apply_async(process_link, soup) for soup in link_soup]
+            multiple_results = [p.apply_async(process_link, (soup,)) for soup in link_soup]
             for mres in tqdm(multiple_results, desc=f"crawling {args.id}"):
                 try:
                     done = mres.get(timeout=60)
