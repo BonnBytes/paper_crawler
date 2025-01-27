@@ -7,6 +7,8 @@ It processes each PDF to extract GitHub links, and to stores the results in a JS
 import json
 import urllib
 from multiprocessing import Pool
+import os
+from pathlib import Path
 
 import pdfx
 import argparse
@@ -111,16 +113,21 @@ if __name__ == "__main__":
     else:
         raise ValueError("Unkown conference.")
 
-    link_soup = [
-        list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[-1][
-            1:-1
+    path = Path(f"./storage/{args.id}.json")
+
+    if not path.exists():
+        link_soup = [
+            list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[-1][
+                1:-1
+            ]
+            for pdf_soup_el in pdf_soup
         ]
-        for pdf_soup_el in pdf_soup
-    ]
 
-    # loop through paper links find pdfs
-    with Pool(10) as p:
-        res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
+        # loop through paper links find pdfs
+        with Pool(12) as p:
+            res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
 
-    with open(f"./storage/{args.id}.json", "w") as f:
-        f.write(json.dumps(res))
+        with open(f"./storage/{args.id}.json", "w") as f:
+            f.write(json.dumps(res))
+    else:
+        print(f"Path {path} exists, exiting.")

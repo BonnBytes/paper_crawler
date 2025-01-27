@@ -1,19 +1,21 @@
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
-
-from collections import Counter
-
+import tikzplotlib as tikz
 
 if __name__ == "__main__":
 
-    file_ids = ['ICLR.cc_2024_Conference', 'icml2024', 'icml2023']
-    pids = ["ICML-2024", "ICML-2023", "ICLR-2024"]
+    file_ids = ["icml2024", "icml2023"]
+    pids = ["ICML-2024", "ICML-2023"]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
         with open(f"./storage/stored_counters_{fid}.pkl", "rb") as f:
             id_counters = pickle.load(f)
+
+            # do the postprocessing
+            pass
+
             counter_dict[pid] = id_counters
 
 
@@ -57,16 +59,16 @@ if __name__ == "__main__":
 
     for conf_key, conf_values in data_dict_by_conf.items():
         offset = width * multiplier
-        rects = ax.bar(x + offset, list((round((conf_values[key] / counter_dict[conf_key]['page_total'])*100., 2) for key in software_keys)), width, label=conf_key)
+        rects = ax.bar(x + offset, list((round((conf_values[key] / counter_dict[conf_key]['page_total'])*100., 1) for key in software_keys)), width, label=conf_key)
         ax.bar_label(rects, padding=3)
         multiplier += 1
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('share')
-    ax.set_title('Software by conference')
+    ax.set_ylabel("adoption [%]")
     ax.set_xticks(x + width, (sk[0] for sk in software_keys))
-    ax.legend(loc='upper left', ncols=3)
+    ax.legend(loc='upper left', ncol=3)
     ax.set_ylim(0, 100)
 
+    tikz.save('./plots/icml_plot.tex', standalone=True)
     plt.show()
     pass

@@ -7,8 +7,6 @@ from tqdm import tqdm
 
 from ._argparse_code import _parse_args
 
-# def search_folders_and_files(str) -> list[str]:
-#    pass
 
 def extract_stats(paper_soup_and_link) -> list[dict[str, bool]]:
     # Second position is the page link, use for debugging.
@@ -97,7 +95,7 @@ if __name__ == "__main__":
         try:
             results = extract_stats(paper_soup_and_link)
         except Exception as e:
-            print(f"Error: {e}")
+            # print(f"Error: {e}")
             error_counter += 1
 
     print(f"Problems {error_counter}.")
