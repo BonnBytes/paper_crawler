@@ -40,7 +40,7 @@ def process_paper_links(links: list[str]) -> list:
             buttons = soup.find_all("button")
             has_branch_picker = any(map(lambda bs: "branch-picker" in str(bs), buttons))
             if has_branch_picker:
-                filtered.append((soup, github_link))
+                filtered.extend((soup, github_link))
     except Exception as e:
         if github_link:
             print(f"Page {github_link} produced an error {e}.")
