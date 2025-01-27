@@ -7,7 +7,7 @@ It processes each PDF to extract GitHub links, and to stores the results in a JS
 import json
 import urllib
 from multiprocessing import Pool
-import os
+import time
 from pathlib import Path
 
 import pdfx
@@ -53,16 +53,6 @@ def get_icml(url: str) -> list:
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
     return pdf_soup
 
-# DODO timeout pdfx
-def get_urls(url: str):
-    reader = pdfx.PDFx(url)
-    urls = list(reader.get_references_as_dict()["url"])
-    urls_filter_broken = list(filter(lambda url: "http" in url, urls))
-    urls_filter_github = list(
-        filter(lambda url: "github" in url, urls_filter_broken)
-    )
-    return urls_filter_github
-
 
 def process_link(url: str) -> list[str]:
     """Process a given URL to extract and filter GitHub links from a PDF.
@@ -79,8 +69,14 @@ def process_link(url: str) -> list[str]:
         Exception: If there is an error during the processing of the PDF. # noqa: DAR402
     """
     try:
-        urls_filter_github = get_urls(url)
-
+        reader = pdfx.PDFx(url)
+        urls = list(reader.get_references_as_dict()["url"])
+        urls_filter_broken = list(filter(lambda url: "http" in url, urls))
+        urls_filter_github = list(
+            filter(lambda url: "github" in url, urls_filter_broken)
+        )
+        # avoid block
+        time = time.sleep(0.5)
         if urls_filter_github:
             github_links = [urllib.parse.urlparse(cl) for cl in urls_filter_github]
             return github_links
