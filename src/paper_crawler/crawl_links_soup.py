@@ -127,7 +127,7 @@ if __name__ == "__main__":
         # loop through paper links find pdfs
         res = []
         for link_soup in (bar := tqdm(link_soup)):
-            bar.set_description('link_soup')
+            bar.set_description(link_soup)
             res.append(process_link(link_soup))
         # with Pool(2) as p:
         # res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
