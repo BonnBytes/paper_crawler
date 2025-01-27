@@ -130,7 +130,7 @@ if __name__ == "__main__":
             multiple_results = [p.apply_async(process_link, soup) for soup in link_soup]
             for mres in tqdm(multiple_results, desc=f"crawling {args.id}"):
                 try:
-                    done = mres.get(timeout=120)
+                    done = mres.get(timeout=60)
                     res.append(done) 
                 except TimeoutError as e:
                     print(f"Timeout of {e}.")
