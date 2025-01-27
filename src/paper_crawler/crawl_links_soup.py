@@ -15,7 +15,27 @@ from tqdm import tqdm
 from ._argparse_code import _parse_args
 
 
+imcl_dict = {
+    2024: 235,
+    2023: 202,
+    2022: 162,
+    2021: 139,
+    2020: 119,
+    2019: 97,
+    2018: 80,
+    2017: 70,
+    2016: 48,
+    2015: 37,
+    2014: 32
+}
+
 def get_icml_2024_pdf():
+    return get_icml_pdf(2024)
+
+def get_icml_2023_pdf():
+    return get_icml_pdf(2023)
+
+def get_icml_pdf(year: int) -> list:
     """Fetch the PDF links from the ICML 2024 proceedings page.
 
     This function opens the ICML 2024 proceedings page, parses the HTML content,
@@ -23,25 +43,10 @@ def get_icml_2024_pdf():
     Returns:
         list: A list of BeautifulSoup tag objects that contain the PDF links.
     """
-    return get_icml("https://proceedings.mlr.press/v235/")
-
-def get_icml_2023_pdf():
-    """Fetch the PDF links from the ICML 2023 proceedings page.
-    Returns:
-        list: A list of BeautifulSoup tag objects.
-    """
-    return get_icml("https://proceedings.mlr.press/v202/")
+    return get_icml(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
 
 
-def get_icml_2022_pdf():
-    """Fetch the PDF links from the ICML 2022 proceedings page.
-    Returns:
-        list: A list of BeautifulSoup tag objects.
-    """
-    return get_icml("https://proceedings.mlr.press/v162/")
-
-
-def get_icml(url: str) -> None:
+def get_icml(url: str) -> list:
     soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
     return pdf_soup
@@ -99,8 +104,10 @@ if __name__ == "__main__":
         pdf_soup = get_icml_2024_pdf()
     elif args.id == 'icml2023':
         pdf_soup = get_icml_2023_pdf()
-    elif args.id == 'icml2021':
-        pdf_soup = get_icml_2022_pdf()
+    elif args.id == 'icml2022':
+        pdf_soup = get_icml_pdf(2022)
+    elif "icml" in args.id:
+        pdf_soup = get_icml_pdf(int(args.id[4:]))
     else:
         raise ValueError("Unkown conference.")
 
