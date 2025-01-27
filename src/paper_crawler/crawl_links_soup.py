@@ -107,7 +107,6 @@ def _parse_args():
 
 
 if __name__ == "__main__":
-
     args = _parse_args()
     if args.id == 'icml2024':
         pdf_soup = get_icml_2024_pdf()
