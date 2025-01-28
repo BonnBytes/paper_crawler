@@ -83,12 +83,6 @@ if __name__ == "__main__":
 
     results = []
 
-    # todo remove after recrawl.
-    paper_pages2 = []
-    for pp in paper_pages:
-        paper_pages2.extend(pp)
-    paper_pages = paper_pages2
-
     error_counter = 0
     for paper_soup_and_link in tqdm(paper_pages):
         # folders and files exists once per page.
