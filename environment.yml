@@ -92,4 +92,4 @@ dependencies:
       - webcolors==1.12
       - wrapt==1.17.2
       - wrapt-timeout-decorator==1.5.1
-prefix: /home/wolter/miniforge3/envs/crawl-ml-papers
+

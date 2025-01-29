@@ -10,16 +10,7 @@ np.Inf = np.inf
 np.float_ = np.float64
 
 
-if __name__ == "__main__":
-    ## PLOT ICML stats.
-    file_ids = [f"icml20{year}" for year in range(14, 25)]
-    pids = [f"{year}" for year in range(14, 25)]
-    counter_dict = {}
-
-    for fid, pid in zip(file_ids, pids):
-        with open(f"./storage/stored_counters_{fid}.pkl", "rb") as f:
-            id_counters = pickle.load(f)
-            counter_dict[pid] = id_counters
+def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) -> None:
 
     # restructure data
     software_keys = []
@@ -90,12 +81,16 @@ if __name__ == "__main__":
                      ('test-folder', True),
                      ('tox', True),
                      ('noxfile.py', True),
-                     ('.github/workflows', True)]
+                     ('.github/workflows', True),
+                     ('environment.yml',  True)]
     
     def set_up_plot(keys: str, filename: str = None):
         x = np.arange(len(keys))  # the label locations
         width = 0.08  # the width of the bars
-        multiplier = -4
+        if 'icml' in filename:
+            multiplier = -4
+        else:
+            multiplier = 0
         fig, ax = plt.subplots(layout='constrained')
         for conf_key, conf_values in data_dict_by_conf.items():
             offset = width * multiplier
@@ -117,24 +112,54 @@ if __name__ == "__main__":
     ## License and Readme
     keys = [("LICENSE", True),
             ("README", True)]
-    set_up_plot(keys, "license_and_readme")
+    set_up_plot(keys, f"{plot_prefix}_license_and_readme")
 
     ## Python
     keys = [("uses_python", True)]
-    set_up_plot(keys, "uses_python")
+    set_up_plot(keys, f"{plot_prefix}_uses_python")
 
     ## Requirements
-    keys = [("requirements.txt", True)]
-    set_up_plot(keys, "requirements")
+    keys = [("requirements.txt", True),
+            ('environment.yml',  True)]
+    set_up_plot(keys, f"{plot_prefix}_requirements")
 
     ## packaging
     keys = [("setup.py", True),
             ("pyproject.toml", True)]
-    set_up_plot(keys, "packaging")
+    set_up_plot(keys, f"{plot_prefix}_packaging")
 
     ## Tests and container
     keys = [("test-folder", True),
             ("tox", True),
             ("noxfile.py", True),
             (".github/workflows", True)]
-    set_up_plot(keys, "tests")
+    set_up_plot(keys, f"{plot_prefix}_tests")
+
+
+
+
+if __name__ == "__main__":
+    ## PLOT ICML stats.
+    file_ids = [f"icml20{year}" for year in range(14, 25)]
+    pids = [f"{year}" for year in range(14, 25)]
+    counter_dict = {}
+
+    for fid, pid in zip(file_ids, pids):
+        with open(f"./storage/stored_counters_{fid}.pkl", "rb") as f:
+            id_counters = pickle.load(f)
+            counter_dict[pid] = id_counters
+
+    structure_and_plot(pids, counter_dict, "icml")
+
+
+    ## ML in 2024
+    file_ids = ["icml2024", "ICLR.cc_2024_Conference", "NeurIPS.cc_2024_Conference"]
+    pids = ["ICML-2024", "ICLR-2024", "NeurIPS-2024"]
+    counter_dict = {}
+
+    for fid, pid in zip(file_ids, pids):
+        with open(f"./storage/stored_counters_{fid}.pkl", "rb") as f:
+            id_counters = pickle.load(f)
+            counter_dict[pid] = id_counters
+
+    structure_and_plot(pids, counter_dict, "ml_in_2024")
