@@ -52,6 +52,7 @@ def extract_stats(paper_soup_and_link) -> list[dict[str, bool]]:
         "setup.py",
         "setup.cfg",
         "pyproject.toml",
+        "environment.yml",
     ]
     interesting_folders = ["test", "tests", ".github/workflows"]
 
@@ -132,8 +133,7 @@ if __name__ == "__main__":
     print("Folders")
     print(f"total: {folders_counter.items()} of {page_total}")
     print(
-        f"ratios: {[(mc[0], mc[1] / float(page_total))
-                   for mc in folders_counter.items()]}"
+        f"ratios: {[(mc[0], mc[1] / float(page_total)) for mc in folders_counter.items()]}"
     )
 
     with open(f"./storage/stored_counters_{id}.pkl", "wb") as f:
