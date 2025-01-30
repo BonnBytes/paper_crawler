@@ -61,7 +61,8 @@ if __name__ == "__main__":
                 flat_links.append(link)
 
     str_links = list(map(urllib.parse.urlunparse, flat_links))
-    remove_duplicates = list(set(str_links))
+    # remove duplicates, not doing it means frequently used repos have more weight.
+    # str_links = list(set(str_links))
 
     # clean the data.
     filtered_pages = []
@@ -70,8 +71,8 @@ if __name__ == "__main__":
 
     with Pool(1) as p:
         filtered_pages.extend(
-            tqdm(p.imap(process_repo_link, remove_duplicates),
-                 total=len(remove_duplicates), desc=f"downloading {id}.")
+            tqdm(p.imap(process_repo_link, str_links),
+                 total=len(str_links), desc=f"downloading {id}.")
         )
 
 
