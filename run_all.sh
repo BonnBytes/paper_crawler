@@ -10,6 +10,7 @@ python -m src.paper_crawler.crawl_links_soup --id icml2016
 python -m src.paper_crawler.crawl_links_soup --id icml2015
 python -m src.paper_crawler.crawl_links_soup --id icml2014
 python -m src.paper_crawler.crawl_links_openreview --id ICLR.cc/2024/Conference
+python -m src.paper_crawler.crawl_links_openreview --id NeurIPS.cc/2024/Conference
 python -m src.paper_crawler.filter_and_download_links --id icml2024
 python -m src.paper_crawler.filter_and_download_links --id icml2023
 python -m src.paper_crawler.filter_and_download_links --id icml2022
@@ -22,6 +23,7 @@ python -m src.paper_crawler.filter_and_download_links --id icml2016
 python -m src.paper_crawler.filter_and_download_links --id icml2015
 python -m src.paper_crawler.filter_and_download_links --id icml2014
 python -m src.paper_crawler.filter_and_download_links --id ICLR.cc/2024/Conference
+python -m src.paper_crawler.filter_and_download_links --id NeurIPS.cc/2024/Conference
 python -m src.paper_crawler.process_pages --id icml2024
 python -m src.paper_crawler.process_pages --id icml2023
 python -m src.paper_crawler.process_pages --id icml2022
@@ -34,3 +36,4 @@ python -m src.paper_crawler.process_pages --id icml2016
 python -m src.paper_crawler.process_pages --id icml2015
 python -m src.paper_crawler.process_pages --id icml2014
 python -m src.paper_crawler.process_pages --id ICLR.cc/2024/Conference
+python -m src.paper_crawler.process_pages --id NeurIPS.cc/2024/Conference
