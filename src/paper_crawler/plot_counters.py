@@ -86,11 +86,13 @@ def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) ->
     
     def set_up_plot(keys: str, filename: str = None):
         x = np.arange(len(keys))  # the label locations
-        width = 0.08  # the width of the bars
+        
         if 'icml' in filename:
             multiplier = -4
+            width = 0.08  # the width of the bars
         else:
             multiplier = 0
+            width = 0.25  # the width of the bars
         fig, ax = plt.subplots(layout='constrained')
         for conf_key, conf_values in data_dict_by_conf.items():
             offset = width * multiplier
@@ -136,8 +138,6 @@ def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) ->
     set_up_plot(keys, f"{plot_prefix}_tests")
 
 
-
-
 if __name__ == "__main__":
     ## PLOT ICML stats.
     file_ids = [f"icml20{year}" for year in range(14, 25)]
@@ -154,7 +154,7 @@ if __name__ == "__main__":
 
     ## ML in 2024
     file_ids = ["icml2024", "ICLR.cc_2024_Conference", "NeurIPS.cc_2024_Conference"]
-    pids = ["ICML-2024", "ICLR-2024", "NeurIPS-2024"]
+    pids = ["ICML", "ICLR", "NeurIPS"]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
