@@ -8,7 +8,7 @@ from tqdm import tqdm
 from ._argparse_code import _parse_args
 
 
-def extract_stats(paper_soup_and_link) -> list[dict[str, bool]]:
+def extract_stats(paper_soup_and_link) -> dict[str, bool]:
     # Second position is the page link, use for debugging.
     soup, _ = paper_soup_and_link
 
@@ -68,8 +68,7 @@ def extract_stats(paper_soup_and_link) -> list[dict[str, bool]]:
     if python_span:
         result_dict["python"]["uses_python"] = True
 
-    results.append(result_dict)
-    return results
+    return result_dict
 
 
 if __name__ == "__main__":
@@ -86,7 +85,7 @@ if __name__ == "__main__":
     for paper_soup_and_link in tqdm(paper_pages):
         # folders and files exists once per page.
         try:
-            results = extract_stats(paper_soup_and_link)
+            results.append(extract_stats(paper_soup_and_link))
         except Exception as e:
             # print(f"Error: {e}")
             error_counter += 1
