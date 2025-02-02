@@ -7,7 +7,6 @@ It processes each PDF to extract GitHub links, and to stores the results in a JS
 import argparse
 import json
 import urllib
-from multiprocessing import Pool
 from pathlib import Path
 
 import pdfx
@@ -32,10 +31,12 @@ imcl_dict = {
 
 
 def get_icml_2024_pdf():
+    """Get all ICML 2024 paper links."""
     return get_icml_pdf(2024)
 
 
 def get_icml_2023_pdf():
+    """Get all ICML 2024 paper links."""
     return get_icml_pdf(2023)
 
 

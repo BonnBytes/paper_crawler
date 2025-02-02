@@ -20,19 +20,19 @@ def test_requirements_txt():
     assert loaded[1] == link
     stats = extract_stats(loaded)
 
-    assert stats['files']['requirements.txt'] is True
-    assert stats['files']['README.md'] is True
-    assert stats['files']['LICENSE'] is False
-    assert stats['files']['noxfile.py'] is False
-    assert stats['files']['tox.toml'] is False
-    assert stats['files']['tox.ini'] is False
-    assert stats['files']['setup.py'] is False
-    assert stats['files']['setup.cfg'] is False
-    assert stats['files']['pyproject.toml'] is False
-    assert stats['files']['environment.yml'] is False
+    assert stats["files"]["requirements.txt"] is True
+    assert stats["files"]["README.md"] is True
+    assert stats["files"]["LICENSE"] is False
+    assert stats["files"]["noxfile.py"] is False
+    assert stats["files"]["tox.toml"] is False
+    assert stats["files"]["tox.ini"] is False
+    assert stats["files"]["setup.py"] is False
+    assert stats["files"]["setup.cfg"] is False
+    assert stats["files"]["pyproject.toml"] is False
+    assert stats["files"]["environment.yml"] is False
 
-    assert stats['folders']['test'] is False
-    assert stats['folders']['tests'] is False
-    assert stats['folders']['.github/workflows'] is False
+    assert stats["folders"]["test"] is False
+    assert stats["folders"]["tests"] is False
+    assert stats["folders"][".github/workflows"] is False
 
-    assert stats['python']['uses_python'] is True
+    assert stats["python"]["uses_python"] is True
