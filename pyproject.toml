@@ -39,7 +39,8 @@ dependencies = [
 dev = [
     "pytest",
     "nox",
-    "build"
+    "build",
+    "mypy"
 ]
 
 

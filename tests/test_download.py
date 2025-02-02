@@ -5,14 +5,14 @@ import urllib
 from paper_crawler.filter_and_download_links import process_repo_link
 
 
-def test_download():
+def test_download() -> None:
     """Test the process repo functions for actual repos and an organization page."""
     links = [
         ["https", "github.com", "/huggingface/", "", "", ""],
         ["https", "github.com", "/Ryan0v0/multilingual_borders", "", "", ""],
         ["https", "github.com", "/huggingface/peft", "", "", ""],
     ]
-    links = list(map(urllib.parse.urlunparse, links))
+    links = list(map(urllib.parse.urlunparse, links))  # type: ignore
 
     res = list(map(process_repo_link, links))
 
@@ -22,9 +22,9 @@ def test_download():
     assert type(res[2]) is tuple
 
 
-def test_pth():
+def test_pth() -> None:
     """Make sure a weight object file is filtered properly."""
-    links = urllib.parse.urlunparse(
+    links = urllib.parse.urlunparse(    # type: ignore
         [
             "https",
             "github.com",

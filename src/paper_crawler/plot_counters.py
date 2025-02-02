@@ -2,6 +2,7 @@
 
 import pickle
 from collections import Counter
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,7 +12,9 @@ np.Inf = np.inf
 np.float_ = np.float64
 
 
-def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) -> None:
+def structure_and_plot(
+    pids: list[str], counter_dict: dict[str, Any], plot_prefix: str
+) -> None:
     """Restructure counter dictionaries and generate bar plots for practice adoption.
 
     Args:

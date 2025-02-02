@@ -4,7 +4,7 @@ from paper_crawler.filter_and_download_links import process_repo_link
 from paper_crawler.process_pages import extract_stats
 
 
-def test_requirements_txt():
+def test_requirements_txt() -> None:
     """Test if the requirements.txt file is found."""
     link = "https://github.com/ErikEnglesson/SGN"
 
@@ -31,7 +31,7 @@ def test_requirements_txt():
     assert stats["python"]["uses_python"] is True
 
 
-def test_tests_folder():
+def test_tests_folder() -> None:
     """Test if the tests folder is found."""
     link = "https://github.com/v0lta/PyTorch-Wavelet-Toolbox"
 
