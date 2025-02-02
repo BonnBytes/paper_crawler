@@ -3,6 +3,13 @@
 import nox
 
 
+@nox.session(name="no-credentials-test")
+def run_test_fast(session):
+    """Run pytest."""
+    session.install(".[dev]")
+    session.run("pytest", "-m", "not uses_credentials")
+
+
 @nox.session(name="test")
 def run_test(session):
     """Run pytest."""
@@ -24,8 +31,6 @@ def lint(session):
         "darglint",
     )
     session.run("flake8", "src", "tests", "noxfile.py")
-    session.install("sphinx", "doc8")
-    session.run("doc8", "--max-line-length", "120", "docs/")
 
 
 @nox.session(name="typing")

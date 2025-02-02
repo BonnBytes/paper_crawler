@@ -1,17 +1,12 @@
-# TODO: remove sys when done.
-import sys
+"""Test the download code frome the 'filter_and_download_links' module."""
 
-sys.path.append("./src")
-
-import json
 import urllib
 
-import pytest
-
-from src.paper_crawler.filter_and_download_links import process_repo_link
+from paper_crawler.filter_and_download_links import process_repo_link
 
 
 def test_download():
+    """Test the process repo functions for actual repos and an organization page."""
     links = [
         ["https", "github.com", "/huggingface/", "", "", ""],
         ["https", "github.com", "/Ryan0v0/multilingual_borders", "", "", ""],
@@ -28,6 +23,7 @@ def test_download():
 
 
 def test_pth():
+    """Make sure a weight object file is filtered properly."""
     links = urllib.parse.urlunparse(
         [
             "https",

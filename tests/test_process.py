@@ -1,18 +1,11 @@
-# TODO: remove sys when done.
-import sys
+"""Test if the process_pages module does what it should."""
 
-sys.path.append("./src")
-
-import json
-import urllib
-
-import pytest
-
-from src.paper_crawler.filter_and_download_links import process_repo_link
-from src.paper_crawler.process_pages import extract_stats
+from paper_crawler.filter_and_download_links import process_repo_link
+from paper_crawler.process_pages import extract_stats
 
 
 def test_requirements_txt():
+    """Test if the requirements.txt file is found."""
     link = "https://github.com/ErikEnglesson/SGN"
 
     loaded = process_repo_link(link)

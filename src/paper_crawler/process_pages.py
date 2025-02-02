@@ -8,7 +8,23 @@ from tqdm import tqdm
 from ._argparse_code import _parse_args
 
 
-def extract_stats(paper_soup_and_link) -> dict[str, bool]:
+def extract_stats(paper_soup_and_link: tuple) -> dict[str, bool]:
+    """Extract statistics from a BeautifulSoup object representing a paper's webpage.
+
+    Args:
+        paper_soup_and_link (tuple): A tuple containing a BeautifulSoup object of
+            the paper's webpage and the page link.
+
+    Returns:
+        dict[str, bool]: A dictionary containing the presence of specific files,
+          folders, and whether Python is mentioned on the page.
+            - "files": A dictionary where keys are filenames of interest
+                and values are booleans indicating their presence.
+            - "folders": A dictionary where keys are folder names of interest
+                and values are booleans indicating their presence.
+            - "python": A dictionary with a key "uses_python"
+                and a boolean value indicating if Python is mentioned on the page.
+    """
     # Second position is the page link, use for debugging.
     soup, _ = paper_soup_and_link
 
@@ -86,7 +102,7 @@ if __name__ == "__main__":
         # folders and files exists once per page.
         try:
             results.append(extract_stats(paper_soup_and_link))
-        except Exception as e:
+        except Exception:
             # print(f"Error: {e}")
             error_counter += 1
 
@@ -114,10 +130,12 @@ if __name__ == "__main__":
     print("Files:")
     print(f"total: {file_counter.items()} of {page_total}")
     print(
-        f"ratios: {[(mc[0], mc[1] / float(page_total)) for mc in file_counter.items()]}"
+        f"ratios: {[(mc[0], mc[1] / float(page_total))
+                   for mc in file_counter.items()]}"
     )
     print(
-        f"python-ratios: {[(mc[0], mc[1] / float(python_total)) for mc in file_counter.items()]}"
+        f"python-ratios: {[(mc[0], mc[1] / float(python_total))
+                          for mc in file_counter.items()]}"
     )
 
     folders = []
@@ -130,7 +148,8 @@ if __name__ == "__main__":
     print("Folders")
     print(f"total: {folders_counter.items()} of {page_total}")
     print(
-        f"ratios: {[(mc[0], mc[1] / float(page_total)) for mc in folders_counter.items()]}"
+        f"ratios: {[(mc[0], mc[1] / float(page_total))
+                   for mc in folders_counter.items()]}"
     )
 
     with open(f"./storage/stored_counters_{id}.pkl", "wb") as f:

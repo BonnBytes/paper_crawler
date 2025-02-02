@@ -1,15 +1,12 @@
 """See if the openreview crawler works as we would expect."""
 
-# TODO: remove sys when done.
-import sys
-
-sys.path.append("./src")
-
+import pytest
 from dotenv import load_dotenv
 
-from src.paper_crawler.crawl_links_openreview import get_openreview_submissions
+from paper_crawler.crawl_links_openreview import get_openreview_submissions
 
 
+@pytest.mark.uses_credentials
 def test_iclr24() -> None:
     """Check if we got all ICLR 2024 papers."""
     load_dotenv()

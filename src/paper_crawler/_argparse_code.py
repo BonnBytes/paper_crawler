@@ -2,7 +2,7 @@ import argparse
 
 
 def _parse_args():
-    """Parse cmd line args for filtering and downloading github-repository pages."""
+    """Cmd line args for filtering and downloading and analyzing ML-conferences."""
     parser = argparse.ArgumentParser(description="")
     parser.add_argument(
         "--id",

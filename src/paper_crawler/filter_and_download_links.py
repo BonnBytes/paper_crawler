@@ -2,7 +2,6 @@
 
 import json
 import pickle
-import time
 import urllib
 import urllib.request
 from multiprocessing import Pool
@@ -15,7 +14,9 @@ from ._argparse_code import _parse_args
 
 def process_repo_link(repo_link: list[str]) -> list:
     """
-    Process a list of repo_link to GitHub, filters out those that contain a branch picker.
+    Process a list of links to github repos.
+
+    This functions filters out those that contain a branch picker.
 
     Args:
         repo_link (list[str]): A list of URLs to process.
@@ -23,7 +24,7 @@ def process_repo_link(repo_link: list[str]) -> list:
     Returns:
         list: A list of url and soups with a branch picker.
 
-    Raises: # noqa: DAR402
+    Raises: # noqa: DAR402, DAR401
         Exception: If an error occurs while processing a link,
             it will be caught and printed.
     """

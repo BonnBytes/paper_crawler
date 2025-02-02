@@ -1,15 +1,10 @@
 """Test the pdfs from html crawl code."""
 
-# TODO: remove sys when done.
-import sys
 import urllib
 
-sys.path.append("./src")
-
-from src.paper_crawler.crawl_links_soup import (
+from paper_crawler.crawl_links_soup import (
     get_icml_2023_pdf,
     get_icml_2024_pdf,
-    get_icml_pdf,
     process_link,
 )
 
@@ -25,9 +20,9 @@ def test_icml23() -> None:
 
 
 def check_process_no_pdf():
-    """Check if no github-link returns None"""
+    """Check if no github-link returns None."""
     link = "https://proceedings.mlr.press/v139/abdolshah21a/abdolshah21a.pdf"
-    assert process_link(link) == None
+    assert process_link(link) is None
 
 
 def test_process_link() -> None:

@@ -1,3 +1,5 @@
+"""Plot the numbers computed by the other scripts."""
+
 import pickle
 from collections import Counter
 
@@ -10,7 +12,14 @@ np.float_ = np.float64
 
 
 def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) -> None:
+    """Restructure counter dictionaries and generate bar plots for practice adoption.
 
+    Args:
+        pids (list[str]): A list of plot-conference IDs to process.
+        counter_dict (dict): A dictionary containing counters
+            for different software features.
+        plot_prefix (str): A prefix to use for the plot filenames.
+    """
     # restructure data
     software_keys = []
     software_keys.extend(counter_dict[pids[-1]]["files"].keys())
@@ -36,7 +45,7 @@ def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) ->
                         counter_dict[conf_key], data_key
                     )
                 except KeyError as e:
-                    print(f"Key {data_key} not found.")
+                    print(f"Key {data_key} not found: {e}")
                     data_dict_by_feature[data_key][conf_key] = 0
             else:
                 try:
@@ -44,7 +53,7 @@ def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) ->
                     key_val = find_key(counter_dict[conf_key], data_key)
                     data_dict_by_feature[data_key][conf_key] = key_val
                 except KeyError as e:
-                    print(f"Key {data_key} not found.")
+                    print(f"Key {data_key} not found: {e}.")
                     data_dict_by_feature[data_key][conf_key] = 0
 
     data_dict_by_conf = {}
@@ -132,23 +141,23 @@ def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) ->
             tikz.save(f"./plots/{filename}.tex", standalone=True)
         plt.show()
 
-    ## License and Readme
+    # License and Readme
     keys = [("LICENSE", True), ("README", True)]
     set_up_plot(keys, f"{plot_prefix}_license_and_readme")
 
-    ## Python
+    # Python
     keys = [("uses_python", True)]
     set_up_plot(keys, f"{plot_prefix}_uses_python")
 
-    ## Requirements
+    # Requirements
     keys = [("requirements.txt", True), ("environment.yml", True)]
     set_up_plot(keys, f"{plot_prefix}_requirements")
 
-    ## packaging
+    # packaging
     keys = [("setup.py", True), ("pyproject.toml", True)]
     set_up_plot(keys, f"{plot_prefix}_packaging")
 
-    ## Tests and container
+    # Tests and container
     keys = [
         ("test-folder", True),
         ("tox", True),
@@ -159,7 +168,7 @@ def structure_and_plot(pids: list[str], counter_dict: dict, plot_prefix: str) ->
 
 
 if __name__ == "__main__":
-    ## PLOT ICML stats.
+    # PLOT ICML stats.
     file_ids = [f"icml20{year}" for year in range(14, 25)]
     pids = [f"{year}" for year in range(14, 25)]
     counter_dict = {}
@@ -171,7 +180,7 @@ if __name__ == "__main__":
 
     structure_and_plot(pids, counter_dict, "icml")
 
-    ## ML in 2024
+    # ML in 2024
     file_ids = ["icml2024", "ICLR.cc_2024_Conference", "NeurIPS.cc_2024_Conference"]
     pids = ["ICML", "ICLR", "NeurIPS"]
     counter_dict = {}

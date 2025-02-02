@@ -4,7 +4,6 @@ This module containes code to fetche PDF links from the ICML 2024 proceedings pa
 It processes each PDF to extract GitHub links, and to stores the results in a JSON file.
 """
 
-import argparse
 import json
 import urllib
 from pathlib import Path
@@ -52,6 +51,14 @@ def get_icml_pdf(year: int) -> list:
 
 
 def get_icml(url: str) -> list:
+    """Fetch PDF links from an URL.
+
+    Args:
+        url (str): The URL where we want to look for PDF links.
+
+    Returns:
+        list: A list of links that contain "pdf" in their href attribute.
+    """
     soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
     return pdf_soup
@@ -89,18 +96,6 @@ def process_link(url: str) -> list[str]:
         return None
 
 
-def _parse_args():
-    """Parse cmd line args for filtering and downloading github-repository pages."""
-    parser = argparse.ArgumentParser(description="")
-    parser.add_argument(
-        "--id",
-        type=str,
-        default="icml2024",
-        help="Specify the venueid.",
-    )
-    return parser.parse_args()
-
-
 if __name__ == "__main__":
     args = _parse_args()
     if args.id == "icml2024":
@@ -117,7 +112,7 @@ if __name__ == "__main__":
     path = Path(f"./storage/{args.id}.json")
 
     if not path.exists():
-        link_soup = [
+        links = [
             list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[
                 -1
             ][1:-1]
@@ -126,23 +121,12 @@ if __name__ == "__main__":
 
         # loop through paper links find pdfs
         res = []
-        for steps, link_soup in enumerate((bar := tqdm(link_soup))):
-            bar.set_description(link_soup)
-            res.append(process_link(link_soup))
+        for steps, current_link in enumerate((bar := tqdm(links))):
+            bar.set_description(current_link)
+            res.append(process_link(current_link))
             if steps % 100 == 0:
                 with open(f"./storage/{args.id}.json", "w") as f:
                     f.write(json.dumps(res))
-
-        # with Pool(4) as p:
-        # res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
-        # res = []
-        # multiple_results = [p.apply_async(process_link, (soup,)) for soup in link_soup]
-        # for mres in tqdm(multiple_results, desc=f"crawling {args.id}"):
-        #     try:
-        #         done = mres.get(timeout=60)
-        #         res.append(done)
-        #     except TimeoutError as e:
-        #         print(f"Timeout of {e}.")
 
         with open(f"./storage/{args.id}.json", "w") as f:
             f.write(json.dumps(res))
