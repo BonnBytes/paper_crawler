@@ -112,6 +112,10 @@ if __name__ == "__main__":
 
     path = Path(f"./storage/{args.id}.json")
 
+    if not os.path.exists("./storage/"):
+        os.makedirs("./storage/")
+
+
     if not path.exists():
         links = [
             list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[
@@ -128,10 +132,6 @@ if __name__ == "__main__":
             if steps % 100 == 0:
                 with open(f"./storage/{args.id}.json", "w") as f:
                     f.write(json.dumps(res))
-
-
-        if not os.path.exists("./storage/"):
-            os.makedirs("./storage/")
 
         with open(f"./storage/{args.id}.json", "w") as f:
             f.write(json.dumps(res))

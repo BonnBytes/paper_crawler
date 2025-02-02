@@ -55,14 +55,14 @@ if __name__ == "__main__":
     venueid = args.id
     print(f"getting pdf-linkes from {venueid}, saving at {storage_file}")
 
+    if not os.path.exists("./storage/"):
+        os.makedirs("./storage/")
+
     links = get_openreview_submissions(venueid)
 
     # loop through paper links find pdfs
     with Pool(2) as p:
         res = list(tqdm(p.imap(process_link, links), total=len(links)))
-
-    if not os.path.exists("./storage/"):
-        os.makedirs("./storage/")
 
     with open(storage_file, "w") as f:
         f.write(json.dumps(res, indent=1))
