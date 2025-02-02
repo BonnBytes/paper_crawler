@@ -129,14 +129,10 @@ if __name__ == "__main__":
 
     print("Files:")
     print(f"total: {file_counter.items()} of {page_total}")
-    print(
-        f"ratios: {[(mc[0], mc[1] / float(page_total))
-                   for mc in file_counter.items()]}"
-    )
-    print(
-        f"python-ratios: {[(mc[0], mc[1] / float(python_total))
-                          for mc in file_counter.items()]}"
-    )
+    ratios = [(mc[0], mc[1] / float(python_total)) for mc in file_counter.items()]
+    print(f"ratios: {ratios}")
+    ratios = [(mc[0], mc[1] / float(python_total)) for mc in file_counter.items()]
+    print(f"python-ratios: {ratios}")
 
     folders = []
     for res in results:
