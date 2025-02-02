@@ -64,9 +64,7 @@ def extract_stats(paper_soup_and_link) -> list[dict[str, bool]]:
         result_dict["files"][interesting_file] = interesting_file in files
 
     for interesting_folder in interesting_folders:
-        result_dict["folders"][interesting_folder] = (
-            interesting_folder in folders
-        )
+        result_dict["folders"][interesting_folder] = interesting_folder in folders
     if python_span:
         result_dict["python"]["uses_python"] = True
 
@@ -121,7 +119,7 @@ if __name__ == "__main__":
     )
     print(
         f"python-ratios: {[(mc[0], mc[1] / float(python_total)) for mc in file_counter.items()]}"
-    )    
+    )
 
     folders = []
     for res in results:
@@ -137,7 +135,12 @@ if __name__ == "__main__":
     )
 
     with open(f"./storage/stored_counters_{id}.pkl", "wb") as f:
-        pickle.dump({"files": file_counter,
-                     "folders": folders_counter,
-                     "language":  python_counter,
-                     "page_total": page_total}, f)
+        pickle.dump(
+            {
+                "files": file_counter,
+                "folders": folders_counter,
+                "language": python_counter,
+                "page_total": page_total,
+            },
+            f,
+        )

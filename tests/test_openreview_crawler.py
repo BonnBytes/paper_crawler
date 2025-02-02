@@ -1,10 +1,13 @@
 """See if the openreview crawler works as we would expect."""
+
 # TODO: remove sys when done.
 import sys
+
 sys.path.append("./src")
 
 from dotenv import load_dotenv
-from paper_crawler.crawl_links_openreview import get_openreview_submissions
+
+from src.paper_crawler.crawl_links_openreview import get_openreview_submissions
 
 
 def test_iclr24() -> None:

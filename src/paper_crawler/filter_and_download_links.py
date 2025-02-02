@@ -28,7 +28,7 @@ def process_repo_link(repo_link: list[str]) -> list:
             it will be caught and printed.
     """
     try:
-        if repo_link.split('.')[-1] in ['pth', 'pkl']:
+        if repo_link.split(".")[-1] in ["pth", "pkl"]:
             raise ValueError("Pickled or model file found.")
         page = urllib.request.urlopen(repo_link)
         soup = BeautifulSoup(page, "html.parser")
@@ -41,6 +41,7 @@ def process_repo_link(repo_link: list[str]) -> list:
         tqdm.write(f"Page {repo_link} produced an error {e}.")
         return None
 
+
 if __name__ == "__main__":
     args = _parse_args()
     id = "_".join(args.id.split("/"))
@@ -49,8 +50,7 @@ if __name__ == "__main__":
     with open(f"./storage/{id}.json", "r") as f:
         links = json.load(f)
 
-
-    if id == 'ICLR.cc_2024_Conference':
+    if id == "ICLR.cc_2024_Conference":
         # this one is broken.
         links.pop(1809)
 
@@ -71,10 +71,12 @@ if __name__ == "__main__":
 
     with Pool(1) as p:
         filtered_pages.extend(
-            tqdm(p.imap(process_repo_link, str_links),
-                 total=len(str_links), desc=f"downloading {id}.")
+            tqdm(
+                p.imap(process_repo_link, str_links),
+                total=len(str_links),
+                desc=f"downloading {id}.",
+            )
         )
-
 
     with open(f"./storage/{id}_filtered.pkl", "wb") as f:
         pickle.dump(filtered_pages, f)

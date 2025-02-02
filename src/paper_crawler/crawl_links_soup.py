@@ -4,17 +4,17 @@ This module containes code to fetche PDF links from the ICML 2024 proceedings pa
 It processes each PDF to extract GitHub links, and to stores the results in a JSON file.
 """
 
+import argparse
 import json
 import urllib
 from multiprocessing import Pool
 from pathlib import Path
 
 import pdfx
-import argparse
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from ._argparse_code import _parse_args
 
+from ._argparse_code import _parse_args
 
 imcl_dict = {
     2024: 235,
@@ -27,14 +27,17 @@ imcl_dict = {
     2017: 70,
     2016: 48,
     2015: 37,
-    2014: 32
+    2014: 32,
 }
+
 
 def get_icml_2024_pdf():
     return get_icml_pdf(2024)
 
+
 def get_icml_2023_pdf():
     return get_icml_pdf(2023)
+
 
 def get_icml_pdf(year: int) -> list:
     """Fetch the PDF links from the ICML 2024 proceedings page.
@@ -97,14 +100,13 @@ def _parse_args():
     return parser.parse_args()
 
 
-
 if __name__ == "__main__":
     args = _parse_args()
-    if args.id == 'icml2024':
+    if args.id == "icml2024":
         pdf_soup = get_icml_2024_pdf()
-    elif args.id == 'icml2023':
+    elif args.id == "icml2023":
         pdf_soup = get_icml_2023_pdf()
-    elif args.id == 'icml2022':
+    elif args.id == "icml2022":
         pdf_soup = get_icml_pdf(2022)
     elif "icml" in args.id:
         pdf_soup = get_icml_pdf(int(args.id[4:]))
@@ -115,9 +117,9 @@ if __name__ == "__main__":
 
     if not path.exists():
         link_soup = [
-            list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[-1][
-                1:-1
-            ]
+            list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[
+                -1
+            ][1:-1]
             for pdf_soup_el in pdf_soup
         ]
 
@@ -130,14 +132,14 @@ if __name__ == "__main__":
                 with open(f"./storage/{args.id}.json", "w") as f:
                     f.write(json.dumps(res))
 
-        #with Pool(4) as p:
+        # with Pool(4) as p:
         # res = list(tqdm(p.imap(process_link, link_soup), total=len(link_soup)))
         # res = []
         # multiple_results = [p.apply_async(process_link, (soup,)) for soup in link_soup]
         # for mres in tqdm(multiple_results, desc=f"crawling {args.id}"):
         #     try:
         #         done = mres.get(timeout=60)
-        #         res.append(done) 
+        #         res.append(done)
         #     except TimeoutError as e:
         #         print(f"Timeout of {e}.")
 

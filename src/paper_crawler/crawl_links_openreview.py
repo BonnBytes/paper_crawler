@@ -8,8 +8,8 @@ import openreview
 from dotenv import load_dotenv
 from tqdm import tqdm
 
-from .crawl_links_soup import process_link
 from ._argparse_code import _parse_args
+from .crawl_links_soup import process_link
 
 
 def get_openreview_submissions(venueid: str) -> list[str]:
