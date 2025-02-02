@@ -86,7 +86,7 @@ def check_coverage(session):
     session.install("pytest")
     session.install("coverage")
     try:
-        session.run("coverage", "run", "-m", "pytest")
+        session.run("coverage", "run", "--source=paper_crawler", "-m", "pytest")
     finally:
         session.run("coverage", "html")
 

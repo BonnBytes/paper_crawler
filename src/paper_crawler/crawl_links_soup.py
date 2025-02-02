@@ -75,8 +75,8 @@ def process_link(url: str) -> list[str]:
           If an error occurs, returns None.
 
     Raises:
-        ValueError: If not GitHub-Links are found.
-        Exception: If there is an error during the processing of the PDF. # noqa: DAR402
+        ValueError: If no GitHub links are found.
+            Is immediately caught and logged on the console.
     """
     try:
         reader = pdfx.PDFx(url)

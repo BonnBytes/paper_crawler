@@ -32,3 +32,9 @@ def test_process_link() -> None:
         urllib.parse.urlunparse(process_link(link)[0])
         == "https://github.com/IdanAchituve/GP-Tree"
     )
+
+
+def test_process_no_link() -> None:
+    """Check if a paper no repo-link raises an error."""
+    link = "https://proceedings.mlr.press/v139/acar21b/acar21b.pdf"
+    assert process_link(link) is None
