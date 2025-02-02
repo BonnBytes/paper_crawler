@@ -24,7 +24,7 @@ def test_download() -> None:
 
 def test_pth() -> None:
     """Make sure a weight object file is filtered properly."""
-    links = urllib.parse.urlunparse(    # type: ignore
+    links = urllib.parse.urlunparse(  # type: ignore
         [
             "https",
             "github.com",

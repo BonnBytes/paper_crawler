@@ -61,5 +61,8 @@ if __name__ == "__main__":
     with Pool(2) as p:
         res = list(tqdm(p.imap(process_link, links), total=len(links)))
 
+    if not os.path.exists("./storage/"):
+        os.makedirs("./storage/")
+
     with open(storage_file, "w") as f:
         f.write(json.dumps(res, indent=1))

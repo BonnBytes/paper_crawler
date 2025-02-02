@@ -4,6 +4,7 @@ This module containes code to fetche PDF links from the ICML 2024 proceedings pa
 It processes each PDF to extract GitHub links, and to stores the results in a JSON file.
 """
 
+import os
 import json
 import urllib
 from pathlib import Path
@@ -127,6 +128,10 @@ if __name__ == "__main__":
             if steps % 100 == 0:
                 with open(f"./storage/{args.id}.json", "w") as f:
                     f.write(json.dumps(res))
+
+
+        if not os.path.exists("./storage/"):
+            os.makedirs("./storage/")
 
         with open(f"./storage/{args.id}.json", "w") as f:
             f.write(json.dumps(res))

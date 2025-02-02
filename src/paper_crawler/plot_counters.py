@@ -29,7 +29,7 @@ def structure_and_plot(
     software_keys.extend(counter_dict[pids[-1]]["folders"].keys())
     software_keys.extend(counter_dict[pids[-1]]["language"].keys())
 
-    def find_key(counters, data_key):
+    def find_key(counters: dict[str, Any], data_key: str) -> Any:
         for counter in counters.values():
             if type(counter) is Counter:
                 test = list(
