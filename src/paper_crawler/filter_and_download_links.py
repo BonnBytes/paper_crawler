@@ -1,5 +1,4 @@
 """Filter the GitHub links and download the front page for each link."""
-from typing import Union
 
 import json
 import pickle
@@ -7,6 +6,7 @@ import urllib
 import urllib.parse
 import urllib.request
 from multiprocessing import Pool
+from typing import Union
 
 from bs4 import BeautifulSoup
 from tqdm import tqdm

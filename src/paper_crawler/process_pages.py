@@ -1,16 +1,18 @@
 """This module allows parsing the github pages. It extracts file and folder names."""
 
-import bs4
 import pickle
-from typing import Any
 from collections import Counter
+from typing import Any
 
+import bs4
 from tqdm import tqdm
 
 from ._argparse_code import _parse_args
 
 
-def extract_stats(paper_soup_and_link: tuple[bs4.BeautifulSoup, str]) -> dict[str, dict[str, bool]]:
+def extract_stats(
+    paper_soup_and_link: tuple[bs4.BeautifulSoup, str],
+) -> dict[str, dict[str, bool]]:
     """Extract statistics from a BeautifulSoup object representing a paper's webpage.
 
     Args:
@@ -46,7 +48,7 @@ def extract_stats(paper_soup_and_link: tuple[bs4.BeautifulSoup, str]) -> dict[st
     )[0]
     cells: list[bs4.element.Tag] = list(
         filter(
-            lambda td: "row-name-cell" in str(td), # type: ignore
+            lambda td: "row-name-cell" in str(td),  # type: ignore
             folders_and_files.find_all("td"),  # type: ignore
         )
     )
@@ -112,15 +114,13 @@ if __name__ == "__main__":
     files: list[tuple[str, bool]] = []
     for res in results:
         files.extend(
-            list(filter(lambda res: res[1] is True,
-                        list(res["files"].items())))
+            list(filter(lambda res: res[1] is True, list(res["files"].items())))
         )
 
     python_use: list[tuple[str, bool]] = []
     for res in results:
         python_use.extend(
-            list(filter(lambda res: res[1] is True,
-                        list(res["python"].items())))
+            list(filter(lambda res: res[1] is True, list(res["python"].items())))
         )
     python_counter = Counter(python_use)
     python_total = list(python_counter.items())[0][1]

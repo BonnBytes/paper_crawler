@@ -3,15 +3,15 @@ This module containes code to fetche PDF links from the ICML 2024 proceedings pa
 
 It processes each PDF to extract GitHub links, and to stores the results in a JSON file.
 """
-from typing import Union
 
 import json
 import os
 import urllib
 from pathlib import Path
+from typing import Union
 
-import pdfx
 import bs4
+import pdfx
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
@@ -42,7 +42,7 @@ def get_icml_2023_pdf() -> list[bs4.element.Tag]:
     return get_icml_pdf(2023)
 
 
-def get_icml_pdf(year: int)-> list[bs4.element.Tag]:
+def get_icml_pdf(year: int) -> list[bs4.element.Tag]:
     """Fetch the PDF links from the ICML 2024 proceedings page.
 
     This function opens the ICML 2024 proceedings page, parses the HTML content,
@@ -63,8 +63,8 @@ def get_icml(url: str) -> list[bs4.element.Tag]:
         list: A list of links that contain "pdf" in their href attribute.
     """
     soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
-    pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a"))) 
-    return pdf_soup # type: ignore
+    pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
+    return pdf_soup  # type: ignore
 
 
 def process_link(url: str) -> Union[list[str], None]:

@@ -2,13 +2,11 @@
 
 import pickle
 from collections import Counter
-from typing import Any
+from typing import Any, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import tikzplotlib as tikz
-
-from typing import Union
 
 np.Inf = np.inf
 np.float_ = np.float64
@@ -106,7 +104,9 @@ def structure_and_plot(
         ("environment.yml", True),
     ]
 
-    def _set_up_plot(keys: list[tuple[str, bool]], filename: Union[str, None] = None) -> None:
+    def _set_up_plot(
+        keys: list[tuple[str, bool]], filename: Union[str, None] = None
+    ) -> None:
         x = np.arange(len(keys))  # the label locations
 
         if filename and "icml" in filename:
@@ -124,8 +124,7 @@ def structure_and_plot(
                 list(
                     (
                         round(
-                            (conf_values[key] / page_total)
-                            * 100.0,
+                            (conf_values[key] / page_total) * 100.0,
                             1,
                         )
                         for key in keys
