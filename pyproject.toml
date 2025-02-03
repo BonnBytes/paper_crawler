@@ -7,7 +7,7 @@ name = "paper_crawler"
 version = "0.0.1-dev"
 description = "Supplementary code for our ICML 2024 position paper on the state of the software Engineering ecosystem in ML."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = { file = "LICENSE" }
 keywords = ["Machine Learning", "Paper", "Crawler"]
 classifiers = [
