@@ -21,8 +21,12 @@ pip install .
 ```
 
 ### Download the data run
-To aggregate the statistical data we used for the paper run the command below.
+To aggregate the statistical data we used for the paper, run the command below.
 
 ``` bash
 ./run_all.sh
 ```
+
+### Funding
+
+The Bundesministerium für Bildung und Forschung (BMBF) supported research through its "BNTrAInee" (16DHBK1022) and "WestAI" (01IS22094A) projects. 
