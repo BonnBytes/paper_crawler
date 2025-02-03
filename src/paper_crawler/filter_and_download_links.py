@@ -1,8 +1,10 @@
 """Filter the GitHub links and download the front page for each link."""
+from typing import Union
 
 import json
 import pickle
 import urllib
+import urllib.parse
 import urllib.request
 from multiprocessing import Pool
 
@@ -12,14 +14,14 @@ from tqdm import tqdm
 from ._argparse_code import _parse_args
 
 
-def process_repo_link(repo_link: list[str]) -> list:
+def process_repo_link(repo_link: str) -> Union[tuple[BeautifulSoup, str], None]:
     """
-    Process a list of links to github repos.
+    Process a link to a GitHub repo.
 
-    This functions filters out those that contain a branch picker.
+    This returns a BeautifulSoup object and the URL if the page has a branch picker.
 
     Args:
-        repo_link (list[str]): A list of URLs to process.
+        repo_link (str): A list of URLs to process.
 
     Returns:
         list: A list of url and soups with a branch picker.
@@ -38,6 +40,8 @@ def process_repo_link(repo_link: list[str]) -> list:
         has_branch_picker = any(map(lambda bs: "branch-picker" in str(bs), buttons))
         if has_branch_picker:
             return (soup, repo_link)
+        else:
+            return None
     except Exception as e:
         tqdm.write(f"Page {repo_link} produced an error {e}.")
         return None
@@ -48,8 +52,8 @@ if __name__ == "__main__":
     id = "_".join(args.id.split("/"))
     print(f"Loading from: ./storage/{id}.json")
 
-    with open(f"./storage/{id}.json", "r") as f:
-        links = json.load(f)
+    with open(f"./storage/{id}.json", "r") as f_read:
+        links = json.load(f_read)
 
     if id == "ICLR.cc_2024_Conference":
         # this one is broken.
@@ -61,7 +65,7 @@ if __name__ == "__main__":
             for link in page_links:
                 flat_links.append(link)
 
-    str_links = list(map(urllib.parse.urlunparse, flat_links))
+    str_links = list(map(lambda link: str(urllib.parse.urlunparse(link)), flat_links))
     # remove duplicates, not doing it means frequently used repos have more weight.
     # str_links = list(set(str_links))
 
@@ -79,5 +83,5 @@ if __name__ == "__main__":
             )
         )
 
-    with open(f"./storage/{id}_filtered.pkl", "wb") as f:
-        pickle.dump(filtered_pages, f)
+    with open(f"./storage/{id}_filtered.pkl", "wb") as f_write:
+        pickle.dump(filtered_pages, f_write)

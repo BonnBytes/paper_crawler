@@ -8,12 +8,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tikzplotlib as tikz
 
+from typing import Union
+
 np.Inf = np.inf
 np.float_ = np.float64
 
 
 def structure_and_plot(
-    pids: list[str], counter_dict: dict[str, Any], plot_prefix: str
+    pids: list[str], counter_dict: dict[str, dict[str, Any]], plot_prefix: str
 ) -> None:
     """Restructure counter dictionaries and generate bar plots for practice adoption.
 
@@ -24,12 +26,12 @@ def structure_and_plot(
         plot_prefix (str): A prefix to use for the plot filenames.
     """
     # restructure data
-    software_keys = []
+    software_keys: list[tuple[str, bool]] = []
     software_keys.extend(counter_dict[pids[-1]]["files"].keys())
     software_keys.extend(counter_dict[pids[-1]]["folders"].keys())
     software_keys.extend(counter_dict[pids[-1]]["language"].keys())
 
-    def find_key(counters: dict[str, Any], data_key: str) -> Any:
+    def find_key(counters: dict[str, Any], data_key: tuple[str, bool]) -> Any:
         for counter in counters.values():
             if type(counter) is Counter:
                 test = list(
@@ -39,7 +41,7 @@ def structure_and_plot(
                     return test[0][1]
         raise KeyError("Key not found.")
 
-    data_dict_by_feature = {}
+    data_dict_by_feature: dict[tuple[str, bool], dict[str, int]] = {}
     for conf_key in pids:
         for data_key in software_keys:
             if data_key in data_dict_by_feature.keys():
@@ -59,7 +61,7 @@ def structure_and_plot(
                     print(f"Key {data_key} not found: {e}.")
                     data_dict_by_feature[data_key][conf_key] = 0
 
-    data_dict_by_conf = {}
+    data_dict_by_conf: dict[str, dict[tuple[str, bool], int]] = {}
     for pid in pids:
         data_dict_by_conf[pid] = {}
     for software_feature_key, conf_dict in data_dict_by_feature.items():
@@ -104,10 +106,10 @@ def structure_and_plot(
         ("environment.yml", True),
     ]
 
-    def set_up_plot(keys: str, filename: str = None):
+    def _set_up_plot(keys: list[tuple[str, bool]], filename: Union[str, None] = None) -> None:
         x = np.arange(len(keys))  # the label locations
 
-        if "icml" in filename:
+        if filename and "icml" in filename:
             multiplier = -4
             width = 0.08  # the width of the bars
         else:
@@ -116,12 +118,13 @@ def structure_and_plot(
         fig, ax = plt.subplots(layout="constrained")
         for conf_key, conf_values in data_dict_by_conf.items():
             offset = width * multiplier
+            page_total = counter_dict[conf_key]["page_total"]
             rects = ax.bar(
                 x + offset,
                 list(
                     (
                         round(
-                            (conf_values[key] / counter_dict[conf_key]["page_total"])
+                            (conf_values[key] / page_total)
                             * 100.0,
                             1,
                         )
@@ -146,19 +149,19 @@ def structure_and_plot(
 
     # License and Readme
     keys = [("LICENSE", True), ("README", True)]
-    set_up_plot(keys, f"{plot_prefix}_license_and_readme")
+    _set_up_plot(keys, f"{plot_prefix}_license_and_readme")
 
     # Python
     keys = [("uses_python", True)]
-    set_up_plot(keys, f"{plot_prefix}_uses_python")
+    _set_up_plot(keys, f"{plot_prefix}_uses_python")
 
     # Requirements
     keys = [("requirements.txt", True), ("environment.yml", True)]
-    set_up_plot(keys, f"{plot_prefix}_requirements")
+    _set_up_plot(keys, f"{plot_prefix}_requirements")
 
     # packaging
     keys = [("setup.py", True), ("pyproject.toml", True)]
-    set_up_plot(keys, f"{plot_prefix}_packaging")
+    _set_up_plot(keys, f"{plot_prefix}_packaging")
 
     # Tests and container
     keys = [
@@ -167,7 +170,7 @@ def structure_and_plot(
         ("noxfile.py", True),
         (".github/workflows", True),
     ]
-    set_up_plot(keys, f"{plot_prefix}_tests")
+    _set_up_plot(keys, f"{plot_prefix}_tests")
 
 
 if __name__ == "__main__":

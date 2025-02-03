@@ -1,6 +1,8 @@
 """This module allows parsing the github pages. It extracts file and folder names."""
 
+import bs4
 import pickle
+from typing import Any
 from collections import Counter
 
 from tqdm import tqdm
@@ -8,12 +10,12 @@ from tqdm import tqdm
 from ._argparse_code import _parse_args
 
 
-def extract_stats(paper_soup_and_link: tuple) -> dict[str, bool]:
+def extract_stats(paper_soup_and_link: tuple[bs4.BeautifulSoup, str]) -> dict[str, dict[str, bool]]:
     """Extract statistics from a BeautifulSoup object representing a paper's webpage.
 
     Args:
         paper_soup_and_link (tuple): A tuple containing a BeautifulSoup object of
-            the paper's webpage and the page link.
+            the paper's webpage and the page link where we got the soup from.
 
     Returns:
         dict[str, bool]: A dictionary containing the presence of specific files,
@@ -42,10 +44,10 @@ def extract_stats(paper_soup_and_link: tuple) -> dict[str, bool]:
             soup.find_all("table"),
         )
     )[0]
-    cells = list(
+    cells: list[bs4.element.Tag] = list(
         filter(
-            lambda td: "row-name-cell" in str(td),
-            folders_and_files.find_all("td"),
+            lambda td: "row-name-cell" in str(td), # type: ignore
+            folders_and_files.find_all("td"),  # type: ignore
         )
     )
 
@@ -72,7 +74,7 @@ def extract_stats(paper_soup_and_link: tuple) -> dict[str, bool]:
     ]
     interesting_folders = ["test", "tests", ".github/workflows"]
 
-    result_dict = {}
+    result_dict: dict[str, Any] = {}
     result_dict["files"] = {}
     result_dict["folders"] = {}
     result_dict["python"] = {}
@@ -92,8 +94,8 @@ if __name__ == "__main__":
     id = "_".join(args.id.split("/"))
     print(f"./storage/{id}_filtered.pkl")
 
-    with open(f"./storage/{id}_filtered.pkl", "rb") as f:
-        paper_pages = pickle.load(f)
+    with open(f"./storage/{id}_filtered.pkl", "rb") as f_read:
+        paper_pages = pickle.load(f_read)
 
     results = []
 
@@ -107,16 +109,18 @@ if __name__ == "__main__":
             error_counter += 1
 
     print(f"Problems {error_counter}.")
-    files = []
+    files: list[tuple[str, bool]] = []
     for res in results:
         files.extend(
-            list(filter(lambda res: res[1] is True, list(res["files"].items())))
+            list(filter(lambda res: res[1] is True,
+                        list(res["files"].items())))
         )
 
-    python_use = []
+    python_use: list[tuple[str, bool]] = []
     for res in results:
         python_use.extend(
-            list(filter(lambda res: res[1] is True, list(res["python"].items())))
+            list(filter(lambda res: res[1] is True,
+                        list(res["python"].items())))
         )
     python_counter = Counter(python_use)
     python_total = list(python_counter.items())[0][1]
@@ -148,7 +152,7 @@ if __name__ == "__main__":
                    for mc in folders_counter.items()]}"
     )
 
-    with open(f"./storage/stored_counters_{id}.pkl", "wb") as f:
+    with open(f"./storage/stored_counters_{id}.pkl", "wb") as f_write:
         pickle.dump(
             {
                 "files": file_counter,
@@ -156,5 +160,5 @@ if __name__ == "__main__":
                 "language": python_counter,
                 "page_total": page_total,
             },
-            f,
+            f_write,
         )

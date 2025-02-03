@@ -3,6 +3,7 @@ This module containes code to fetche PDF links from the ICML 2024 proceedings pa
 
 It processes each PDF to extract GitHub links, and to stores the results in a JSON file.
 """
+from typing import Union
 
 import json
 import os
@@ -10,6 +11,7 @@ import urllib
 from pathlib import Path
 
 import pdfx
+import bs4
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
@@ -30,17 +32,17 @@ imcl_dict = {
 }
 
 
-def get_icml_2024_pdf():
+def get_icml_2024_pdf() -> list[bs4.element.Tag]:
     """Get all ICML 2024 paper links."""
     return get_icml_pdf(2024)
 
 
-def get_icml_2023_pdf():
+def get_icml_2023_pdf() -> list[bs4.element.Tag]:
     """Get all ICML 2024 paper links."""
     return get_icml_pdf(2023)
 
 
-def get_icml_pdf(year: int) -> list:
+def get_icml_pdf(year: int)-> list[bs4.element.Tag]:
     """Fetch the PDF links from the ICML 2024 proceedings page.
 
     This function opens the ICML 2024 proceedings page, parses the HTML content,
@@ -51,7 +53,7 @@ def get_icml_pdf(year: int) -> list:
     return get_icml(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
 
 
-def get_icml(url: str) -> list:
+def get_icml(url: str) -> list[bs4.element.Tag]:
     """Fetch PDF links from an URL.
 
     Args:
@@ -61,11 +63,11 @@ def get_icml(url: str) -> list:
         list: A list of links that contain "pdf" in their href attribute.
     """
     soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
-    pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
-    return pdf_soup
+    pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a"))) 
+    return pdf_soup # type: ignore
 
 
-def process_link(url: str) -> list[str]:
+def process_link(url: str) -> Union[list[str], None]:
     """Process a given URL to extract and filter GitHub links from a PDF.
 
     Args:

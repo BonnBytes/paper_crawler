@@ -1,7 +1,7 @@
 import argparse
 
 
-def _parse_args():
+def _parse_args() -> argparse.Namespace:
     """Cmd line args for filtering and downloading and analyzing ML-conferences."""
     parser = argparse.ArgumentParser(description="")
     parser.add_argument(
