@@ -1,6 +1,7 @@
 ## More Rigorous Software Engineering Would Improve Reproducibility in Machine Learning Research
 
 Source code for our [position paper on software engineering in machine learning](https://arxiv.org/pdf/2502.00902).
+An example template for most of the concepts we discuss in the paper is available [here](https://github.com/Deep-Learning-with-Jax/day_01_exercise_intro/tree/main). 
 
 ### Getting Started
 First of all, we have to clone this repository,
