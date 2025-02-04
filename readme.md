@@ -1,10 +1,14 @@
+## More Rigorous Software Engineering Would Improve Reproducibility in Machine Learning Research
+
+Source code for our [position paper on software engineering in machine learning](https://arxiv.org/pdf/2502.00902).
+
 ### Getting Started
-First of all we have to clone this repository,
+First of all, we have to clone this repository,
 ``` bash
 git clone git@github.com:BonnBytes/position_we_need_more_tests_in_ml.git
 ```
-in a next step, to use the code in this project you need to configure an environment. 
-To do that create a `.env`-file with the following content
+In the next step, to use the code in this project, you need to configure an environment. 
+To do that, create a `.env`-file with the following content.
 
 ``` bash
 PYTHONPATH=.
