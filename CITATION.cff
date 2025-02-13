@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Wolter"
+  given-names: "Moritz"
+- family-names: "Veeramacheneni"
+  given-names: "Lokesh"
+title: "Position: More Rigorous Software Engineering Would Improve Reproducibility
+in Machine Learning Research"
+version: 1.0.0
+date-released: 2025-02-02
+url: "https://arxiv.org/pdf/2502.00902"
