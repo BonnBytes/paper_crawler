@@ -2,6 +2,7 @@
 
 import json
 import os
+from pathlib import Path
 from multiprocessing import Pool
 
 import openreview
@@ -13,9 +14,11 @@ from .crawl_links_soup import process_link
 
 
 def get_openreview_submissions(venueid: str) -> list[str]:
-    """Fetch submission links for a given venue ID.
+    """ Fetch submission links for a given venue ID.
 
-    This functon finds a PDF link for each submission and these as a list of strings.
+    This functon finds a PDF link for each submission
+    and these as a list of strings.
+
     Args:
         venueid (str): The ID of the venue for which to fetch submissions.
     Returns:
@@ -27,7 +30,7 @@ def get_openreview_submissions(venueid: str) -> list[str]:
              If there is an error with the OpenReview API request.
     """
     # API V2
-    print(os.environ["OPENREVIEW_USERNAME"])
+    # print("openreview user:", os.environ["OPENREVIEW_USERNAME"])
     client = openreview.api.OpenReviewClient(
         baseurl="https://api2.openreview.net",
         username=os.environ["OPENREVIEW_USERNAME"],
@@ -53,16 +56,21 @@ if __name__ == "__main__":
     storage_id = "_".join(args.id.split("/"))
     storage_file = f"./storage/{storage_id}.json"
     venueid = args.id
-    print(f"getting pdf-linkes from {venueid}, saving at {storage_file}")
+    print(f"getting pdf-links from {venueid}, saving at {storage_file}")
 
     if not os.path.exists("./storage/"):
         os.makedirs("./storage/")
 
-    links = get_openreview_submissions(venueid)
+    path = Path(storage_file)
+    print(path, path.exists())
+    if not path.exists():
+        links = get_openreview_submissions(venueid)
 
-    # loop through paper links find pdfs
-    with Pool(2) as p:
-        res = list(tqdm(p.imap(process_link, links), total=len(links)))
+        # loop through paper links find pdfs
+        with Pool(2) as p:
+            res = list(tqdm(p.imap(process_link, links), total=len(links)))
 
-    with open(storage_file, "w") as f:
-        f.write(json.dumps(res, indent=1))
+        with open(storage_file, "w") as f:
+            f.write(json.dumps(res, indent=1))
+    else:
+        print(f"Path {path} exists, exiting.")

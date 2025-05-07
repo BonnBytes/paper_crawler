@@ -152,7 +152,7 @@ if __name__ == "__main__":
                    for mc in folders_counter.items()]}"
     )
 
-    with open(f"./storage/stored_counters_{id}.pkl", "wb") as f_write:
+    with open(f"./storage/{id}_stored_counters.pkl", "wb") as f_write:
         pickle.dump(
             {
                 "files": file_counter,
