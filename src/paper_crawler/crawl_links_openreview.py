@@ -29,7 +29,6 @@ def get_openreview_submissions(venueid: str) -> list[str]:
         openreview.OpenReviewException:
              If there is an error with the OpenReview API request.
     """
-    # API V2
     # print("openreview user:", os.environ["OPENREVIEW_USERNAME"])
     client = openreview.api.OpenReviewClient(
         baseurl="https://api2.openreview.net",
@@ -37,17 +36,34 @@ def get_openreview_submissions(venueid: str) -> list[str]:
         password=os.environ["OPENREVIEW_PASSWORD"],
     )
 
-    submissions = client.get_all_notes(content={"venueid": venueid})
+    # check version.
+    # https://docs.openreview.net/how-to-guides/data-retrieval-and-modification/how-to-check-the-api-version-of-a-venue
+    # if v2:
+    if client.get_group(venueid).domain:
+        submissions = client.get_all_notes(content={"venueid": venueid})
 
-    print(f"{venueid} has : {len(submissions)} submissions.")
+        print(f"{venueid} has : {len(submissions)} submissions.")
 
-    # assemble links
-    links = [
-        "https://openreview.net" + submission.content["pdf"]["value"]
-        for submission in submissions
-    ]
+        # assemble links
+        links = [
+            "https://openreview.net" + submission.content["pdf"]["value"]
+            for submission in submissions
+        ]
+        return links
+    else:
+        # legacy v1 api
+        # print("v1 openreview conference")
+        # group = client.get_group(venueid)
+        # submission_id = list(filter(lambda s: "SUBMISSION_ID" in s, group.to_json()['web'].split("\n")))[0]
+        # submission_id = submission_id.split("'")[1]
+        # submissions = client.get_all_notes(
+        #         invitation=submission_id
+        #     )
+        # pass
+        # This does not work. 
+        raise ValueError("v1 api-venue is not supported.")
 
-    return links
+
 
 
 if __name__ == "__main__":
@@ -64,13 +80,16 @@ if __name__ == "__main__":
     path = Path(storage_file)
     print(path, path.exists())
     if not path.exists():
-        links = get_openreview_submissions(venueid)
+        try:
+            links = get_openreview_submissions(venueid)
 
-        # loop through paper links find pdfs
-        with Pool(2) as p:
-            res = list(tqdm(p.imap(process_link, links), total=len(links)))
+            # loop through paper links find pdfs
+            with Pool(2) as p:
+                res = list(tqdm(p.imap(process_link, links), total=len(links)))
 
-        with open(storage_file, "w") as f:
-            f.write(json.dumps(res, indent=1))
+            with open(storage_file, "w") as f:
+                f.write(json.dumps(res, indent=1))
+        except Exception as e:
+            print("An error occured, {e}.")
     else:
         print(f"Path {path} exists, exiting.")

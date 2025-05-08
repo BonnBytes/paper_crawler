@@ -33,6 +33,21 @@ imcl_dict = {
     2014: 32,
 }
 
+aistats_dict = {
+    2024: 238,
+    2023: 206,
+    2022: 151,
+    2021: 130,
+    2020: 108,
+    2019: 89,
+    2018: 84,
+    2017: 54,
+    2016: 51,
+    2015: 38,
+    2014: 33,
+}
+
+
 
 def get_icml_2024_pdf() -> list[bs4.element.Tag]:
     """Get all ICML 2024 paper links."""
@@ -45,19 +60,36 @@ def get_icml_2023_pdf() -> list[bs4.element.Tag]:
 
 
 def get_icml_pdf(year: int) -> list[bs4.element.Tag]:
-    """Fetch the PDF links from the ICML 2024 proceedings page.
+    """Fetch the PDF links from the PMLR proceedings page.
 
-    This function opens the ICML 2024 proceedings page, parses the HTML
+    This function opens the PMLR 2024 proceedings page, 
+    looks for ICML-links and parses the HTML
     content, and filters out the links that contain "pdf" in
     their href attribute.
 
     Returns:
         list: A list of BeautifulSoup tag objects that contain the PDF links.
     """
-    return get_icml(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
+    return get_pmlr(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
 
 
-def get_icml(url: str) -> list[bs4.element.Tag]:
+
+def get_aistats_pdf(year: int) -> list[bs4.element.Tag]:
+    """Fetch the PDF links from the ICML 2024 proceedings page.
+
+    This function opens the PMLR 2024 proceedings page,
+    looks for aistats links and parses the HTML
+    content, and filters out the links that contain "pdf" in
+    their href attribute.
+
+    Returns:
+        list: A list of BeautifulSoup tag objects that contain the PDF links.
+    """
+    return get_pmlr(f"https://proceedings.mlr.press/v{aistats_dict[year]}/")
+
+
+
+def get_pmlr(url: str) -> list[bs4.element.Tag]:
     """Fetch PDF links from an URL.
 
     Args:
@@ -145,6 +177,8 @@ if __name__ == "__main__":
         pdf_soup = get_icml_pdf(int(args.id[4:]))
     elif "nips" in args.id:
         pdf_soup = get_nips_pdf(int(args.id[4:]))
+    elif "aistats" in args.id:
+        pdf_soup = get_aistats_pdf(int(args.id[7:]))
     else:
         raise ValueError("Unkown conference.")
 
@@ -155,7 +189,6 @@ if __name__ == "__main__":
 
     if not path.exists():
         if type(pdf_soup[0]) is not str:
-            breakpoint()
             links = [
                 list(
                     filter(lambda s: "href" in s, str(pdf_soup_el).split())
@@ -168,7 +201,7 @@ if __name__ == "__main__":
         # loop through paper links find pdfs
         res = []
         for steps, current_link in enumerate((bar := tqdm(links))):
-            bar.set_description(current_link)
+            bar.set_description(f" {current_link} ")
             res.append(process_link(current_link))
             if steps % 100 == 0:
                 with open(f"./storage/{args.id}.json", "w") as f:
