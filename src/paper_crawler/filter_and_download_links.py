@@ -5,6 +5,7 @@ import pickle
 import urllib
 import urllib.parse
 import urllib.request
+from pathlib import Path
 from multiprocessing import Pool
 from typing import Union
 
@@ -30,6 +31,7 @@ def process_repo_link(repo_link: str) -> Union[tuple[BeautifulSoup, str], None]:
         Exception: If an error occurs while processing a link,
             it will be caught and printed.
     """
+    print(repo_link)
     try:
         if repo_link.split(".")[-1] in ["pth", "pkl"]:
             raise ValueError("Pickled or model file found.")
@@ -52,36 +54,40 @@ if __name__ == "__main__":
     id = "_".join(args.id.split("/"))
     print(f"Loading from: ./storage/{id}.json")
 
-    with open(f"./storage/{id}.json", "r") as f_read:
-        links = json.load(f_read)
+    save_path = Path(f"./storage/{id}_filtered.pkl")
 
-    if id == "ICLR.cc_2024_Conference":
-        # this one is broken.
-        links.pop(1809)
+    if not save_path.exists():
 
-    flat_links = []
-    for page_links in links:
-        if page_links:
-            for link in page_links:
-                flat_links.append(link)
+        with open(f"./storage/{id}.json", "r") as f_read:
+            links = json.load(f_read)
 
-    str_links = list(map(lambda link: str(urllib.parse.urlunparse(link)), flat_links))
-    # remove duplicates, not doing it means frequently used repos have more weight.
-    # str_links = list(set(str_links))
+        if id == "ICLR.cc_2024_Conference":
+            # this one is broken.
+            links.pop(1809)
+        
+        flat_links = []
+        for page_links in links:
+            if page_links:
+                for link in page_links:
+                    flat_links.append(link)
 
-    # clean the data.
-    filtered_pages = []
-    # for papers_links in tqdm(links):
-    #    filtered_pages.extend(process_paper_links(papers_links))
+        str_links = list(map(lambda link: str(urllib.parse.urlunparse(link)), flat_links))
+        # remove links to zipped files.
+        str_links = list(filter(lambda l: "tar.gz" not in l, str_links))
 
-    with Pool(1) as p:
-        filtered_pages.extend(
+        # remove duplicates, not doing it means frequently used repos have more weight.
+        # str_links = list(set(str_links))
+
+        # clean the data.
+        filtered_pages = list(
             tqdm(
-                p.imap(process_repo_link, str_links),
-                total=len(str_links),
-                desc=f"downloading {id}.",
+                map(process_repo_link, str_links),
+                    total=len(str_links),
+                    desc=f"downloading {id}.",
             )
         )
 
-    with open(f"./storage/{id}_filtered.pkl", "wb") as f_write:
-        pickle.dump(filtered_pages, f_write)
+        with open(save_path, "wb") as f_write:
+            pickle.dump(filtered_pages, f_write)
+    else:
+        print(f"{save_path} exists, exiting.")

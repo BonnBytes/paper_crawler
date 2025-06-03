@@ -30,6 +30,7 @@ def extract_stats(
                 and a boolean value indicating if Python is mentioned on the page.
     """
     # Second position is the page link, use for debugging.
+    breakpoint()
     soup, _ = paper_soup_and_link
 
     # filter language, find spans first
@@ -102,14 +103,17 @@ if __name__ == "__main__":
     results = []
 
     error_counter = 0
+    problems = []
     for paper_soup_and_link in tqdm(paper_pages):
         # folders and files exists once per page.
         try:
             results.append(extract_stats(paper_soup_and_link))
-        except Exception:
-            # print(f"Error: {e}")
+        except Exception as e:
+        #     # print(f"Error: {e}")
+            problems.append(e)
             error_counter += 1
 
+    print(f"Problems: {problems}")
     print(f"Problems {error_counter}.")
     files: list[tuple[str, bool]] = []
     for res in results:
@@ -123,6 +127,7 @@ if __name__ == "__main__":
             list(filter(lambda res: res[1] is True, list(res["python"].items())))
         )
     python_counter = Counter(python_use)
+    breakpoint()
     python_total = list(python_counter.items())[0][1]
 
     file_counter = Counter(files)

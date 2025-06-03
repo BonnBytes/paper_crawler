@@ -60,6 +60,7 @@ def get_openreview_submissions(venueid: str) -> list[str]:
         #         invitation=submission_id
         #     )
         # pass
+        # len(submissions) is 0 ;-( .
         # This does not work. 
         raise ValueError("v1 api-venue is not supported.")
 

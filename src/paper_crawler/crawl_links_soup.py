@@ -167,27 +167,33 @@ def get_nips_pdf(year: int) -> list[str]:
 
 if __name__ == "__main__":
     args = _parse_args()
-    if args.id == "icml2024":
-        pdf_soup = get_icml_2024_pdf()
-    elif args.id == "icml2023":
-        pdf_soup = get_icml_2023_pdf()
-    elif args.id == "icml2022":
-        pdf_soup = get_icml_pdf(2022)
-    elif "icml" in args.id:
-        pdf_soup = get_icml_pdf(int(args.id[4:]))
-    elif "nips" in args.id:
-        pdf_soup = get_nips_pdf(int(args.id[4:]))
-    elif "aistats" in args.id:
-        pdf_soup = get_aistats_pdf(int(args.id[7:]))
-    else:
-        raise ValueError("Unkown conference.")
-
-    path = Path(f"./storage/{args.id}.json")
 
     if not os.path.exists("./storage/"):
         os.makedirs("./storage/")
 
-    if not path.exists():
+    save_path = Path(f"./storage/{args.id}.json")
+
+    print(f"Checking {save_path}.")
+
+    if not save_path.exists():
+        print(f"save_path {save_path} does not exist.")
+
+        if args.id == "icml2024":
+            pdf_soup = get_icml_2024_pdf()
+        elif args.id == "icml2023":
+            pdf_soup = get_icml_2023_pdf()
+        elif args.id == "icml2022":
+            pdf_soup = get_icml_pdf(2022)
+        elif "icml" in args.id:
+            pdf_soup = get_icml_pdf(int(args.id[4:]))
+        elif "nips" in args.id:
+            pdf_soup = get_nips_pdf(int(args.id[4:]))
+        elif "aistats" in args.id:
+            pdf_soup = get_aistats_pdf(int(args.id[7:]))
+        else:
+            raise ValueError("Unkown conference.")
+
+
         if type(pdf_soup[0]) is not str:
             links = [
                 list(
@@ -206,9 +212,8 @@ if __name__ == "__main__":
             if steps % 100 == 0:
                 with open(f"./storage/{args.id}.json", "w") as f:
                     f.write(json.dumps(res))
-
-        with open(f"./storage/{args.id}.json", "w") as f:
+        with open(save_path, "w") as f:
             f.write(json.dumps(res))
 
     else:
-        print(f"Path {path} exists, exiting.")
+        print(f"save_path {save_path} exists, exiting.")
