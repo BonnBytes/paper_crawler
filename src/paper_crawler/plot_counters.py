@@ -109,12 +109,9 @@ def structure_and_plot(
     ) -> None:
         x = np.arange(len(keys))  # the label locations
 
-        if filename and "icml" in filename:
-            multiplier = -4
-            width = 0.08  # the width of the bars
-        else:
-            multiplier = 0
-            width = 0.25  # the width of the bars
+        multiplier = -4
+        width = 0.08  # the width of the bars
+
         fig, ax = plt.subplots(layout="constrained")
         for conf_key, conf_values in data_dict_by_conf.items():
             offset = width * multiplier
@@ -141,6 +138,7 @@ def structure_and_plot(
         ax.set_xticks(x + width, (sk[0] for sk in keys))
         ax.legend(loc="best", ncol=3)
         ax.set_ylim(0, 119)
+        plt.title(filename)
 
         if filename:
             tikz.save(f"./plots/{filename}.tex", standalone=True)
@@ -174,25 +172,29 @@ def structure_and_plot(
 
 if __name__ == "__main__":
     # PLOT ICML stats.
-    file_ids = [f"icml20{year}" for year in range(14, 25)]
-    pids = [f"{year}" for year in range(14, 25)]
+    file_ids = [f"icml20{year}" for year in range(17, 25)]
+    pids = [f"{year}" for year in range(17, 25)]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
-        with open(f"./storage/stored_counters_{fid}.pkl", "rb") as f:
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
             id_counters = pickle.load(f)
             counter_dict[pid] = id_counters
 
     structure_and_plot(pids, counter_dict, "icml")
 
-    # ML in 2024
-    file_ids = ["icml2024", "ICLR.cc_2024_Conference", "NeurIPS.cc_2024_Conference"]
-    pids = ["ICML", "ICLR", "NeurIPS"]
+    # PLOT aistats stats.
+    file_ids = [f"aistats20{year}" for year in range(17, 25)]
+    pids = [f"{year}" for year in range(17, 25)]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
-        with open(f"./storage/stored_counters_{fid}.pkl", "rb") as f:
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
             id_counters = pickle.load(f)
             counter_dict[pid] = id_counters
 
-    structure_and_plot(pids, counter_dict, "ml_in_2024")
+    structure_and_plot(pids, counter_dict, "aistats")
+
+    # PLOT Neurips stats
+
+    pass

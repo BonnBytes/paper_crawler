@@ -73,7 +73,10 @@ if __name__ == "__main__":
 
         str_links = list(map(lambda link: str(urllib.parse.urlunparse(link)), flat_links))
         # remove links to zipped files.
+        # ignore_list = ['tar.gz', ".bin", ".zip"]
         str_links = list(filter(lambda l: "tar.gz" not in l, str_links))
+        str_links = list(filter(lambda l: ".bin" not in l, str_links))
+        str_links = list(filter(lambda l: ".zip" not in l, str_links))
 
         # remove duplicates, not doing it means frequently used repos have more weight.
         # str_links = list(set(str_links))

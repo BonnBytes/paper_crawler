@@ -112,7 +112,7 @@ if __name__ == "__main__":
             problems.append(e)
             error_counter += 1
 
-    print(f"Problems: {problems}")
+    # print(f"Problems: {problems}")
     print(f"Problems {error_counter}.")
     files: list[tuple[str, bool]] = []
     for res in results:
@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
     print("Files:")
     print(f"total: {file_counter.items()} of {page_total}")
-    ratios = [(mc[0], mc[1] / float(python_total)) for mc in file_counter.items()]
+    ratios = [(mc[0], mc[1] / float(page_total)) for mc in file_counter.items()]
     print(f"ratios: {ratios}")
     ratios = [(mc[0], mc[1] / float(python_total)) for mc in file_counter.items()]
     print(f"python-ratios: {ratios}")
