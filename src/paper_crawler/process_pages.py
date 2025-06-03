@@ -30,7 +30,6 @@ def extract_stats(
                 and a boolean value indicating if Python is mentioned on the page.
     """
     # Second position is the page link, use for debugging.
-    breakpoint()
     soup, _ = paper_soup_and_link
 
     # filter language, find spans first
@@ -127,7 +126,7 @@ if __name__ == "__main__":
             list(filter(lambda res: res[1] is True, list(res["python"].items())))
         )
     python_counter = Counter(python_use)
-    breakpoint()
+
     python_total = list(python_counter.items())[0][1]
 
     file_counter = Counter(files)
