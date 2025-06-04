@@ -74,6 +74,9 @@ def extract_stats(
         "setup.cfg",
         "pyproject.toml",
         "environment.yml",
+        "uv.lock",
+        ".pre-commit-config.yaml",
+        "poetry.lock"
     ]
     interesting_folders = ["test", "tests", ".github/workflows"]
 
@@ -159,7 +162,7 @@ if __name__ == "__main__":
                     for mc in folders_counter.items()]}"
         )
 
-        with open(storage_path, "wb") as f_write:
+        with open(save_path, "wb") as f_write:
             pickle.dump(
                 {
                     "files": file_counter,

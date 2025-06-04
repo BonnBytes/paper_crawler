@@ -102,6 +102,9 @@ def structure_and_plot(
         ("noxfile.py", True),
         (".github/workflows", True),
         ("environment.yml", True),
+        ("uv.lock", True),
+        (".pre-commit-config.yaml", True),
+        ("poetry.lock", True)
     ]
 
     def _set_up_plot(
@@ -153,7 +156,7 @@ def structure_and_plot(
     _set_up_plot(keys, f"{plot_prefix}_uses_python")
 
     # Requirements
-    keys = [("requirements.txt", True), ("environment.yml", True)]
+    keys = [("requirements.txt", True), ("environment.yml", True), ("uv.lock", True)]
     _set_up_plot(keys, f"{plot_prefix}_requirements")
 
     # packaging
@@ -165,6 +168,7 @@ def structure_and_plot(
         ("test-folder", True),
         ("tox", True),
         ("noxfile.py", True),
+        (".pre-commit-config.yaml", True)
         (".github/workflows", True),
     ]
     _set_up_plot(keys, f"{plot_prefix}_tests")
@@ -196,7 +200,7 @@ if __name__ == "__main__":
     structure_and_plot(pids, counter_dict, "aistats")
 
     # PLOT Neurips stats
-    file_ids = [f"nips_{year}" for year in range(17, 25)]
+    file_ids = [f"nips20{year}" for year in range(17, 25)]
     pids = [f"{year}" for year in range(17, 25)]
     counter_dict = {}
 
@@ -206,5 +210,30 @@ if __name__ == "__main__":
             counter_dict[pid] = id_counters
 
     structure_and_plot(pids, counter_dict, "nips")
+
+    # PLOT ICLR
+
+    file_ids = [f"ICLR.cc_20{year}_Conference" for year in range(25, 26)]
+    pids = [f"{year}" for year in range(25, 26)]
+    counter_dict = {}
+
+    for fid, pid in zip(file_ids, pids):
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
+            id_counters = pickle.load(f)
+            counter_dict[pid] = id_counters
+
+    structure_and_plot(pids, counter_dict, "ICLR")
+
+
+    file_ids = ["tmlr"]
+    pids = ["all"]
+    counter_dict = {}
+
+    for fid, pid in zip(file_ids, pids):
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
+            id_counters = pickle.load(f)
+            counter_dict[pid] = id_counters
+
+    structure_and_plot(pids, counter_dict, "TMLR")
 
     pass
