@@ -76,7 +76,9 @@ def extract_stats(
         "environment.yml",
         "uv.lock",
         ".pre-commit-config.yaml",
-        "poetry.lock"
+        "poetry.lock",
+        "poetry.toml",
+        "hatch.toml"
     ]
     interesting_folders = ["test", "tests", ".github/workflows"]
 
