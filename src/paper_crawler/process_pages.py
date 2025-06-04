@@ -3,6 +3,7 @@
 import pickle
 from collections import Counter
 from typing import Any
+from pathlib import Path
 
 import bs4
 from tqdm import tqdm
@@ -94,75 +95,79 @@ def extract_stats(
 if __name__ == "__main__":
     args = _parse_args()
     id = "_".join(args.id.split("/"))
-    print(f"./storage/{id}_filtered.pkl")
+    load_path = f"./storage/{id}_filtered.pkl"
+    save_path = Path(f"./storage/{id}_stored_counters.pkl")
 
-    with open(f"./storage/{id}_filtered.pkl", "rb") as f_read:
-        paper_pages = pickle.load(f_read)
+    if not save_path.exists():
+        with open(load_path, "rb") as f_read:
+            paper_pages = pickle.load(f_read)
 
-    results = []
+        results = []
 
-    error_counter = 0
-    problems = []
-    for paper_soup_and_link in tqdm(paper_pages):
-        # folders and files exists once per page.
-        try:
-            results.append(extract_stats(paper_soup_and_link))
-        except Exception as e:
-        #     # print(f"Error: {e}")
-            problems.append(e)
-            error_counter += 1
+        error_counter = 0
+        problems = []
+        for paper_soup_and_link in tqdm(paper_pages):
+            # folders and files exists once per page.
+            try:
+                results.append(extract_stats(paper_soup_and_link))
+            except Exception as e:
+            #     # print(f"Error: {e}")
+                problems.append(e)
+                error_counter += 1
 
-    # print(f"Problems: {problems}")
-    print(f"Problems {error_counter}.")
-    files: list[tuple[str, bool]] = []
-    for res in results:
-        files.extend(
-            list(filter(lambda res: res[1] is True, list(res["files"].items())))
+        # print(f"Problems: {problems}")
+        print(f"Problems {error_counter}.")
+        files: list[tuple[str, bool]] = []
+        for res in results:
+            files.extend(
+                list(filter(lambda res: res[1] is True, list(res["files"].items())))
+            )
+
+        python_use: list[tuple[str, bool]] = []
+        for res in results:
+            python_use.extend(
+                list(filter(lambda res: res[1] is True, list(res["python"].items())))
+            )
+        python_counter = Counter(python_use)
+
+        python_total = list(python_counter.items())[0][1]
+
+        file_counter = Counter(files)
+        page_total = len(results)
+
+        print(f"Python total: {python_total}.")
+        print(f"Python share: {python_total / float(page_total)}.")
+
+        print("Files:")
+        print(f"total: {file_counter.items()} of {page_total}")
+        ratios = [(mc[0], mc[1] / float(page_total)) for mc in file_counter.items()]
+        print(f"ratios: {ratios}")
+        ratios = [(mc[0], mc[1] / float(python_total)) for mc in file_counter.items()]
+        print(f"python-ratios: {ratios}")
+
+        folders = []
+        for res in results:
+            folders.extend(
+                list(filter(lambda res: res[1] is True, list(res["folders"].items())))
+            )
+
+        folders_counter = Counter(folders)
+        print("Folders")
+        print(f"total: {folders_counter.items()} of {page_total}")
+        print(
+            f"ratios: {[(mc[0], mc[1] / float(page_total))
+                    for mc in folders_counter.items()]}"
         )
 
-    python_use: list[tuple[str, bool]] = []
-    for res in results:
-        python_use.extend(
-            list(filter(lambda res: res[1] is True, list(res["python"].items())))
-        )
-    python_counter = Counter(python_use)
-
-    python_total = list(python_counter.items())[0][1]
-
-    file_counter = Counter(files)
-    page_total = len(results)
-
-    print(f"Python total: {python_total}.")
-    print(f"Python share: {python_total / float(page_total)}.")
-
-    print("Files:")
-    print(f"total: {file_counter.items()} of {page_total}")
-    ratios = [(mc[0], mc[1] / float(page_total)) for mc in file_counter.items()]
-    print(f"ratios: {ratios}")
-    ratios = [(mc[0], mc[1] / float(python_total)) for mc in file_counter.items()]
-    print(f"python-ratios: {ratios}")
-
-    folders = []
-    for res in results:
-        folders.extend(
-            list(filter(lambda res: res[1] is True, list(res["folders"].items())))
-        )
-
-    folders_counter = Counter(folders)
-    print("Folders")
-    print(f"total: {folders_counter.items()} of {page_total}")
-    print(
-        f"ratios: {[(mc[0], mc[1] / float(page_total))
-                   for mc in folders_counter.items()]}"
-    )
-
-    with open(f"./storage/{id}_stored_counters.pkl", "wb") as f_write:
-        pickle.dump(
-            {
-                "files": file_counter,
-                "folders": folders_counter,
-                "language": python_counter,
-                "page_total": page_total,
-            },
-            f_write,
-        )
+        with open(storage_path, "wb") as f_write:
+            pickle.dump(
+                {
+                    "files": file_counter,
+                    "folders": folders_counter,
+                    "language": python_counter,
+                    "page_total": page_total,
+                },
+                f_write,
+            )
+    else:
+        print(f"{save_path} exists, exiting.")

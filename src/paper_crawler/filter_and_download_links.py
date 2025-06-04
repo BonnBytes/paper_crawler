@@ -67,9 +67,8 @@ if __name__ == "__main__":
         
         flat_links = []
         for page_links in links:
-            if page_links:
-                for link in page_links:
-                    flat_links.append(link)
+            for link in page_links:
+                flat_links.append(link)
 
         str_links_map = list(map(lambda link: str(urllib.parse.urlunparse(link)), flat_links))
         # remove links to zipped files.

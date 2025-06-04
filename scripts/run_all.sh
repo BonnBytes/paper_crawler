@@ -1,5 +1,9 @@
 pip install .
 
+echo crawling papers from tmlr
+python -m paper_crawler.crawl_tmlr
+
+
 # crawl paper links
 for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 icml2017 icml2016 icml2015 icml2014; do
     echo crawling papers from: $icmlconf
@@ -34,6 +38,9 @@ for nipsconf in nips2024 nips2023 nips2022 nips2021 nips2020 nips2019 nips2018 n
     echo looking at links for: $nipsconf
     python -m paper_crawler.filter_and_download_links --id "$nipsconf"
 done
+
+python -m paper_crawler.filter_and_download_links --id tmlr
+
 
 # process pages
 for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 icml2017; do
