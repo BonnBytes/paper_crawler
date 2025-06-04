@@ -71,12 +71,22 @@ if __name__ == "__main__":
                 for link in page_links:
                     flat_links.append(link)
 
-        str_links = list(map(lambda link: str(urllib.parse.urlunparse(link)), flat_links))
+        str_links_map = list(map(lambda link: str(urllib.parse.urlunparse(link)), flat_links))
         # remove links to zipped files.
-        # ignore_list = ['tar.gz', ".bin", ".zip"]
-        str_links = list(filter(lambda l: "tar.gz" not in l, str_links))
-        str_links = list(filter(lambda l: ".bin" not in l, str_links))
-        str_links = list(filter(lambda l: ".zip" not in l, str_links))
+        # str_links = list(filter(lambda l: "tar.gz" not in l, str_links))
+        # str_links = list(filter(lambda l: ".bin" not in l, str_links))
+        # str_links = list(filter(lambda l: ".zip" not in l, str_links))
+        # str_links = list(filter(lambda l: ".pt" not in l, str_links)
+
+        ignore_list = ['tar.gz', ".bin", ".zip", ".pt", ".gif", ".jpeg"]
+        str_links = []
+        for l in str_links_map:
+            append = True
+            for ignore in ignore_list:
+                if ignore in l:
+                    append = False
+            if append:
+                str_links.append(l)
 
         # remove duplicates, not doing it means frequently used repos have more weight.
         # str_links = list(set(str_links))

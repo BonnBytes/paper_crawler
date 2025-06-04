@@ -91,6 +91,6 @@ if __name__ == "__main__":
             with open(storage_file, "w") as f:
                 f.write(json.dumps(res, indent=1))
         except Exception as e:
-            print("An error occured, {e}.")
+            print(f"An error occured, {e}.")
     else:
         print(f"Path {path} exists, exiting.")
