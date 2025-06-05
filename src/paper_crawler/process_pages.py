@@ -67,7 +67,11 @@ def extract_stats(
         "noxfile.py",
         "LICENSE",
         "README.md",
+        "readme.md",
+        "Readme.md",
         "README.rst",
+        "readme.rst",
+        "Readme.rst",
         "tox.toml",
         "tox.ini",
         "setup.py",
@@ -78,7 +82,9 @@ def extract_stats(
         ".pre-commit-config.yaml",
         "poetry.lock",
         "poetry.toml",
-        "hatch.toml"
+        "hatch.toml",
+        "pixi.lock",
+        "pixi.toml"
     ]
     interesting_folders = ["test", "tests", ".github/workflows"]
 

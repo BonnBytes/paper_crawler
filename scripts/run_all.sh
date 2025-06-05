@@ -3,6 +3,9 @@ pip install .
 echo crawling papers from tmlr
 python -m paper_crawler.crawl_tmlr
 
+echo crawling papers from ICLR
+python -m src.paper_crawler.crawl_links_openreview --id ICLR.cc/2024/Conference
+python -m src.paper_crawler.crawl_links_openreview --id ICLR.cc/2025/Conference
 
 # crawl paper links
 for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 icml2017 icml2016 icml2015 icml2014; do
@@ -22,7 +25,14 @@ for nipsconf in nips2024 nips2023 nips2022 nips2021 nips2020 nips2019 nips2018 n
     python -m paper_crawler.crawl_links_soup --id "$nipsconf"
 done
 
+echo looking at links for TMLR
 python -m paper_crawler.filter_and_download_links --id tmlr
+
+
+echo looking at links for ICLR
+python -m src.paper_crawler.filter_and_download_links --id ICLR.cc/2024/Conference
+python -m src.paper_crawler.filter_and_download_links --id ICLR.cc/2025/Conference
+
 
 # filter links and download soup
 for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 icml2017 icml2016 icml2015 icml2014; do
@@ -43,6 +53,11 @@ done
 
 echo processing pages for tmlr
 python -m paper_crawler.process_pages --id tmlr
+
+echo processing pages for ICLR
+python -m src.paper_crawler.process_pages --id ICLR.cc/2024/Conference
+python -m src.paper_crawler.process_pages --id ICLR.cc/2025/Conference
+
 
 # process pages
 for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 icml2017; do

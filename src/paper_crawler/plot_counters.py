@@ -77,7 +77,12 @@ def structure_and_plot(
         # merge readme
         rmdval = data_dict_by_conf[conf_key].pop(
             ("README.md", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("README.rst", True), 0)
+        ) + data_dict_by_conf[conf_key].pop(("README.rst", True), 0
+        ) + data_dict_by_conf[conf_key].pop(("readme.md", True), 0
+        ) + data_dict_by_conf[conf_key].pop(("readme.rst", True), 0
+        ) + data_dict_by_conf[conf_key].pop(("Readme.md", True), 0
+        ) + data_dict_by_conf[conf_key].pop(("Readme.rst", True), 0
+        )
         data_dict_by_conf[conf_key][("README", True)] = rmdval
 
         # merge tests and test folder
@@ -106,7 +111,9 @@ def structure_and_plot(
         ("uv.lock", True),
         (".pre-commit-config.yaml", True),
         ("poetry.lock", True),
-        ("hatch.toml", True)
+        ("hatch.toml", True),
+        ("pixi.lock", True),
+        ("pixi.toml", True)
     ]
 
     def _set_up_plot(
@@ -241,6 +248,10 @@ if __name__ == "__main__":
             id_counters = pickle.load(f)
             counter_dict[pid] = id_counters
 
-    structure_and_plot(pids, counter_dict, "TMLR")
+    # structure_and_plot(pids, counter_dict, "TMLR")
+    counter_dict = counter_dict['all']
+
+    plt.bar(["README.md", "LICENSE"], [counter_dict['files'][('README.md', True)] + counter_dict['files'][('README.rst', True)], counter_dict['files']["LICENSE", True]])
+    plt.show()
 
     pass

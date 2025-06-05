@@ -2,7 +2,7 @@
 
 import urllib
 
-from paper_crawler.crawl_links_soup import (
+from src.paper_crawler.crawl_links_soup import (
     get_icml_2023_pdf,
     get_icml_2024_pdf,
     process_link,
