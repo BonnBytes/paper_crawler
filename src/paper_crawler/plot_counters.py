@@ -87,7 +87,7 @@ def structure_and_plot(
         data_dict_by_conf[conf_key][("test-folder", True)] = testfolderval
 
         # remove setup.cfg
-        data_dict_by_conf[conf_key].pop(("setup.cfg", True))
+        # data_dict_by_conf[conf_key].pop(("setup.cfg", True))
 
     # software_keys = list(data_dict_by_conf['ICML-2024'].keys())
     software_keys = [
@@ -96,6 +96,7 @@ def structure_and_plot(
         ("uses_python", True),
         ("requirements.txt", True),
         ("setup.py", True),
+        ("setup.cfg", True),
         ("pyproject.toml", True),
         ("test-folder", True),
         ("tox", True),
@@ -104,7 +105,8 @@ def structure_and_plot(
         ("environment.yml", True),
         ("uv.lock", True),
         (".pre-commit-config.yaml", True),
-        ("poetry.lock", True)
+        ("poetry.lock", True),
+        ("hatch.toml", True)
     ]
 
     def _set_up_plot(
@@ -119,17 +121,18 @@ def structure_and_plot(
         for conf_key, conf_values in data_dict_by_conf.items():
             offset = width * multiplier
             page_total = counter_dict[conf_key]["page_total"]
+            
+            counts = []
+            for key in keys:
+                try:
+                    confval = conf_values[key]
+                except KeyError:
+                    print(f"{key} not found when plotting.")
+                    confval = 0
+                counts.append(round((confval / page_total) * 100.0,1))
             rects = ax.bar(
                 x + offset,
-                list(
-                    (
-                        round(
-                            (conf_values[key] / page_total) * 100.0,
-                            1,
-                        )
-                        for key in keys
-                    )
-                ),
+                list(counts),
                 width,
                 label=conf_key,
             )
@@ -147,9 +150,13 @@ def structure_and_plot(
             tikz.save(f"./plots/{filename}.tex", standalone=True)
         plt.show()
 
-    # License and Readme
-    keys = [("LICENSE", True), ("README", True)]
-    _set_up_plot(keys, f"{plot_prefix}_license_and_readme")
+    # License 
+    keys = [("LICENSE", True)]
+    _set_up_plot(keys, f"{plot_prefix}_license")
+
+    # Readme
+    keys = [("README", True)]
+    _set_up_plot(keys, f"{plot_prefix}_readme")
 
     # Python
     keys = [("uses_python", True)]
@@ -160,7 +167,7 @@ def structure_and_plot(
     _set_up_plot(keys, f"{plot_prefix}_requirements")
 
     # packaging
-    keys = [("setup.py", True), ("pyproject.toml", True)]
+    keys = [("setup.py", True), ("setup.cfg", True), ("pyproject.toml", True), ("hatch.toml", True)]
     _set_up_plot(keys, f"{plot_prefix}_packaging")
 
     # Tests and container
@@ -168,7 +175,7 @@ def structure_and_plot(
         ("test-folder", True),
         ("tox", True),
         ("noxfile.py", True),
-        (".pre-commit-config.yaml", True)
+        (".pre-commit-config.yaml", True),
         (".github/workflows", True),
     ]
     _set_up_plot(keys, f"{plot_prefix}_tests")
@@ -213,8 +220,8 @@ if __name__ == "__main__":
 
     # PLOT ICLR
 
-    file_ids = [f"ICLR.cc_20{year}_Conference" for year in range(25, 26)]
-    pids = [f"{year}" for year in range(25, 26)]
+    file_ids = [f"ICLR.cc_20{year}_Conference" for year in range(24, 26)]
+    pids = [f"{year}" for year in range(24, 26)]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
