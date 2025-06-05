@@ -51,19 +51,20 @@ def get_openreview_submissions(venueid: str) -> list[str]:
         ]
         return links
     else:
-        # legacy v1 api
-        # print("v1 openreview conference")
-        # group = client.get_group(venueid)
-        # submission_id = list(filter(lambda s: "SUBMISSION_ID" in s, group.to_json()['web'].split("\n")))[0]
-        # submission_id = submission_id.split("'")[1]
-        # submissions = client.get_all_notes(
-        #         invitation=submission_id
-        #     )
-        # pass
-        # len(submissions) is 0 ;-( .
-        # This does not work. 
-        raise ValueError("v1 api-venue is not supported.")
-
+        # v1 api.
+        client = openreview.Client(
+            baseurl="https://api.openreview.net",
+            username=os.environ["OPENREVIEW_USERNAME"],
+            password=os.environ["OPENREVIEW_PASSWORD"],
+        )
+        submissions = client.get_all_notes(content={"venueid": venueid})
+        print(f"{venueid} has : {len(submissions)} submissions.")
+        # assemble links
+        links = [
+            "https://openreview.net" + submission.content["pdf"]
+            for submission in submissions
+        ]
+        return links
 
 
 
