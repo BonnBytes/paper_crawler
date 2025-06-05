@@ -31,6 +31,32 @@ imcl_dict = {
     2014: 32,
 }
 
+cvpr_day_dict = {
+    2018: ["2018-06-19", "2018-06-20", "2018-06-21"],
+    2019: ["2019-06-18", "2019-06-19", "2019-06-20"],
+    2020: ["2020-06-16", "2020-06-17", "2020-06-18"],
+}
+
+
+def get_cvpr_pdf(year: int) -> list[bs4.element.Tag]:
+    """Fetch PDF links for CVPR papers.
+
+    Args:
+        year (int): Year of interest.
+
+    Returns:
+        list: A list of links that contain "pdf" in their href attribute.
+    """
+    if year <= 2017:
+        return get_pdf_links(f"https://openaccess.thecvf.com/CVPR{year}")
+    elif year >= 2018 and year <= 2020:
+        year_links = []
+        for day in cvpr_day_dict[year]:
+            links = get_pdf_links(f"https://openaccess.thecvf.com/CVPR{year}?day={day}")
+            year_links.extend(links)
+        return year_links
+    return get_pdf_links(f"https://openaccess.thecvf.com/CVPR{year}?day=all")
+
 
 def get_icml_2024_pdf() -> list[bs4.element.Tag]:
     """Get all ICML 2024 paper links."""
@@ -38,7 +64,7 @@ def get_icml_2024_pdf() -> list[bs4.element.Tag]:
 
 
 def get_icml_2023_pdf() -> list[bs4.element.Tag]:
-    """Get all ICML 2024 paper links."""
+    """Get all ICML 2023 paper links."""
     return get_icml_pdf(2023)
 
 
@@ -50,10 +76,10 @@ def get_icml_pdf(year: int) -> list[bs4.element.Tag]:
     Returns:
         list: A list of BeautifulSoup tag objects that contain the PDF links.
     """
-    return get_icml(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
+    return get_pdf_links(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
 
 
-def get_icml(url: str) -> list[bs4.element.Tag]:
+def get_pdf_links(url: str) -> list[bs4.element.Tag]:
     """Fetch PDF links from an URL.
 
     Args:
@@ -109,6 +135,8 @@ if __name__ == "__main__":
         pdf_soup = get_icml_pdf(2022)
     elif "icml" in args.id:
         pdf_soup = get_icml_pdf(int(args.id[4:]))
+    elif "cvpr" in args.id:
+        pdf_soup = get_cvpr_pdf(int(args.id[4:]))
     else:
         raise ValueError("Unkown conference.")
 
