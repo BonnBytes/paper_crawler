@@ -33,7 +33,7 @@ python -m paper_crawler.filter_and_download_links --id tmlr
 echo looking at links for ICLR
 for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/Conference ICLR.cc/2016/Conference ICLR.cc/2015/Conference ICLR.cc/2014/Conference
     echo crawling papers from $iclrconf
-    python -m src.paper_crawler.filter_and_download_links --id "$iclrconf"
+    python -m paper_crawler.filter_and_download_links --id "$iclrconf"
 done
 
 # filter links and download soup

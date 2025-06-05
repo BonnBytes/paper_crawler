@@ -251,7 +251,30 @@ if __name__ == "__main__":
     # structure_and_plot(pids, counter_dict, "TMLR")
     counter_dict = counter_dict['all']
 
-    plt.bar(["README.md", "LICENSE"], [counter_dict['files'][('README.md', True)] + counter_dict['files'][('README.rst', True)], counter_dict['files']["LICENSE", True]])
+    readme_file_types = ["README.md", "Readme.md", "readme.md", "README.rst", "Readme.rst", "readme.rst"]
+    readmecout = sum([counter_dict['files'][(rmd, True)] for rmd in readme_file_types])
+    file_total = counter_dict['page_total']
+
+    dependencies_counter = sum([counter_dict['files'][(deb, True)] for deb in ["requirements.txt", "environment.yml", "uv.lock"]])
+    packaged_counter = sum([counter_dict['files'][(deb, True)] for deb in ["setup.py", "setup.cfg", "pyproject.toml", "hatch.toml"]])
+    test_folder = sum([counter_dict['folders'][(deb, True)] for deb in ["test", "tests"]])
+
+
+    plt.bar(["README", 
+             "python",
+             "LICENSE",
+             "dependencies",
+             "packaged",
+             "test-folder"], 
+            [round( readmecout / file_total * 100, 1), 
+             round( counter_dict['language']['uses_python', True] / file_total * 100, 1 ),
+             round( counter_dict['files']["LICENSE", True] / file_total * 100, 1 ),
+             round( dependencies_counter / file_total * 100, 1 ),
+             round( packaged_counter / file_total * 100, 1),
+             round( test_folder / file_total * 100, 1)
+            ]
+    )
+    plt.grid()
     plt.show()
 
     pass
