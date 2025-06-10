@@ -144,7 +144,7 @@ def get_nips_pdf(year: int) -> list[str]:
     soup = BeautifulSoup(urllib.request.urlopen(url_str), "html.parser")
     paper_list = soup.find_all("ul", {"class": "paper-list"})[0]
     paper_links = paper_list.find_all("a")
-    process_link = lambda link: str(link).split()[1][6:-1] # noqa E731
+    process_link = lambda link: str(link).split()[1][6:-1]  # noqa E731
     paper_links = list(map(process_link, paper_links))
     pdf_links = []
     # get the pdf

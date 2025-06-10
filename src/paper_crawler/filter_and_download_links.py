@@ -32,7 +32,7 @@ def process_repo_link(repo_link: str) -> Union[tuple[BeautifulSoup, str], None]:
         Exception: If an error occurs while processing a link,
             it will be caught and printed.
     """
-    print(repo_link)
+    # print(repo_link)
     try:
         if repo_link.split(".")[-1] in ["pth", "pkl"]:
             raise ValueError("Pickled or model file found.")
@@ -75,12 +75,7 @@ if __name__ == "__main__":
         str_links_map = list(
             map(lambda link: str(urllib.parse.urlunparse(link)), flat_links)
         )
-        # remove links to zipped files.
-        # str_links = list(filter(lambda l: "tar.gz" not in l, str_links))
-        # str_links = list(filter(lambda l: ".bin" not in l, str_links))
-        # str_links = list(filter(lambda l: ".zip" not in l, str_links))
-        # str_links = list(filter(lambda l: ".pt" not in l, str_links)
-
+        # remove links to zipped and other undesirable files.
         ignore_list = ["tar.gz", ".bin", ".zip", ".pt", ".gif", ".jpeg"]
         str_links = []
         for link in str_links_map:
@@ -95,13 +90,10 @@ if __name__ == "__main__":
         # str_links = list(set(str_links))
 
         # clean the data.
-        filtered_pages = list(
-            tqdm(
-                map(process_repo_link, str_links),
-                total=len(str_links),
-                desc=f"downloading {id}.",
-            )
-        )
+        filtered_pages = []
+        for link in (bar := tqdm(str_links, desc=f"downloading {id}.")):
+            bar.set_description(link)
+            filtered_pages.append(process_repo_link(link))
 
         with open(save_path, "wb") as f_write:
             pickle.dump(filtered_pages, f_write)
