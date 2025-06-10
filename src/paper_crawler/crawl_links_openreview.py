@@ -7,6 +7,7 @@ from multiprocessing import Pool
 import openreview
 from dotenv import load_dotenv
 from tqdm import tqdm
+import time
 
 from ._argparse_code import _parse_args
 from .crawl_links_soup import process_link
@@ -61,8 +62,16 @@ if __name__ == "__main__":
     links = get_openreview_submissions(venueid)
 
     # loop through paper links find pdfs
-    with Pool(2) as p:
-        res = list(tqdm(p.imap(process_link, links), total=len(links)))
+    # with Pool(2) as p:
+    #     res = list(tqdm(p.imap(process_link, links), total=len(links)))
+
+    res = []
+    for link in (bar := tqdm(links)):
+        res.append(process_link(link))
+        bar.set_description(link)
+        # avoid ip-ban.
+        time.sleep(2)
+
 
     with open(storage_file, "w") as f:
         f.write(json.dumps(res, indent=1))
