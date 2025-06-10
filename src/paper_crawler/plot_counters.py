@@ -75,13 +75,13 @@ def structure_and_plot(
         data_dict_by_conf[conf_key][("tox", True)] = toxval
 
         # merge readme
-        rmdval = data_dict_by_conf[conf_key].pop(
-            ("README.md", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("README.rst", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("readme.md", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("readme.rst", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("Readme.md", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("Readme.rst", True), 0
+        rmdval = (
+            data_dict_by_conf[conf_key].pop(("README.md", True), 0)
+            + data_dict_by_conf[conf_key].pop(("README.rst", True), 0)
+            + data_dict_by_conf[conf_key].pop(("readme.md", True), 0)
+            + data_dict_by_conf[conf_key].pop(("readme.rst", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Readme.md", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Readme.rst", True), 0)
         )
         data_dict_by_conf[conf_key][("README", True)] = rmdval
 
@@ -113,7 +113,7 @@ def structure_and_plot(
         ("poetry.lock", True),
         ("hatch.toml", True),
         ("pixi.lock", True),
-        ("pixi.toml", True)
+        ("pixi.toml", True),
     ]
 
     def _set_up_plot(
@@ -128,7 +128,7 @@ def structure_and_plot(
         for conf_key, conf_values in data_dict_by_conf.items():
             offset = width * multiplier
             page_total = counter_dict[conf_key]["page_total"]
-            
+
             counts = []
             for key in keys:
                 try:
@@ -136,7 +136,7 @@ def structure_and_plot(
                 except KeyError:
                     print(f"{key} not found when plotting.")
                     confval = 0
-                counts.append(round((confval / page_total) * 100.0,1))
+                counts.append(round((confval / page_total) * 100.0, 1))
             rects = ax.bar(
                 x + offset,
                 list(counts),
@@ -157,7 +157,7 @@ def structure_and_plot(
             tikz.save(f"./plots/{filename}.tex", standalone=True)
         plt.show()
 
-    # License 
+    # License
     keys = [("LICENSE", True)]
     _set_up_plot(keys, f"{plot_prefix}_license")
 
@@ -174,7 +174,12 @@ def structure_and_plot(
     _set_up_plot(keys, f"{plot_prefix}_requirements")
 
     # packaging
-    keys = [("setup.py", True), ("setup.cfg", True), ("pyproject.toml", True), ("hatch.toml", True)]
+    keys = [
+        ("setup.py", True),
+        ("setup.cfg", True),
+        ("pyproject.toml", True),
+        ("hatch.toml", True),
+    ]
     _set_up_plot(keys, f"{plot_prefix}_packaging")
 
     # Tests and container
@@ -238,7 +243,6 @@ if __name__ == "__main__":
 
     structure_and_plot(pids, counter_dict, "ICLR")
 
-
     file_ids = ["tmlr"]
     pids = ["all"]
     counter_dict = {}
@@ -249,30 +253,45 @@ if __name__ == "__main__":
             counter_dict[pid] = id_counters
 
     # structure_and_plot(pids, counter_dict, "TMLR")
-    counter_dict = counter_dict['all']
+    counter_dict = counter_dict["all"]
 
-    readme_file_types = ["README.md", "Readme.md", "readme.md", "README.rst", "Readme.rst", "readme.rst"]
-    readmecout = sum([counter_dict['files'][(rmd, True)] for rmd in readme_file_types])
-    file_total = counter_dict['page_total']
+    readme_file_types = [
+        "README.md",
+        "Readme.md",
+        "readme.md",
+        "README.rst",
+        "Readme.rst",
+        "readme.rst",
+    ]
+    readmecout = sum([counter_dict["files"][(rmd, True)] for rmd in readme_file_types])
+    file_total = counter_dict["page_total"]
 
-    dependencies_counter = sum([counter_dict['files'][(deb, True)] for deb in ["requirements.txt", "environment.yml", "uv.lock"]])
-    packaged_counter = sum([counter_dict['files'][(deb, True)] for deb in ["setup.py", "setup.cfg", "pyproject.toml", "hatch.toml"]])
-    test_folder = sum([counter_dict['folders'][(deb, True)] for deb in ["test", "tests"]])
+    dependencies_counter = sum(
+        [
+            counter_dict["files"][(deb, True)]
+            for deb in ["requirements.txt", "environment.yml", "uv.lock"]
+        ]
+    )
+    packaged_counter = sum(
+        [
+            counter_dict["files"][(deb, True)]
+            for deb in ["setup.py", "setup.cfg", "pyproject.toml", "hatch.toml"]
+        ]
+    )
+    test_folder = sum(
+        [counter_dict["folders"][(deb, True)] for deb in ["test", "tests"]]
+    )
 
-
-    plt.bar(["README", 
-             "python",
-             "LICENSE",
-             "dependencies",
-             "packaged",
-             "test-folder"], 
-            [round( readmecout / file_total * 100, 1), 
-             round( counter_dict['language']['uses_python', True] / file_total * 100, 1 ),
-             round( counter_dict['files']["LICENSE", True] / file_total * 100, 1 ),
-             round( dependencies_counter / file_total * 100, 1 ),
-             round( packaged_counter / file_total * 100, 1),
-             round( test_folder / file_total * 100, 1)
-            ]
+    plt.bar(
+        ["README", "python", "LICENSE", "dependencies", "packaged", "test-folder"],
+        [
+            round(readmecout / file_total * 100, 1),
+            round(counter_dict["language"]["uses_python", True] / file_total * 100, 1),
+            round(counter_dict["files"]["LICENSE", True] / file_total * 100, 1),
+            round(dependencies_counter / file_total * 100, 1),
+            round(packaged_counter / file_total * 100, 1),
+            round(test_folder / file_total * 100, 1),
+        ],
     )
     plt.grid()
     plt.show()

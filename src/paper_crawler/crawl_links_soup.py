@@ -1,6 +1,5 @@
 """
-This module containes code to fetche PDF links from
-the ICML 2024 proceedings page.
+This module containes code to fetche PDF links from proceedings pages.
 
 It processes each PDF to extract GitHub links,
 and to stores the results in a JSON file.
@@ -48,7 +47,6 @@ aistats_dict = {
 }
 
 
-
 def get_icml_2024_pdf() -> list[bs4.element.Tag]:
     """Get all ICML 2024 paper links."""
     return get_icml_pdf(2024)
@@ -62,7 +60,7 @@ def get_icml_2023_pdf() -> list[bs4.element.Tag]:
 def get_icml_pdf(year: int) -> list[bs4.element.Tag]:
     """Fetch the PDF links from the PMLR proceedings page.
 
-    This function opens the PMLR 2024 proceedings page, 
+    This function opens the PMLR 2024 proceedings page,
     looks for ICML-links and parses the HTML
     content, and filters out the links that contain "pdf" in
     their href attribute.
@@ -71,7 +69,6 @@ def get_icml_pdf(year: int) -> list[bs4.element.Tag]:
         list: A list of BeautifulSoup tag objects that contain the PDF links.
     """
     return get_pmlr(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
-
 
 
 def get_aistats_pdf(year: int) -> list[bs4.element.Tag]:
@@ -88,7 +85,6 @@ def get_aistats_pdf(year: int) -> list[bs4.element.Tag]:
     return get_pmlr(f"https://proceedings.mlr.press/v{aistats_dict[year]}/")
 
 
-
 def get_pmlr(url: str) -> list[bs4.element.Tag]:
     """Fetch PDF links from an URL.
 
@@ -99,9 +95,7 @@ def get_pmlr(url: str) -> list[bs4.element.Tag]:
         list: A list of links that contain "pdf" in their href attribute.
     """
     soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
-    pdf_soup = list(
-        filter(lambda line: "pdf" in str(line), soup.find_all("a"))
-    )
+    pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
     return pdf_soup  # type: ignore
 
 
@@ -128,8 +122,7 @@ def process_link(url: str) -> Union[list[str], None]:
         )
         # avoid block
         if urls_filter_github:
-            github_links = [urllib.parse.urlparse(cl)
-                            for cl in urls_filter_github]
+            github_links = [urllib.parse.urlparse(cl) for cl in urls_filter_github]
             return github_links
         else:
             raise ValueError("No GitHub-Links found.")
@@ -139,25 +132,33 @@ def process_link(url: str) -> Union[list[str], None]:
 
 
 def get_nips_pdf(year: int) -> list[str]:
+    """Return links to pdfs from the neurips proceedings page.
+
+    Args:
+        year (int): The conference year.
+
+    Returns:
+        list[str]: A list with links.
+    """
     url_str = f"https://papers.nips.cc/paper_files/paper/{year}"
-    soup = BeautifulSoup(urllib.request.urlopen(url_str),
-                         "html.parser")
+    soup = BeautifulSoup(urllib.request.urlopen(url_str), "html.parser")
     paper_list = soup.find_all("ul", {"class": "paper-list"})[0]
     paper_links = paper_list.find_all("a")
-    process_link = lambda link: str(link).split()[1][6:-1]
+    process_link = lambda link: str(link).split()[1][6:-1] # noqa E731
     paper_links = list(map(process_link, paper_links))
     pdf_links = []
     # get the pdf
     for paper_link in tqdm(paper_links, total=len(paper_links), desc=url_str):
         try:
             full_url = "https://papers.nips.cc" + paper_link
-            sub_soup = BeautifulSoup(urllib.request.urlopen(full_url),
-                                     "html.parser")
+            sub_soup = BeautifulSoup(urllib.request.urlopen(full_url), "html.parser")
             pdf_soup = list(
                 filter(lambda line: "pdf" in str(line), sub_soup.find_all("a"))
             )
-            extract_link = lambda link: "https://papers.nips.cc" + str(
-                link).split()[-1].split("\"")[1]
+            extract_link = (
+                lambda link: "https://papers.nips.cc"
+                + str(link).split()[-1].split('"')[1]
+            )
             links = list(map(extract_link, pdf_soup))
             pdf_links.extend(links)
         except Exception as e:
@@ -193,12 +194,11 @@ if __name__ == "__main__":
         else:
             raise ValueError("Unkown conference.")
 
-
         if type(pdf_soup[0]) is not str:
             links = [
-                list(
-                    filter(lambda s: "href" in s, str(pdf_soup_el).split())
-                )[0].split("=")[-1][1:-1]
+                list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
+                    "="
+                )[-1][1:-1]
                 for pdf_soup_el in pdf_soup
             ]
         else:

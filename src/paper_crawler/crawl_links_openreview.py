@@ -2,8 +2,8 @@
 
 import json
 import os
+import time
 from pathlib import Path
-from multiprocessing import Pool
 
 import openreview
 from dotenv import load_dotenv
@@ -12,22 +12,20 @@ from tqdm import tqdm
 from ._argparse_code import _parse_args
 from .crawl_links_soup import process_link
 
+# from multiprocessing import Pool
+
 
 def get_openreview_submissions(venueid: str) -> list[str]:
-    """ Fetch submission links for a given venue ID.
+    """Fetch submission links for a given venue ID.
 
     This functon finds a PDF link for each submission
     and these as a list of strings.
 
     Args:
         venueid (str): The ID of the venue for which to fetch submissions.
+
     Returns:
         list[str]: A list of URLs pointing to the PDF files of the submissions.
-    Raises:
-        KeyError: If the environment variables
-            'OPENREVIEW_USERNAME' or 'OPENREVIEW_PASSWORD' are not set.
-        openreview.OpenReviewException:
-             If there is an error with the OpenReview API request.
     """
     # print("openreview user:", os.environ["OPENREVIEW_USERNAME"])
     client = openreview.api.OpenReviewClient(
@@ -67,7 +65,6 @@ def get_openreview_submissions(venueid: str) -> list[str]:
         return links
 
 
-
 if __name__ == "__main__":
     load_dotenv()
     args = _parse_args()
@@ -85,9 +82,26 @@ if __name__ == "__main__":
         try:
             links = get_openreview_submissions(venueid)
 
+            if args.id == "ICLR.cc/2021/Conference":
+                print(f"pop: {args.id}")
+                links.pop(719)
+                links.pop(718)
+                links.pop(717)
+
             # loop through paper links find pdfs
-            with Pool(2) as p:
-                res = list(tqdm(p.imap(process_link, links), total=len(links)))
+            # with Pool(2) as p:
+            #     res = list(tqdm(p.imap(process_link, links), total=len(links)))
+
+            res = []
+            for link in (bar := tqdm(links)):
+                res.append(process_link(link))
+                bar.set_description(link)
+                # avoid ip-ban.
+                time.sleep(2)
+
+            # loop through paper links find pdfs
+            # with Pool(2) as p:
+            #    res = list(tqdm(p.imap(process_link, links), total=len(links)))
 
             with open(storage_file, "w") as f:
                 f.write(json.dumps(res, indent=1))

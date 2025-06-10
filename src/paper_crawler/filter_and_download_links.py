@@ -5,8 +5,9 @@ import pickle
 import urllib
 import urllib.parse
 import urllib.request
+
+# from multiprocessing import Pool
 from pathlib import Path
-from multiprocessing import Pool
 from typing import Union
 
 from bs4 import BeautifulSoup
@@ -64,31 +65,31 @@ if __name__ == "__main__":
         if id == "ICLR.cc_2024_Conference":
             # this one is broken.
             links.pop(1809)
-        
+
         flat_links = []
         for page_links in links:
             if page_links:
                 for link in page_links:
                     flat_links.append(link)
 
-
-
-        str_links_map = list(map(lambda link: str(urllib.parse.urlunparse(link)), flat_links))
+        str_links_map = list(
+            map(lambda link: str(urllib.parse.urlunparse(link)), flat_links)
+        )
         # remove links to zipped files.
         # str_links = list(filter(lambda l: "tar.gz" not in l, str_links))
         # str_links = list(filter(lambda l: ".bin" not in l, str_links))
         # str_links = list(filter(lambda l: ".zip" not in l, str_links))
         # str_links = list(filter(lambda l: ".pt" not in l, str_links)
 
-        ignore_list = ['tar.gz', ".bin", ".zip", ".pt", ".gif", ".jpeg"]
+        ignore_list = ["tar.gz", ".bin", ".zip", ".pt", ".gif", ".jpeg"]
         str_links = []
-        for l in str_links_map:
+        for link in str_links_map:
             append = True
             for ignore in ignore_list:
-                if ignore in l:
+                if ignore in link:
                     append = False
             if append:
-                str_links.append(l)
+                str_links.append(link)
 
         # remove duplicates, not doing it means frequently used repos have more weight.
         # str_links = list(set(str_links))
@@ -97,8 +98,8 @@ if __name__ == "__main__":
         filtered_pages = list(
             tqdm(
                 map(process_repo_link, str_links),
-                    total=len(str_links),
-                    desc=f"downloading {id}.",
+                total=len(str_links),
+                desc=f"downloading {id}.",
             )
         )
 

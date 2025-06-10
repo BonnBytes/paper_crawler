@@ -1,10 +1,10 @@
 """Test if the process_pages module does what it should."""
 
-import urllib
-from bs4 import BeautifulSoup
+# import urllib
+# from bs4 import BeautifulSoup
 
-from src.paper_crawler.filter_and_download_links import process_repo_link
-from src.paper_crawler.process_pages import extract_stats
+from paper_crawler.filter_and_download_links import process_repo_link
+from paper_crawler.process_pages import extract_stats
 
 
 def test_requirements_txt() -> None:
@@ -60,8 +60,9 @@ def test_tests_folder() -> None:
 
     assert stats["python"]["uses_python"] is True
 
+
 def test_all_false_no_readme() -> None:
-    """ Test tmlr stats"""
+    """Test tmlr stats."""
     link = "https://github.com/mas-takayama/LLM-and-SCD"
 
     loaded = process_repo_link(link)
@@ -69,12 +70,12 @@ def test_all_false_no_readme() -> None:
     assert loaded[1] == link
     stats = extract_stats(loaded)
 
-    assert stats['files']['README.md'] is False
-    assert stats['files']['README.rst'] is False 
-    assert stats['files']['readme.md'] is False 
-    assert stats['files']['readme.rst'] is False 
-    assert stats['files']['Readme.md'] is False 
-    assert stats['files']['Readme.rst'] is False
+    assert stats["files"]["README.md"] is False
+    assert stats["files"]["README.rst"] is False
+    assert stats["files"]["readme.md"] is False
+    assert stats["files"]["readme.rst"] is False
+    assert stats["files"]["Readme.md"] is False
+    assert stats["files"]["Readme.rst"] is False
 
     assert stats["files"]["requirements.txt"] is False
     assert stats["files"]["LICENSE"] is False
@@ -91,7 +92,7 @@ def test_all_false_no_readme() -> None:
 
 
 def test_little_python() -> None:
-    """ Test tmlr stats"""
+    """Test tmlr stats."""
     link = "https://github.com/rjiang03/HCL"
 
     loaded = process_repo_link(link)
@@ -101,11 +102,11 @@ def test_little_python() -> None:
 
     assert stats["python"]["uses_python"] is True
 
-    assert stats['files']['README.md'] is True
-    assert stats['files']['README.rst'] is False 
-    assert stats['files']['readme.md'] is False 
-    assert stats['files']['readme.rst'] is False 
-    assert stats['files']['Readme.md'] is False 
-    assert stats['files']['Readme.rst'] is False
+    assert stats["files"]["README.md"] is True
+    assert stats["files"]["README.rst"] is False
+    assert stats["files"]["readme.md"] is False
+    assert stats["files"]["readme.rst"] is False
+    assert stats["files"]["Readme.md"] is False
+    assert stats["files"]["Readme.rst"] is False
     assert stats["folders"]["test"] is False
     assert stats["folders"]["tests"] is False

@@ -2,7 +2,7 @@
 
 import urllib
 
-from src.paper_crawler.filter_and_download_links import process_repo_link
+from paper_crawler.filter_and_download_links import process_repo_link
 
 
 def test_download() -> None:

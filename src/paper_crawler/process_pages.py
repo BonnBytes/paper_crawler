@@ -2,8 +2,8 @@
 
 import pickle
 from collections import Counter
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 import bs4
 from tqdm import tqdm
@@ -84,7 +84,7 @@ def extract_stats(
         "poetry.toml",
         "hatch.toml",
         "pixi.lock",
-        "pixi.toml"
+        "pixi.toml",
     ]
     interesting_folders = ["test", "tests", ".github/workflows"]
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
             try:
                 results.append(extract_stats(paper_soup_and_link))
             except Exception as e:
-            #     # print(f"Error: {e}")
+                #     # print(f"Error: {e}")
                 problems.append(e)
                 error_counter += 1
 
@@ -167,7 +167,7 @@ if __name__ == "__main__":
         print(f"total: {folders_counter.items()} of {page_total}")
         print(
             f"ratios: {[(mc[0], mc[1] / float(page_total))
-                    for mc in folders_counter.items()]}"
+                       for mc in folders_counter.items()]}"
         )
 
         with open(save_path, "wb") as f_write:

@@ -2,11 +2,11 @@
 
 import urllib
 
-from src.paper_crawler.crawl_links_soup import (
+from paper_crawler.crawl_links_soup import (
     get_icml_2023_pdf,
     get_icml_2024_pdf,
+    get_nips_pdf,
     process_link,
-    get_nips_pdf
 )
 
 
@@ -42,6 +42,6 @@ def test_process_no_link() -> None:
 
 
 def test_nips_pdf() -> None:
+    """Check if we got all nips 1988 pdfs."""
     pdf_list = get_nips_pdf(1988)
     assert len(pdf_list) == 94
-
