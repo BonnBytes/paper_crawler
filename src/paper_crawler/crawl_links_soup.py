@@ -38,24 +38,25 @@ cvpr_day_dict = {
 }
 
 
-def get_cvpr_pdf(year: int) -> list[bs4.element.Tag]:
+def get_cvpr_pdf(year: int, cvpr_url: str) -> list[bs4.element.Tag]:
     """Fetch PDF links for CVPR papers.
 
     Args:
         year (int): Year of interest.
+        cvpr_url (str): CVPR base url
 
     Returns:
         list: A list of links that contain "pdf" in their href attribute.
     """
     if year <= 2017:
-        return get_pdf_links(f"https://openaccess.thecvf.com/CVPR{year}")
+        return get_pdf_links(f"{cvpr_url}CVPR{year}/")
     elif year >= 2018 and year <= 2020:
         year_links = []
         for day in cvpr_day_dict[year]:
-            links = get_pdf_links(f"https://openaccess.thecvf.com/CVPR{year}?day={day}")
+            links = get_pdf_links(f"{cvpr_url}CVPR{year}?day={day}/")
             year_links.extend(links)
         return year_links
-    return get_pdf_links(f"https://openaccess.thecvf.com/CVPR{year}?day=all")
+    return get_pdf_links(f"{cvpr_url}CVPR{year}?day=all/")
 
 
 def get_icml_2024_pdf() -> list[bs4.element.Tag]:
@@ -127,6 +128,7 @@ def process_link(url: str) -> Union[list[str], None]:
 
 if __name__ == "__main__":
     args = _parse_args()
+    base_url = ""
     if args.id == "icml2024":
         pdf_soup = get_icml_2024_pdf()
     elif args.id == "icml2023":
@@ -136,7 +138,8 @@ if __name__ == "__main__":
     elif "icml" in args.id:
         pdf_soup = get_icml_pdf(int(args.id[4:]))
     elif "cvpr" in args.id:
-        pdf_soup = get_cvpr_pdf(int(args.id[4:]))
+        base_url = "https://openaccess.thecvf.com/"
+        pdf_soup = get_cvpr_pdf(int(args.id[4:]), base_url)
     else:
         raise ValueError("Unkown conference.")
 
@@ -146,12 +149,15 @@ if __name__ == "__main__":
         os.makedirs("./storage/")
 
     if not path.exists():
-        links = [
-            list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[
-                -1
-            ][1:-1]
-            for pdf_soup_el in pdf_soup
-        ]
+        if "CVPR" not in args.id.upper():
+            links = [
+                list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
+                    "="
+                )[-1][1:-1]
+                for pdf_soup_el in pdf_soup
+            ]
+        else:
+            links = [base_url + str(pdf_soup_el["href"]) for pdf_soup_el in pdf_soup]
 
         # loop through paper links find pdfs
         res = []
