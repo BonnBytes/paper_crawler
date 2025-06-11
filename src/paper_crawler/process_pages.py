@@ -85,6 +85,7 @@ def extract_stats(
         "hatch.toml",
         "pixi.lock",
         "pixi.toml",
+        "Pipfile.lock"
     ]
     interesting_folders = ["test", "tests", ".github/workflows"]
 
