@@ -76,7 +76,7 @@ if __name__ == "__main__":
             map(lambda link: str(urllib.parse.urlunparse(link)), flat_links)
         )
         # remove links to zipped and other undesirable files.
-        ignore_list = ["tar.gz", ".bin", ".zip", ".pt", ".gif", ".jpeg"]
+        ignore_list = ["tar.gz", ".bin", ".zip", ".pt", ".gif", ".jpeg", ".mp4"]
         str_links = []
         for link in str_links_map:
             append = True

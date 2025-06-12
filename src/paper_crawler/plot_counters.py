@@ -233,16 +233,16 @@ if __name__ == "__main__":
     structure_and_plot(pids, counter_dict, "nips")
 
     # PLOT ICLR
-    file_ids = ["ICLR.cc_2017_conference"] + [f"ICLR.cc_20{year}_Conference" for year in range(18, 26)]
-    pids = [f"{year}" for year in range(17, 24)] + ["25"]
-    counter_dict = {}
-
-    for fid, pid in zip(file_ids, pids):
-        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
-            id_counters = pickle.load(f)
-            counter_dict[pid] = id_counters
-
-    structure_and_plot(pids, counter_dict, "ICLR")
+    # file_ids = ["ICLR.cc_2017_conference"] + [f"ICLR.cc_20{year}_Conference" for year in range(18, 26)]
+    # pids = [f"{year}" for year in range(17, 24)] + ["25"]
+    # counter_dict = {}
+    # 
+    # for fid, pid in zip(file_ids, pids):
+    #     with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
+    #         id_counters = pickle.load(f)
+    #         counter_dict[pid] = id_counters
+    # 
+    # structure_and_plot(pids, counter_dict, "ICLR")
 
     # PLOT TMLR
     file_ids = ["tmlr"]
