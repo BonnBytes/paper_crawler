@@ -170,7 +170,8 @@ def structure_and_plot(
     _set_up_plot(keys, f"{plot_prefix}_uses_python")
 
     # Requirements
-    keys = [("requirements.txt", True), ("environment.yml", True), ("uv.lock", True)]
+    keys = [("requirements.txt", True), ("environment.yml", True), ("uv.lock", True), 
+            ("Pipfile.lock", True), ("poetry.lock", True), ("pixi.lock", True)]
     _set_up_plot(keys, f"{plot_prefix}_requirements")
 
     # packaging
@@ -179,6 +180,7 @@ def structure_and_plot(
         ("setup.cfg", True),
         ("pyproject.toml", True),
         ("hatch.toml", True),
+        ("pixi.toml", True)
     ]
     _set_up_plot(keys, f"{plot_prefix}_packaging")
 
@@ -231,7 +233,6 @@ if __name__ == "__main__":
     structure_and_plot(pids, counter_dict, "nips")
 
     # PLOT ICLR
-
     file_ids = [f"ICLR.cc_20{year}_Conference" for year in range(24, 26)]
     pids = [f"{year}" for year in range(24, 26)]
     counter_dict = {}
@@ -243,6 +244,7 @@ if __name__ == "__main__":
 
     structure_and_plot(pids, counter_dict, "ICLR")
 
+    # PLOT TMLR
     file_ids = ["tmlr"]
     pids = ["all"]
     counter_dict = {}

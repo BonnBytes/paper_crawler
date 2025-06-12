@@ -3,7 +3,7 @@ pip install .
 echo crawling papers from tmlr
 python -m paper_crawler.crawl_tmlr
 
-for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
+for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
     echo crawling papers from: $iclrconf
     python -m paper_crawler.crawl_links_openreview --id "$iclrconf"
 done
