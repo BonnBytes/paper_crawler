@@ -219,7 +219,7 @@ if __name__ == "__main__":
         os.makedirs("./storage/")
     save_path = Path(f"./storage/{args.id}.json")
 
-    if not path.exists():
+    if not save_path.exists():
         links = []
         if "CVPR" not in args.id.upper():
             if type(pdf_soup[0]) is not str:
