@@ -142,7 +142,11 @@ if __name__ == "__main__":
             )
         python_counter = Counter(python_use)
 
-        python_total = list(python_counter.items())[0][1]
+        try:
+            python_total = list(python_counter.items())[0][1]
+        except IndexError as e:
+            print(f"No python code found, {e}")
+            python_total = 0
 
         file_counter = Counter(files)
         page_total = len(results)

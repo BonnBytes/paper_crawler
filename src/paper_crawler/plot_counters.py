@@ -197,8 +197,8 @@ def structure_and_plot(
 
 if __name__ == "__main__":
     # PLOT ICML stats.
-    file_ids = [f"icml20{year}" for year in range(17, 25)]
-    pids = [f"{year}" for year in range(17, 25)]
+    file_ids = [f"icml20{year}" for year in range(15, 25)]
+    pids = [f"{year}" for year in range(15, 25)]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
@@ -212,17 +212,17 @@ if __name__ == "__main__":
     file_ids = [f"aistats20{year}" for year in range(17, 25)]
     pids = [f"{year}" for year in range(17, 25)]
     counter_dict = {}
-
+    
     for fid, pid in zip(file_ids, pids):
         with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
             id_counters = pickle.load(f)
             counter_dict[pid] = id_counters
-
+     
     structure_and_plot(pids, counter_dict, "aistats")
 
     # PLOT Neurips stats
-    file_ids = [f"nips20{year}" for year in range(17, 25)]
-    pids = [f"{year}" for year in range(17, 25)]
+    file_ids = [f"nips20{year}" for year in range(15, 25)]
+    pids = [f"{year}" for year in range(15, 25)]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
@@ -233,8 +233,8 @@ if __name__ == "__main__":
     structure_and_plot(pids, counter_dict, "nips")
 
     # PLOT ICLR
-    file_ids = [f"ICLR.cc_20{year}_Conference" for year in range(24, 26)]
-    pids = [f"{year}" for year in range(24, 26)]
+    file_ids = ["ICLR.cc_2017_conference"] + [f"ICLR.cc_20{year}_Conference" for year in range(18, 26)]
+    pids = [f"{year}" for year in range(17, 24)] + ["25"]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
