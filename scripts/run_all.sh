@@ -31,7 +31,7 @@ python -m paper_crawler.filter_and_download_links --id tmlr
 
 
 echo looking at links for ICLR
-for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
+for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
     echo crawling papers from $iclrconf
     python -m paper_crawler.filter_and_download_links --id "$iclrconf"
 done
@@ -57,7 +57,7 @@ echo processing pages for tmlr
 python -m paper_crawler.process_pages --id tmlr
 
 echo processing pages for ICLR
-for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
+for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
     echo crawling papers from $iclrconf
     python -m src.paper_crawler.process_pages --id "$iclrconf"
 done
