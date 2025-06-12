@@ -32,6 +32,33 @@ imcl_dict = {
     2014: 32,
 }
 
+cvpr_day_dict = {
+    2018: ["2018-06-19", "2018-06-20", "2018-06-21"],
+    2019: ["2019-06-18", "2019-06-19", "2019-06-20"],
+    2020: ["2020-06-16", "2020-06-17", "2020-06-18"],
+}
+
+
+def get_cvpr_pdf(year: int, cvpr_url: str) -> list[bs4.element.Tag]:
+    """Fetch PDF links for CVPR papers.
+
+    Args:
+        year (int): Year of interest.
+        cvpr_url (str): CVPR base url
+
+    Returns:
+        list: A list of links that contain "pdf" in their href attribute.
+    """
+    if year <= 2017:
+        return get_pmlr(f"{cvpr_url}CVPR{year}/")
+    elif year >= 2018 and year <= 2020:
+        year_links = []
+        for day in cvpr_day_dict[year]:
+            links = get_pmlr(f"{cvpr_url}CVPR{year}?day={day}/")
+            year_links.extend(links)
+        return year_links
+    return get_pmlr(f"{cvpr_url}CVPR{year}?day=all")
+
 aistats_dict = {
     2024: 238,
     2023: 206,
@@ -53,7 +80,7 @@ def get_icml_2024_pdf() -> list[bs4.element.Tag]:
 
 
 def get_icml_2023_pdf() -> list[bs4.element.Tag]:
-    """Get all ICML 2024 paper links."""
+    """Get all ICML 2023 paper links."""
     return get_icml_pdf(2023)
 
 
@@ -168,42 +195,47 @@ def get_nips_pdf(year: int) -> list[str]:
 
 if __name__ == "__main__":
     args = _parse_args()
+    base_url = ""
+    if args.id == "icml2024":
+        pdf_soup = get_icml_2024_pdf()
+    elif args.id == "icml2023":
+        pdf_soup = get_icml_2023_pdf()
+    elif args.id == "icml2022":
+        pdf_soup = get_icml_pdf(2022)
+    elif "icml" in args.id:
+        pdf_soup = get_icml_pdf(int(args.id[4:]))
+    elif "cvpr" in args.id:
+        base_url = "https://openaccess.thecvf.com/"
+        pdf_soup = get_cvpr_pdf(int(args.id[4:]), base_url)
+    elif "nips" in args.id:
+            pdf_soup = get_nips_pdf(int(args.id[4:]))
+    elif "aistats" in args.id:
+        pdf_soup = get_aistats_pdf(int(args.id[7:]))
+    else:
+        raise ValueError("Unkown conference.")
+
 
     if not os.path.exists("./storage/"):
         os.makedirs("./storage/")
-
     save_path = Path(f"./storage/{args.id}.json")
 
-    print(f"Checking {save_path}.")
-
     if not save_path.exists():
-        print(f"save_path {save_path} does not exist.")
+        links = []
+        if "CVPR" not in args.id.upper():
+            if type(pdf_soup[0]) is not str:
+                links = [
+                    list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
+                        "="
+                    )[-1][1:-1]
+                    for pdf_soup_el in pdf_soup
+                ]
+            else:
+                links = pdf_soup
+        elif "CVPR" in args.id.upper():
+            links = [base_url + str(pdf_soup_el["href"]) for pdf_soup_el in pdf_soup]
 
-        if args.id == "icml2024":
-            pdf_soup = get_icml_2024_pdf()
-        elif args.id == "icml2023":
-            pdf_soup = get_icml_2023_pdf()
-        elif args.id == "icml2022":
-            pdf_soup = get_icml_pdf(2022)
-        elif "icml" in args.id:
-            pdf_soup = get_icml_pdf(int(args.id[4:]))
-        elif "nips" in args.id:
-            pdf_soup = get_nips_pdf(int(args.id[4:]))
-        elif "aistats" in args.id:
-            pdf_soup = get_aistats_pdf(int(args.id[7:]))
-        else:
-            raise ValueError("Unkown conference.")
-
-        if type(pdf_soup[0]) is not str:
-            links = [
-                list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
-                    "="
-                )[-1][1:-1]
-                for pdf_soup_el in pdf_soup
-            ]
-        else:
-            links = pdf_soup
-
+        if len(links) == 0:
+            raise ValueError("Links not found...")
         # loop through paper links find pdfs
         res = []
         for steps, current_link in enumerate((bar := tqdm(links))):
@@ -217,3 +249,4 @@ if __name__ == "__main__":
 
     else:
         print(f"save_path {save_path} exists, exiting.")
+    
