@@ -75,9 +75,14 @@ def structure_and_plot(
         data_dict_by_conf[conf_key][("tox", True)] = toxval
 
         # merge readme
-        rmdval = data_dict_by_conf[conf_key].pop(
-            ("README.md", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("README.rst", True), 0)
+        rmdval = (
+            data_dict_by_conf[conf_key].pop(("README.md", True), 0)
+            + data_dict_by_conf[conf_key].pop(("README.rst", True), 0)
+            + data_dict_by_conf[conf_key].pop(("readme.md", True), 0)
+            + data_dict_by_conf[conf_key].pop(("readme.rst", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Readme.md", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Readme.rst", True), 0)
+        )
         data_dict_by_conf[conf_key][("README", True)] = rmdval
 
         # merge tests and test folder
@@ -87,7 +92,7 @@ def structure_and_plot(
         data_dict_by_conf[conf_key][("test-folder", True)] = testfolderval
 
         # remove setup.cfg
-        data_dict_by_conf[conf_key].pop(("setup.cfg", True))
+        # data_dict_by_conf[conf_key].pop(("setup.cfg", True))
 
     # software_keys = list(data_dict_by_conf['ICML-2024'].keys())
     software_keys = [
@@ -96,12 +101,19 @@ def structure_and_plot(
         ("uses_python", True),
         ("requirements.txt", True),
         ("setup.py", True),
+        ("setup.cfg", True),
         ("pyproject.toml", True),
         ("test-folder", True),
         ("tox", True),
         ("noxfile.py", True),
         (".github/workflows", True),
         ("environment.yml", True),
+        ("uv.lock", True),
+        (".pre-commit-config.yaml", True),
+        ("poetry.lock", True),
+        ("hatch.toml", True),
+        ("pixi.lock", True),
+        ("pixi.toml", True),
     ]
 
     def _set_up_plot(
@@ -109,27 +121,25 @@ def structure_and_plot(
     ) -> None:
         x = np.arange(len(keys))  # the label locations
 
-        if filename and "icml" in filename:
-            multiplier = -4
-            width = 0.08  # the width of the bars
-        else:
-            multiplier = 0
-            width = 0.25  # the width of the bars
+        multiplier = -4
+        width = 0.08  # the width of the bars
+
         fig, ax = plt.subplots(layout="constrained")
         for conf_key, conf_values in data_dict_by_conf.items():
             offset = width * multiplier
             page_total = counter_dict[conf_key]["page_total"]
+
+            counts = []
+            for key in keys:
+                try:
+                    confval = conf_values[key]
+                except KeyError:
+                    print(f"{key} not found when plotting.")
+                    confval = 0
+                counts.append(round((confval / page_total) * 100.0, 1))
             rects = ax.bar(
                 x + offset,
-                list(
-                    (
-                        round(
-                            (conf_values[key] / page_total) * 100.0,
-                            1,
-                        )
-                        for key in keys
-                    )
-                ),
+                list(counts),
                 width,
                 label=conf_key,
             )
@@ -141,25 +151,35 @@ def structure_and_plot(
         ax.set_xticks(x + width, (sk[0] for sk in keys))
         ax.legend(loc="best", ncol=3)
         ax.set_ylim(0, 119)
+        plt.title(filename)
 
         if filename:
             tikz.save(f"./plots/{filename}.tex", standalone=True)
         plt.show()
 
-    # License and Readme
-    keys = [("LICENSE", True), ("README", True)]
-    _set_up_plot(keys, f"{plot_prefix}_license_and_readme")
+    # License
+    keys = [("LICENSE", True)]
+    _set_up_plot(keys, f"{plot_prefix}_license")
+
+    # Readme
+    keys = [("README", True)]
+    _set_up_plot(keys, f"{plot_prefix}_readme")
 
     # Python
     keys = [("uses_python", True)]
     _set_up_plot(keys, f"{plot_prefix}_uses_python")
 
     # Requirements
-    keys = [("requirements.txt", True), ("environment.yml", True)]
+    keys = [("requirements.txt", True), ("environment.yml", True), ("uv.lock", True)]
     _set_up_plot(keys, f"{plot_prefix}_requirements")
 
     # packaging
-    keys = [("setup.py", True), ("pyproject.toml", True)]
+    keys = [
+        ("setup.py", True),
+        ("setup.cfg", True),
+        ("pyproject.toml", True),
+        ("hatch.toml", True),
+    ]
     _set_up_plot(keys, f"{plot_prefix}_packaging")
 
     # Tests and container
@@ -167,6 +187,7 @@ def structure_and_plot(
         ("test-folder", True),
         ("tox", True),
         ("noxfile.py", True),
+        (".pre-commit-config.yaml", True),
         (".github/workflows", True),
     ]
     _set_up_plot(keys, f"{plot_prefix}_tests")
@@ -174,25 +195,105 @@ def structure_and_plot(
 
 if __name__ == "__main__":
     # PLOT ICML stats.
-    file_ids = [f"icml20{year}" for year in range(14, 25)]
-    pids = [f"{year}" for year in range(14, 25)]
+    file_ids = [f"icml20{year}" for year in range(17, 25)]
+    pids = [f"{year}" for year in range(17, 25)]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
-        with open(f"./storage/stored_counters_{fid}.pkl", "rb") as f:
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
             id_counters = pickle.load(f)
             counter_dict[pid] = id_counters
 
     structure_and_plot(pids, counter_dict, "icml")
 
-    # ML in 2024
-    file_ids = ["icml2024", "ICLR.cc_2024_Conference", "NeurIPS.cc_2024_Conference"]
-    pids = ["ICML", "ICLR", "NeurIPS"]
+    # PLOT aistats stats.
+    file_ids = [f"aistats20{year}" for year in range(17, 25)]
+    pids = [f"{year}" for year in range(17, 25)]
     counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
-        with open(f"./storage/stored_counters_{fid}.pkl", "rb") as f:
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
             id_counters = pickle.load(f)
             counter_dict[pid] = id_counters
 
-    structure_and_plot(pids, counter_dict, "ml_in_2024")
+    structure_and_plot(pids, counter_dict, "aistats")
+
+    # PLOT Neurips stats
+    file_ids = [f"nips20{year}" for year in range(17, 25)]
+    pids = [f"{year}" for year in range(17, 25)]
+    counter_dict = {}
+
+    for fid, pid in zip(file_ids, pids):
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
+            id_counters = pickle.load(f)
+            counter_dict[pid] = id_counters
+
+    structure_and_plot(pids, counter_dict, "nips")
+
+    # PLOT ICLR
+
+    file_ids = [f"ICLR.cc_20{year}_Conference" for year in range(24, 26)]
+    pids = [f"{year}" for year in range(24, 26)]
+    counter_dict = {}
+
+    for fid, pid in zip(file_ids, pids):
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
+            id_counters = pickle.load(f)
+            counter_dict[pid] = id_counters
+
+    structure_and_plot(pids, counter_dict, "ICLR")
+
+    file_ids = ["tmlr"]
+    pids = ["all"]
+    counter_dict = {}
+
+    for fid, pid in zip(file_ids, pids):
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
+            id_counters = pickle.load(f)
+            counter_dict[pid] = id_counters
+
+    # structure_and_plot(pids, counter_dict, "TMLR")
+    counter_dict = counter_dict["all"]
+
+    readme_file_types = [
+        "README.md",
+        "Readme.md",
+        "readme.md",
+        "README.rst",
+        "Readme.rst",
+        "readme.rst",
+    ]
+    readmecout = sum([counter_dict["files"][(rmd, True)] for rmd in readme_file_types])
+    file_total = counter_dict["page_total"]
+
+    dependencies_counter = sum(
+        [
+            counter_dict["files"][(deb, True)]
+            for deb in ["requirements.txt", "environment.yml", "uv.lock"]
+        ]
+    )
+    packaged_counter = sum(
+        [
+            counter_dict["files"][(deb, True)]
+            for deb in ["setup.py", "setup.cfg", "pyproject.toml", "hatch.toml"]
+        ]
+    )
+    test_folder = sum(
+        [counter_dict["folders"][(deb, True)] for deb in ["test", "tests"]]
+    )
+
+    plt.bar(
+        ["README", "python", "LICENSE", "dependencies", "packaged", "test-folder"],
+        [
+            round(readmecout / file_total * 100, 1),
+            round(counter_dict["language"]["uses_python", True] / file_total * 100, 1),
+            round(counter_dict["files"]["LICENSE", True] / file_total * 100, 1),
+            round(dependencies_counter / file_total * 100, 1),
+            round(packaged_counter / file_total * 100, 1),
+            round(test_folder / file_total * 100, 1),
+        ],
+    )
+    plt.grid()
+    plt.show()
+
+    pass

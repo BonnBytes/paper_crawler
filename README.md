@@ -32,6 +32,15 @@ To aggregate the statistical data we used for the paper, run the command below.
 ./run_all.sh
 ```
 
+### Run the tests
+Set up a dotenv with your openreview account credentials. Make sure you set the
+`OPENREVIEW_USERNAME` and `OPENREVIEW_PASSWORD` variables correctly. To run the tests type
+``` bash
+nox -s test
+```
+into the console.
+
+
 ### Funding
 
 The Bundesministerium für Bildung und Forschung (BMBF) supported research through its "BNTrAInee" (16DHBK1022) and "WestAI" (01IS22094A) projects. 

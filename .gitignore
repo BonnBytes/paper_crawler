@@ -1,5 +1,7 @@
 storage/
 .vscode/
+virtual_env/
+plots/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,7 +1,8 @@
 """
-This module containes code to fetche PDF links from the ICML 2024 proceedings page.
+This module containes code to fetche PDF links from proceedings pages.
 
-It processes each PDF to extract GitHub links, and to stores the results in a JSON file.
+It processes each PDF to extract GitHub links,
+and to stores the results in a JSON file.
 """
 
 import json
@@ -49,14 +50,28 @@ def get_cvpr_pdf(year: int, cvpr_url: str) -> list[bs4.element.Tag]:
         list: A list of links that contain "pdf" in their href attribute.
     """
     if year <= 2017:
-        return get_pdf_links(f"{cvpr_url}CVPR{year}/")
+        return get_pmlr(f"{cvpr_url}CVPR{year}/")
     elif year >= 2018 and year <= 2020:
         year_links = []
         for day in cvpr_day_dict[year]:
-            links = get_pdf_links(f"{cvpr_url}CVPR{year}?day={day}/")
+            links = get_pmlr(f"{cvpr_url}CVPR{year}?day={day}/")
             year_links.extend(links)
         return year_links
-    return get_pdf_links(f"{cvpr_url}CVPR{year}?day=all")
+    return get_pmlr(f"{cvpr_url}CVPR{year}?day=all")
+
+aistats_dict = {
+    2024: 238,
+    2023: 206,
+    2022: 151,
+    2021: 130,
+    2020: 108,
+    2019: 89,
+    2018: 84,
+    2017: 54,
+    2016: 51,
+    2015: 38,
+    2014: 33,
+}
 
 
 def get_icml_2024_pdf() -> list[bs4.element.Tag]:
@@ -70,17 +85,34 @@ def get_icml_2023_pdf() -> list[bs4.element.Tag]:
 
 
 def get_icml_pdf(year: int) -> list[bs4.element.Tag]:
-    """Fetch the PDF links from the ICML 2024 proceedings page.
+    """Fetch the PDF links from the PMLR proceedings page.
 
-    This function opens the ICML 2024 proceedings page, parses the HTML content,
-    and filters out the links that contain "pdf" in their href attribute.
+    This function opens the PMLR 2024 proceedings page,
+    looks for ICML-links and parses the HTML
+    content, and filters out the links that contain "pdf" in
+    their href attribute.
+
     Returns:
         list: A list of BeautifulSoup tag objects that contain the PDF links.
     """
-    return get_pdf_links(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
+    return get_pmlr(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
 
 
-def get_pdf_links(url: str) -> list[bs4.element.Tag]:
+def get_aistats_pdf(year: int) -> list[bs4.element.Tag]:
+    """Fetch the PDF links from the ICML 2024 proceedings page.
+
+    This function opens the PMLR 2024 proceedings page,
+    looks for aistats links and parses the HTML
+    content, and filters out the links that contain "pdf" in
+    their href attribute.
+
+    Returns:
+        list: A list of BeautifulSoup tag objects that contain the PDF links.
+    """
+    return get_pmlr(f"https://proceedings.mlr.press/v{aistats_dict[year]}/")
+
+
+def get_pmlr(url: str) -> list[bs4.element.Tag]:
     """Fetch PDF links from an URL.
 
     Args:
@@ -126,6 +158,41 @@ def process_link(url: str) -> Union[list[str], None]:
         return None
 
 
+def get_nips_pdf(year: int) -> list[str]:
+    """Return links to pdfs from the neurips proceedings page.
+
+    Args:
+        year (int): The conference year.
+
+    Returns:
+        list[str]: A list with links.
+    """
+    url_str = f"https://papers.nips.cc/paper_files/paper/{year}"
+    soup = BeautifulSoup(urllib.request.urlopen(url_str), "html.parser")
+    paper_list = soup.find_all("ul", {"class": "paper-list"})[0]
+    paper_links = paper_list.find_all("a")
+    process_link = lambda link: str(link).split()[1][6:-1]  # noqa E731
+    paper_links = list(map(process_link, paper_links))
+    pdf_links = []
+    # get the pdf
+    for paper_link in tqdm(paper_links, total=len(paper_links), desc=url_str):
+        try:
+            full_url = "https://papers.nips.cc" + paper_link
+            sub_soup = BeautifulSoup(urllib.request.urlopen(full_url), "html.parser")
+            pdf_soup = list(
+                filter(lambda line: "pdf" in str(line), sub_soup.find_all("a"))
+            )
+            extract_link = (
+                lambda link: "https://papers.nips.cc"
+                + str(link).split()[-1].split('"')[1]
+            )
+            links = list(map(extract_link, pdf_soup))
+            pdf_links.extend(links)
+        except Exception as e:
+            tqdm.write(f"{paper_link}, throws {e}")
+    return pdf_links
+
+
 if __name__ == "__main__":
     args = _parse_args()
     base_url = ""
@@ -140,36 +207,46 @@ if __name__ == "__main__":
     elif "cvpr" in args.id:
         base_url = "https://openaccess.thecvf.com/"
         pdf_soup = get_cvpr_pdf(int(args.id[4:]), base_url)
+    elif "nips" in args.id:
+            pdf_soup = get_nips_pdf(int(args.id[4:]))
+    elif "aistats" in args.id:
+        pdf_soup = get_aistats_pdf(int(args.id[7:]))
     else:
         raise ValueError("Unkown conference.")
 
-    path = Path(f"./storage/{args.id}.json")
 
     if not os.path.exists("./storage/"):
         os.makedirs("./storage/")
+    save_path = Path(f"./storage/{args.id}.json")
 
     if not path.exists():
+        links = []
         if "CVPR" not in args.id.upper():
-            links = [
-                list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
-                    "="
-                )[-1][1:-1]
-                for pdf_soup_el in pdf_soup
-            ]
-        else:
+            if type(pdf_soup[0]) is not str:
+                links = [
+                    list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
+                        "="
+                    )[-1][1:-1]
+                    for pdf_soup_el in pdf_soup
+                ]
+            else:
+                links = pdf_soup
+        elif "CVPR" in args.id.upper():
             links = [base_url + str(pdf_soup_el["href"]) for pdf_soup_el in pdf_soup]
 
+        if len(links) == 0:
+            raise ValueError("Links not found...")
         # loop through paper links find pdfs
         res = []
         for steps, current_link in enumerate((bar := tqdm(links))):
-            bar.set_description(current_link)
+            bar.set_description(f" {current_link} ")
             res.append(process_link(current_link))
             if steps % 100 == 0:
                 with open(f"./storage/{args.id}.json", "w") as f:
                     f.write(json.dumps(res))
-
-        with open(f"./storage/{args.id}.json", "w") as f:
+        with open(save_path, "w") as f:
             f.write(json.dumps(res))
 
     else:
-        print(f"Path {path} exists, exiting.")
+        print(f"save_path {save_path} exists, exiting.")
+    
