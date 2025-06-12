@@ -103,8 +103,10 @@ if __name__ == "__main__":
             # with Pool(2) as p:
             #    res = list(tqdm(p.imap(process_link, links), total=len(links)))
 
-            with open(storage_file, "w") as f:
-                f.write(json.dumps(res, indent=1))
+            # do not create a file is res is empty.
+            if res:
+                with open(storage_file, "w") as f:
+                    f.write(json.dumps(res, indent=1))
         except Exception as e:
             print(f"An error occured, {e}.")
     else:
