@@ -56,7 +56,7 @@ def get_cvpr_pdf(year: int, cvpr_url: str) -> list[bs4.element.Tag]:
             links = get_pdf_links(f"{cvpr_url}CVPR{year}?day={day}/")
             year_links.extend(links)
         return year_links
-    return get_pdf_links(f"{cvpr_url}CVPR{year}?day=all/")
+    return get_pdf_links(f"{cvpr_url}CVPR{year}?day=all")
 
 
 def get_icml_2024_pdf() -> list[bs4.element.Tag]:
