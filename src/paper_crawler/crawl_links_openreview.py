@@ -58,10 +58,12 @@ def get_openreview_submissions(venueid: str) -> list[str]:
         submissions = client.get_all_notes(content={"venueid": venueid})
         print(f"{venueid} has : {len(submissions)} submissions.")
         # assemble links
-        links = [
-            "https://openreview.net" + submission.content["pdf"]
-            for submission in submissions
-        ]
+        links = []
+        for submission in submissions:
+            if "openreview.net" not in submission.content['pdf']:
+                links.append("https://openreview.net" + submission.content["pdf"])
+            else:
+                links.append(submission.content['pdf'])
         return links
 
 
@@ -95,7 +97,7 @@ if __name__ == "__main__":
             res = []
             for link in (bar := tqdm(links)):
                 res.append(process_link(link))
-                bar.set_description(link)
+                bar.set_description(f" {link} ")
                 # avoid ip-ban.
                 time.sleep(2)
 
