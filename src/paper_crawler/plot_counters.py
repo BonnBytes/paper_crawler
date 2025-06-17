@@ -12,10 +12,10 @@ np.Inf = np.inf
 np.float_ = np.float64
 
 
-def structure_and_plot(
-    pids: list[str], counter_dict: dict[str, dict[str, Any]], plot_prefix: str
+def re_structure(
+    pids: list[str], counter_dict: dict[str, dict[str, Any]]
 ) -> None:
-    """Restructure counter dictionaries and generate bar plots for practice adoption.
+    """Restructure counter dictionaries remove the top layer.
 
     Args:
         pids (list[str]): A list of plot-conference IDs to process.
@@ -62,6 +62,7 @@ def structure_and_plot(
     data_dict_by_conf: dict[str, dict[tuple[str, bool], int]] = {}
     for pid in pids:
         data_dict_by_conf[pid] = {}
+
     for software_feature_key, conf_dict in data_dict_by_feature.items():
         for pid in pids:
             data_dict_by_conf[pid][software_feature_key] = conf_dict[pid]
@@ -91,83 +92,49 @@ def structure_and_plot(
         ) + data_dict_by_conf[conf_key].pop(("tests", True), 0)
         data_dict_by_conf[conf_key][("test-folder", True)] = testfolderval
 
-        # remove setup.cfg
-        # data_dict_by_conf[conf_key].pop(("setup.cfg", True))
+        data_dict_by_conf[conf_key]['page_total'] = counter_dict[conf_key]['page_total']
 
-    # software_keys = list(data_dict_by_conf['ICML-2024'].keys())
-    software_keys = [
-        ("LICENSE", True),
-        ("README", True),
-        ("uses_python", True),
-        ("requirements.txt", True),
-        ("setup.py", True),
-        ("setup.cfg", True),
-        ("pyproject.toml", True),
-        ("test-folder", True),
-        ("tox", True),
-        ("noxfile.py", True),
-        (".github/workflows", True),
-        ("environment.yml", True),
-        ("uv.lock", True),
-        (".pre-commit-config.yaml", True),
-        ("poetry.lock", True),
-        ("hatch.toml", True),
-        ("pixi.lock", True),
-        ("pixi.toml", True),
-    ]
+    return data_dict_by_conf
+
+def plot_data(data_dict_by_conf, plot_prefix):
 
     def _set_up_plot(
         keys: list[tuple[str, bool]], filename: Union[str, None] = None
     ) -> None:
-        x = np.arange(len(keys))  # the label locations
 
-        multiplier = -4
-        width = 0.08  # the width of the bars
+        for key in keys:
+            for conf in data_dict_by_conf.keys():
+                data_dict = data_dict_by_conf[conf]
+                labels = sorted(list(data_dict.keys()))
+                data = []
+                for label in labels:
+                    try:
+                        dat = data_dict[label][key]
+                    except KeyError as e:
+                        print(f"Key {label} not found, {e}.")
+                        dat = 0
+                    data.append(dat/data_dict[label]['page_total'])
+                plt.plot(labels, data, label=conf)
+            plt.title(key[0])
+            plt.legend()
+            
+            if filename:
+                tikz.save(f"./plots/{filename}_{key[0]}.tex", standalone=True)
+            plt.show()
+            plt.clf()
 
-        fig, ax = plt.subplots(layout="constrained")
-        for conf_key, conf_values in data_dict_by_conf.items():
-            offset = width * multiplier
-            page_total = counter_dict[conf_key]["page_total"]
-
-            counts = []
-            for key in keys:
-                try:
-                    confval = conf_values[key]
-                except KeyError:
-                    print(f"{key} not found when plotting.")
-                    confval = 0
-                counts.append(round((confval / page_total) * 100.0, 1))
-            rects = ax.bar(
-                x + offset,
-                list(counts),
-                width,
-                label=conf_key,
-            )
-            ax.bar_label(rects, padding=3)
-            multiplier += 1
-
-        # Add some text for labels, title and custom x-axis tick labels, etc.
-        ax.set_ylabel("adoption [%]")
-        ax.set_xticks(x + width, (sk[0] for sk in keys))
-        ax.legend(loc="best", ncol=3)
-        ax.set_ylim(0, 119)
-        plt.title(filename)
-
-        if filename:
-            tikz.save(f"./plots/{filename}.tex", standalone=True)
-        plt.show()
 
     # License
     keys = [("LICENSE", True)]
-    _set_up_plot(keys, f"{plot_prefix}_license")
+    _set_up_plot(keys, f"{plot_prefix}")
 
     # Readme
     keys = [("README", True)]
-    _set_up_plot(keys, f"{plot_prefix}_readme")
+    _set_up_plot(keys, f"{plot_prefix}")
 
     # Python
     keys = [("uses_python", True)]
-    _set_up_plot(keys, f"{plot_prefix}_uses_python")
+    _set_up_plot(keys, f"{plot_prefix}")
 
     # Requirements
     keys = [("requirements.txt", True), ("environment.yml", True), ("uv.lock", True), 
@@ -197,53 +164,54 @@ def structure_and_plot(
 
 if __name__ == "__main__":
     # PLOT ICML stats.
-    file_ids = [f"icml20{year}" for year in range(15, 25)]
-    pids = [f"{year}" for year in range(15, 25)]
-    counter_dict = {}
+    file_ids = [f"icml20{year}" for year in range(16, 25)]
+    pids = [f"{year}" for year in range(16, 25)]
+    icml_counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
         with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
             id_counters = pickle.load(f)
-            counter_dict[pid] = id_counters
+            icml_counter_dict[pid] = id_counters
 
-    structure_and_plot(pids, counter_dict, "icml")
+    structured_icml_dict = re_structure(pids, icml_counter_dict)
 
     # PLOT aistats stats.
     file_ids = [f"aistats20{year}" for year in range(17, 25)]
     pids = [f"{year}" for year in range(17, 25)]
-    counter_dict = {}
+    aistats_counter_dict = {}
     
     for fid, pid in zip(file_ids, pids):
         with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
             id_counters = pickle.load(f)
-            counter_dict[pid] = id_counters
-     
-    structure_and_plot(pids, counter_dict, "aistats")
+            aistats_counter_dict[pid] = id_counters
 
+    structured_aistats_dict = re_structure(pids, aistats_counter_dict)
+     
     # PLOT Neurips stats
-    file_ids = [f"nips20{year}" for year in range(15, 25)]
-    pids = [f"{year}" for year in range(15, 25)]
-    counter_dict = {}
+    file_ids = [f"nips20{year}" for year in range(16, 25)]
+    pids = [f"{year}" for year in range(16, 25)]
+    neurips_counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
         with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
             id_counters = pickle.load(f)
-            counter_dict[pid] = id_counters
+            neurips_counter_dict[pid] = id_counters
 
-    structure_and_plot(pids, counter_dict, "nips")
+    structured_neurips_dict = re_structure(pids, neurips_counter_dict)
+
 
     # PLOT ICLR
-    # file_ids = ["ICLR.cc_2017_conference"] + [f"ICLR.cc_20{year}_Conference" for year in range(18, 26)]
-    # pids = [f"{year}" for year in range(17, 24)] + ["25"]
-    # counter_dict = {}
-    # 
-    # for fid, pid in zip(file_ids, pids):
-    #     with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
-    #         id_counters = pickle.load(f)
-    #         counter_dict[pid] = id_counters
-    # 
-    # structure_and_plot(pids, counter_dict, "ICLR")
+    file_ids = ["ICLR.cc_2017_conference"] + [f"ICLR.cc_20{year}_Conference" for year in range(20, 26)]
+    pids = [f"{year}" for year in range(20, 26)] + ["25"]
+    iclr_counter_dict = {}
+    
+    for fid, pid in zip(file_ids, pids):
+        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
+            id_counters = pickle.load(f)
+            iclr_counter_dict[pid] = id_counters
 
+    structured_iclr_dict = re_structure(pids, iclr_counter_dict)
+    
     # PLOT TMLR
     file_ids = ["tmlr"]
     pids = ["all"]
@@ -254,7 +222,6 @@ if __name__ == "__main__":
             id_counters = pickle.load(f)
             counter_dict[pid] = id_counters
 
-    # structure_and_plot(pids, counter_dict, "TMLR")
     counter_dict = counter_dict["all"]
 
     readme_file_types = [
@@ -298,4 +265,10 @@ if __name__ == "__main__":
     plt.grid()
     plt.show()
 
+    # TODO create line plots.
+    confs = {"icml": structured_icml_dict, "aistats": structured_aistats_dict,
+             "iclr": structured_iclr_dict, "neurips": structured_neurips_dict}
+    counter_dict.keys()
+
+    plot_data(confs, "line_plots")
     pass
