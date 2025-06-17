@@ -113,13 +113,17 @@ def plot_data(data_dict_by_conf, plot_prefix):
                     except KeyError as e:
                         print(f"Key {label} not found, {e}.")
                         dat = 0
-                    data.append(dat/data_dict[label]['page_total'])
+                    data.append((dat/data_dict[label]['page_total'])*100)
                 plt.plot(labels, data, label=conf)
             plt.title(key[0])
             plt.legend()
+            plt.ylim(0, 100)
+            plt.ylabel("adoption [\%]")
+            plt.xlabel("conference year")
             
             if filename:
-                tikz.save(f"./plots/{filename}_{key[0]}.tex", standalone=True)
+                save_key = key[0].replace(".", "_").replace("/", "_")
+                tikz.save(f"./plots/{filename}_{save_key}.tex", standalone=True)
             plt.show()
             plt.clf()
 
