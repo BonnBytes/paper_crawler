@@ -60,10 +60,10 @@ def get_openreview_submissions(venueid: str) -> list[str]:
         # assemble links
         links = []
         for submission in submissions:
-            if "openreview.net" not in submission.content['pdf']:
+            if "openreview.net" not in submission.content["pdf"]:
                 links.append("https://openreview.net" + submission.content["pdf"])
             else:
-                links.append(submission.content['pdf'])
+                links.append(submission.content["pdf"])
         return links
 
 
