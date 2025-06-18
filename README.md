@@ -17,6 +17,7 @@ OPENREVIEW_USERNAME=YOUR_OPENREVIEW_ACCOUNT_NAME
 OPENREVIEW_PASSWORD=YOUR_PASSWORD
 ```
 
+This crawler uses the selenium packet, which in turn requires an installed chrome browser.
 
 ### Reusability
 After cloning and navigating into this repository, you can install the code in this repository via pip.
