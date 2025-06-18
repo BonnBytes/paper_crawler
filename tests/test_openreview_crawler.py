@@ -3,7 +3,7 @@
 import pytest
 from dotenv import load_dotenv
 
-from paper_crawler.crawl_links_openreview import get_openreview_submissions
+from src.paper_crawler.crawl_links_openreview import get_openreview_submissions
 
 
 @pytest.mark.uses_credentials

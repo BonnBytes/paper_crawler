@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 from ._argparse_code import _parse_args
+from .crawl_links_selenium import get_iclr_pdf_2018, get_iclr_pdf_2019
 
 imcl_dict = {
     2024: 235,
@@ -191,6 +192,10 @@ if __name__ == "__main__":
             pdf_soup = get_nips_pdf(int(args.id[4:]))
         elif "aistats" in args.id:
             pdf_soup = get_aistats_pdf(int(args.id[7:]))
+        elif "iclr2018" in args.id:
+            pdf_soup = get_iclr_pdf_2018()
+        elif "iclr2019" in args.id:
+            pdf_soup = get_iclr_pdf_2019()
         else:
             raise ValueError("Unkown conference.")
 

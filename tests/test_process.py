@@ -3,8 +3,8 @@
 # import urllib
 # from bs4 import BeautifulSoup
 
-from paper_crawler.filter_and_download_links import process_repo_link
-from paper_crawler.process_pages import extract_stats
+from src.paper_crawler.filter_and_download_links import process_repo_link
+from src.paper_crawler.process_pages import extract_stats
 
 
 def test_requirements_txt() -> None:

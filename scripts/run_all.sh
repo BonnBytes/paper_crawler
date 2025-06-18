@@ -3,10 +3,17 @@ pip install .
 echo crawling papers from tmlr
 python -m paper_crawler.crawl_tmlr
 
-for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
+for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2017/conference; do
     echo crawling papers from: $iclrconf
     python -m paper_crawler.crawl_links_openreview --id "$iclrconf"
 done
+
+# crawl paper links from iclrs where openreview did not work.
+for iclrconf in iclr2019 iclr2018; do
+    echo crawling papers from: $iclrconf
+    python -m paper_crawler.crawl_links_soup --id "$iclrconf"
+done
+
 
 # crawl paper links
 for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 icml2017 icml2016 icml2015 icml2014; do
@@ -31,10 +38,17 @@ python -m paper_crawler.filter_and_download_links --id tmlr
 
 
 echo looking at links for ICLR
-for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
+for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2017/conference; do
     echo crawling papers from $iclrconf
     python -m paper_crawler.filter_and_download_links --id "$iclrconf"
 done
+
+# iclrs where openreview did not work.
+for iclrconf in iclr2019 iclr2018; do
+    echo crawling papers from: $iclrconf
+    python -m paper_crawler.filter_and_download_links --id "$iclrconf"
+done
+
 
 # filter links and download soup
 for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 icml2017 icml2016 icml2015 icml2014; do
@@ -57,9 +71,14 @@ echo processing pages for tmlr
 python -m paper_crawler.process_pages --id tmlr
 
 echo processing pages for ICLR
-for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2019/Conference ICLR.cc/2018/Conference ICLR.cc/2017/conference; do
+for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2017/conference; do
     echo process_pages from $iclrconf
     python -m src.paper_crawler.process_pages --id "$iclrconf"
+done
+
+for iclrconf in iclr2019 iclr2018; do
+    echo crawling papers from: $iclrconf
+    python -m paper_crawler.process_pages --id "$iclrconf"
 done
 
 # process pages
