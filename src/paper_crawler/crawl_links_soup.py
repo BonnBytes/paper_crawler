@@ -100,38 +100,6 @@ def get_pmlr(url: str) -> list[bs4.element.Tag]:
     return pdf_soup  # type: ignore
 
 
-def process_link(url: str) -> Union[list[str], None]:
-    """Process a given URL to extract and filter GitHub links from a PDF.
-
-    Args:
-        url (str): The URL of the PDF to be processed.
-
-    Returns:
-        list: A list of GitHub links extracted from the PDF.
-          If an error occurs, returns None.
-
-    Raises:
-        ValueError: If no GitHub links are found.
-            Is immediately caught and logged on the console.
-    """
-    try:
-        reader = pdfx.PDFx(url)
-        urls = list(reader.get_references_as_dict()["url"])
-        urls_filter_broken = list(filter(lambda url: "http" in url, urls))
-        urls_filter_github = list(
-            filter(lambda url: "github" in url, urls_filter_broken)
-        )
-        # avoid block
-        if urls_filter_github:
-            github_links = [urllib.parse.urlparse(cl) for cl in urls_filter_github]
-            return github_links
-        else:
-            raise ValueError("No GitHub-Links found.")
-    except Exception as e:
-        tqdm.write(f"{url}, throws {e}")
-        return None
-
-
 def get_nips_pdf(year: int) -> list[str]:
     """Return links to pdfs from the neurips proceedings page.
 
@@ -167,6 +135,48 @@ def get_nips_pdf(year: int) -> list[str]:
     return pdf_links
 
 
+def get_iclr_2016_pdf() -> list[str]:
+    url = "https://www.iclr.cc/archive/www/doku.php%3Fid=iclr2016:accepted-main.html"
+    soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
+    pdf_soup = list(filter(lambda line: "arxiv" in str(line), soup.find_all("a")))
+    filter_soup = list(
+        map(lambda ps: str(ps).split()[2].split('"')[1].replace("abs", "pdf"), pdf_soup)
+    )
+    return filter_soup
+
+
+def process_link(url: str) -> Union[list[str], None]:
+    """Process a given URL to extract and filter GitHub links from a PDF.
+
+    Args:
+        url (str): The URL of the PDF to be processed.
+
+    Returns:
+        list: A list of GitHub links extracted from the PDF.
+          If an error occurs, returns None.
+
+    Raises:
+        ValueError: If no GitHub links are found.
+            Is immediately caught and logged on the console.
+    """
+    try:
+        reader = pdfx.PDFx(url)
+        urls = list(reader.get_references_as_dict()["url"])
+        urls_filter_broken = list(filter(lambda url: "http" in url, urls))
+        urls_filter_github = list(
+            filter(lambda url: "github" in url, urls_filter_broken)
+        )
+        # avoid block
+        if urls_filter_github:
+            github_links = [urllib.parse.urlparse(cl) for cl in urls_filter_github]
+            return github_links
+        else:
+            raise ValueError("No GitHub-Links found.")
+    except Exception as e:
+        tqdm.write(f"{url}, throws {e}")
+        return None
+
+
 if __name__ == "__main__":
     args = _parse_args()
 
@@ -196,6 +206,8 @@ if __name__ == "__main__":
             pdf_soup = get_iclr_pdf_2018()
         elif "iclr2019" in args.id:
             pdf_soup = get_iclr_pdf_2019()
+        elif "iclr2016" in args.id:
+            pdf_soup = get_iclr_2016_pdf()
         else:
             raise ValueError("Unkown conference.")
 

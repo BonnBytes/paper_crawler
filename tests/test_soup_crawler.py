@@ -4,6 +4,7 @@ import urllib
 
 from src.paper_crawler.crawl_links_selenium import get_iclr_pdf_2018, get_iclr_pdf_2019
 from src.paper_crawler.crawl_links_soup import (
+    get_iclr_2016_pdf,
     get_icml_2023_pdf,
     get_icml_2024_pdf,
     get_nips_pdf,
@@ -57,3 +58,9 @@ def test_iclr_pdf_2019() -> None:
 def test_iclr_pdf_2018() -> None:
     pdf_list = get_iclr_pdf_2018()
     assert len(pdf_list) == 337
+
+
+def test_iclr_pdf_2016() -> None:
+    """Check if the soup crawler works for ICLR 2016."""
+    pdf_list = get_iclr_2016_pdf()
+    assert len(pdf_list) == 65 + 15  # 65 poster papers, 15 orals

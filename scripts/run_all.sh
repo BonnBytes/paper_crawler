@@ -9,7 +9,7 @@ for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Con
 done
 
 # crawl paper links from iclrs where openreview did not work.
-for iclrconf in iclr2019 iclr2018; do
+for iclrconf in iclr2019 iclr2018 iclr2016; do
     echo crawling papers from: $iclrconf
     python -m paper_crawler.crawl_links_soup --id "$iclrconf"
 done
@@ -22,7 +22,7 @@ for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 i
 done
 
 # python -m paper_crawler.crawl_links_openreview --id NeurIPS.cc/2024/Conference
-for aistatsconf in aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017 aistats2016 aistats2015 aistats2014; do
+for aistatsconf in aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017; do
     echo crawling papers from: $aistatsconf
     python -m paper_crawler.crawl_links_soup --id "$aistatsconf"
 done
@@ -44,7 +44,7 @@ for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Con
 done
 
 # iclrs where openreview did not work.
-for iclrconf in iclr2019 iclr2018; do
+for iclrconf in iclr2019 iclr2018 iclr2016; do
     echo crawling papers from: $iclrconf
     python -m paper_crawler.filter_and_download_links --id "$iclrconf"
 done
@@ -56,7 +56,7 @@ for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 i
     python -m paper_crawler.filter_and_download_links --id "$icmlconf"
 done
 
-for aistatsconf in aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017 aistats2016 aistats2015 aistats2014; do
+for aistatsconf in aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017; do
     echo looking at links for: $aistatsconf
     python -m paper_crawler.filter_and_download_links --id "$aistatsconf"
 done
@@ -76,7 +76,7 @@ for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Con
     python -m src.paper_crawler.process_pages --id "$iclrconf"
 done
 
-for iclrconf in iclr2019 iclr2018; do
+for iclrconf in iclr2019 iclr2018 iclr2016; do
     echo crawling papers from: $iclrconf
     python -m paper_crawler.process_pages --id "$iclrconf"
 done
@@ -87,7 +87,7 @@ for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 i
     python -m paper_crawler.process_pages --id "$icmlconf"
 done
 
-for aistatsconf in aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017 aistats2016 aistats2015 aistats2014; do
+for aistatsconf in aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017; do
     echo processing pages for: $aistatsconf
     python -m paper_crawler.process_pages --id "$aistatsconf"
 done
