@@ -220,10 +220,10 @@ if __name__ == "__main__":
     structured_neurips_dict = re_structure(pids, neurips_counter_dict)
 
     # PLOT ICLR
-    file_ids = ["ICLR.cc_2017_conference"] + [
+    file_ids = ["ICLR.cc_2017_conference"] + ["iclr2018"] + ["iclr2019"] + [
         f"ICLR.cc_20{year}_Conference" for year in range(20, 26)
     ]
-    pids = [f"{year}" for year in range(20, 26)] + ["25"]
+    pids = [f"{year}" for year in range(17, 26)] + ["25"]
     iclr_counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
