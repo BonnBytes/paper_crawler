@@ -11,7 +11,6 @@ import urllib
 from pathlib import Path
 from typing import Union
 
-import bs4
 import pdfx
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -100,12 +99,12 @@ def get_pmlr(url: str) -> list[str]:
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
     pdf_soup
     links = [
-        list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
-            "="
-        )[-1][1:-1]
+        list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split("=")[-1][
+            1:-1
+        ]
         for pdf_soup_el in pdf_soup
     ]
-    return links  
+    return links
 
 
 def get_nips_pdf(year: int) -> list[str]:
