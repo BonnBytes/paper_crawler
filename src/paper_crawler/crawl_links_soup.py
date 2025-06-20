@@ -49,17 +49,17 @@ aistats_dict = {
 }
 
 
-def get_icml_2024_pdf() -> list[bs4.element.Tag]:
+def get_icml_2024_pdf() -> list[str]:
     """Get all ICML 2024 paper links."""
     return get_icml_pdf(2024)
 
 
-def get_icml_2023_pdf() -> list[bs4.element.Tag]:
+def get_icml_2023_pdf() -> list[str]:
     """Get all ICML 2024 paper links."""
     return get_icml_pdf(2023)
 
 
-def get_icml_pdf(year: int) -> list[bs4.element.Tag]:
+def get_icml_pdf(year: int) -> list[str]:
     """Fetch the PDF links from the PMLR proceedings page.
 
     This function opens the PMLR 2024 proceedings page,
@@ -68,12 +68,12 @@ def get_icml_pdf(year: int) -> list[bs4.element.Tag]:
     their href attribute.
 
     Returns:
-        list: A list of BeautifulSoup tag objects that contain the PDF links.
+        list: A list of urls that contain the PDF links.
     """
     return get_pmlr(f"https://proceedings.mlr.press/v{imcl_dict[year]}/")
 
 
-def get_aistats_pdf(year: int) -> list[bs4.element.Tag]:
+def get_aistats_pdf(year: int) -> list[str]:
     """Fetch the PDF links from the ICML 2024 proceedings page.
 
     This function opens the PMLR 2024 proceedings page,
@@ -82,12 +82,12 @@ def get_aistats_pdf(year: int) -> list[bs4.element.Tag]:
     their href attribute.
 
     Returns:
-        list: A list of BeautifulSoup tag objects that contain the PDF links.
+        list: A list of urls that contain the PDF links.
     """
     return get_pmlr(f"https://proceedings.mlr.press/v{aistats_dict[year]}/")
 
 
-def get_pmlr(url: str) -> list[bs4.element.Tag]:
+def get_pmlr(url: str) -> list[str]:
     """Fetch PDF links from an URL.
 
     Args:
@@ -98,7 +98,14 @@ def get_pmlr(url: str) -> list[bs4.element.Tag]:
     """
     soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
     pdf_soup = list(filter(lambda line: "pdf" in str(line), soup.find_all("a")))
-    return pdf_soup  # type: ignore
+    pdf_soup
+    links = [
+        list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
+            "="
+        )[-1][1:-1]
+        for pdf_soup_el in pdf_soup
+    ]
+    return links  
 
 
 def get_nips_pdf(year: int) -> list[str]:
@@ -113,7 +120,7 @@ def get_nips_pdf(year: int) -> list[str]:
     url_str = f"https://papers.nips.cc/paper_files/paper/{year}"
     soup = BeautifulSoup(urllib.request.urlopen(url_str), "html.parser")
     paper_list = soup.find_all("ul", {"class": "paper-list"})[0]
-    paper_links = paper_list.find_all("a")
+    paper_links = paper_list.find_all("a")  # type: ignore
     process_link = lambda link: str(link).split()[1][6:-1]  # noqa E731
     paper_links = list(map(process_link, paper_links))
     pdf_links = []
@@ -191,12 +198,10 @@ if __name__ == "__main__":
         os.makedirs("./storage/")
 
     save_path = Path(f"./storage/{args.id}.json")
-
     print(f"Checking {save_path}.")
 
     if not save_path.exists():
         print(f"save_path {save_path} does not exist.")
-
         if args.id == "icml2024":
             pdf_soup = get_icml_2024_pdf()
         elif args.id == "icml2023":
@@ -218,19 +223,9 @@ if __name__ == "__main__":
         else:
             raise ValueError("Unkown conference.")
 
-        if type(pdf_soup[0]) is not str:
-            links = [
-                list(filter(lambda s: "href" in s, str(pdf_soup_el).split()))[0].split(
-                    "="
-                )[-1][1:-1]
-                for pdf_soup_el in pdf_soup
-            ]
-        else:
-            links = pdf_soup
-
         # loop through paper links find pdfs
         res = []
-        for steps, current_link in enumerate((bar := tqdm(links))):
+        for steps, current_link in enumerate((bar := tqdm(pdf_soup))):
             bar.set_description(f" {current_link} ")
             res.append(process_link(current_link))
             if steps % 100 == 0:
@@ -238,6 +233,5 @@ if __name__ == "__main__":
                     f.write(json.dumps(res))
         with open(save_path, "w") as f:
             f.write(json.dumps(res))
-
     else:
         print(f"save_path {save_path} exists, exiting.")

@@ -37,7 +37,7 @@ exclude =
     .eggs,
     data.
     src/paper_crawler/__init__.py
-max-line-length = 80
+max-line-length = 95
 max-complexity = 20
 import-order-style = pycharm
 application-import-names =

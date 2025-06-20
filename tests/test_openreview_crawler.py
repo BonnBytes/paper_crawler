@@ -14,6 +14,7 @@ def test_iclr24() -> None:
     links = get_openreview_submissions(venueid)
     assert len(links) == 2260
 
+
 @pytest.mark.uses_credentials
 def test_iclr23() -> None:
     """Check if we got all ICLR23 submissions."""

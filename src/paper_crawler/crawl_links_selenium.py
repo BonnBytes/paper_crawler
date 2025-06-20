@@ -8,15 +8,15 @@ from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 
 
-def _get_links_selenium(fun_url: str) -> list[bs4.element.Tag]:
+def _get_links_selenium(fun_url: str) -> list[bs4.element.PageElement]:
     """Extract pdf-links from openreview using selenium to load the javascript.
 
     Args:
         fun_url (str): The URL of the iclr openreview page to crawl.
 
     Returns:
-        list[bs4.element.Tag]: A list of BeautifulSoup Tag objects representing
-            anchor tags that contain 'pdf-link' in their content.
+        list[bs4.element.PageElement]: A list of BeautifulSoup elemets
+            that contain pdf-links in their content.
 
     """
     chrome_options = Options()
@@ -49,11 +49,11 @@ def get_iclr_pdf_2019() -> list[str]:
 
     # filter strings.
     filter_fun = lambda tag: str(tag).split()[2].split('"')[1]  # noqa: E731
-    all_pdf_links = list(map(filter_fun, all_pdf_links))
+    all_pdf_links_split = list(map(filter_fun, all_pdf_links))
 
     add_trunk = lambda link: "https://openreview.net" + link  # noqa: E731
-    all_pdf_links = list(map(add_trunk, all_pdf_links))
-    return all_pdf_links
+    all_pdf_links_full = list(map(add_trunk, all_pdf_links_split))
+    return all_pdf_links_full
 
 
 def get_iclr_pdf_2018() -> list[str]:
@@ -78,9 +78,12 @@ def get_iclr_pdf_2018() -> list[str]:
 
     page_soup = BeautifulSoup(html, "html.parser")
     divs = page_soup.find("div", {"id": "accepted-oral-papers"})
-    pdf_links_oral = list(
-        filter(lambda line: "pdf-link" in str(line), divs.find_all("a"))
-    )
+    if divs:
+        pdf_links_oral: list[str] = list(
+            filter(lambda line: "pdf-link" in str(line), divs.find_all("a"))  # type: ignore
+        )
+    else:
+        pdf_links_oral = []
 
     url_poster = (
         "https://openreview.net/group?id=ICLR.cc/2018/Conference#accepted-poster-papers"
@@ -95,9 +98,12 @@ def get_iclr_pdf_2018() -> list[str]:
 
     page_soup = BeautifulSoup(html, "html.parser")
     divs = page_soup.find("div", {"id": "accepted-poster-papers"})
-    pdf_links_poster = list(
-        filter(lambda line: "pdf-link" in str(line), divs.find_all("a"))
-    )
+    if divs:
+        pdf_links_poster: list[str] = list(
+            filter(lambda line: "pdf-link" in str(line), divs.find_all("a"))  # type: ignore
+        )
+    else:
+        pdf_links_poster = []
 
     all_pdf_links = pdf_links_poster + pdf_links_oral
     # filter strings.

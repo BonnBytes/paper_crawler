@@ -12,8 +12,8 @@ if __name__ == "__main__":
     github_links = list(
         filter(lambda link: "github" in str(link), tmlr_soup.find_all("a"))
     )
-    github_links = list(map(lambda link: str(link).split('"')[1], github_links))
-    github_links_parsed = [[urllib.parse.urlparse(cl)] for cl in github_links]
+    github_links_str = list(map(lambda link: str(link).split('"')[1], github_links))
+    github_links_parsed = [[urllib.parse.urlparse(cl)] for cl in github_links_str]
 
     with open("./storage/tmlr.json", "w") as file:
         file.write(json.dumps(github_links_parsed))

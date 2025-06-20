@@ -8,11 +8,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tikzplotlib as tikz
 
-np.Inf = np.inf
-np.float_ = np.float64
+# tikzplotlib backwards compatability
+# we need to load an old version of matplotlib.
+# https://github.com/nschloe/tikzplotlib/issues/605
+np.Inf = np.inf  # type: ignore
+np.float_ = np.float64  # type: ignore
 
 
-def re_structure(pids: list[str], counter_dict: dict[str, dict[str, Any]]) -> None:
+def re_structure(
+    pids: list[str], counter_dict: dict[str, dict[str, Any]]
+) -> dict[str, Any]:
     """Restructure counter dictionaries remove the top layer.
 
     Args:
@@ -89,12 +94,12 @@ def re_structure(pids: list[str], counter_dict: dict[str, dict[str, Any]]) -> No
         ) + data_dict_by_conf[conf_key].pop(("tests", True), 0)
         data_dict_by_conf[conf_key][("test-folder", True)] = testfolderval
 
-        data_dict_by_conf[conf_key]["page_total"] = counter_dict[conf_key]["page_total"]
+        data_dict_by_conf[conf_key]["page_total"] = counter_dict[conf_key]["page_total"]  # type: ignore
 
     return data_dict_by_conf
 
 
-def plot_data(data_dict_by_conf, plot_prefix):
+def plot_data(data_dict_by_conf: dict[str, Any], plot_prefix: str) -> None:
     """Generate and display multiple plots showing adoption rates.
 
     data_dict_by_conf (dict):
