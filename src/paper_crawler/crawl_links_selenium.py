@@ -97,3 +97,4 @@ def get_iclr_pdf_2018() -> list[str]:
     all_pdf_links = list(map(add_trunk, all_pdf_links))
 
     return all_pdf_links
+

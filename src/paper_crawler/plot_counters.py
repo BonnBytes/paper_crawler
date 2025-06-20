@@ -185,8 +185,8 @@ def plot_data(data_dict_by_conf, plot_prefix):
 
 if __name__ == "__main__":
     # PLOT ICML stats.
-    file_ids = [f"icml20{year}" for year in range(16, 25)]
-    pids = [f"{year}" for year in range(16, 25)]
+    file_ids = [f"icml20{year}" for year in range(16, 25)] + ["ICML.cc_2025_Conference"]
+    pids = [f"{year}" for year in range(16, 26)]
     icml_counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
@@ -197,8 +197,8 @@ if __name__ == "__main__":
     structured_icml_dict = re_structure(pids, icml_counter_dict)
 
     # PLOT aistats stats.
-    file_ids = [f"aistats20{year}" for year in range(17, 25)]
-    pids = [f"{year}" for year in range(17, 25)]
+    file_ids = [f"aistats20{year}" for year in range(17, 26)]
+    pids = [f"{year}" for year in range(17, 26)]
     aistats_counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
