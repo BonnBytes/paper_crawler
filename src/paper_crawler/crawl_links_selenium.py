@@ -1,3 +1,5 @@
+"""This module extracts PDF links for ICLR papers using Selenium and BeautifulSoup."""
+
 import time
 
 import bs4
@@ -7,6 +9,16 @@ from selenium.webdriver.chrome.options import Options
 
 
 def _get_links_selenium(fun_url: str) -> list[bs4.element.Tag]:
+    """Extract pdf-links from openreview using selenium to load the javascript.
+
+    Args:
+        fun_url (str): The URL of the iclr openreview page to crawl.
+
+    Returns:
+        list[bs4.element.Tag]: A list of BeautifulSoup Tag objects representing
+            anchor tags that contain 'pdf-link' in their content.
+
+    """
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Opens the browser up in background
     # fix for ubuntu https://github.com/SeleniumHQ/selenium/issues/15327
@@ -28,7 +40,6 @@ def _get_links_selenium(fun_url: str) -> list[bs4.element.Tag]:
 
 def get_iclr_pdf_2019() -> list[str]:
     """Get ICLR 2019 PDFs."""
-
     url = "https://openreview.net/group?id=ICLR.cc/2019/Conference#poster-presentations"
     pdf_links = _get_links_selenium(url)
     url = "https://openreview.net/group?id=ICLR.cc/2019/Conference#oral-presentations"
@@ -37,20 +48,20 @@ def get_iclr_pdf_2019() -> list[str]:
     all_pdf_links = pdf_links + pdf_links_oral
 
     # filter strings.
-    filter_fun = lambda tag: str(tag).split()[2].split('"')[1]
+    filter_fun = lambda tag: str(tag).split()[2].split('"')[1]  # noqa: E731
     all_pdf_links = list(map(filter_fun, all_pdf_links))
 
-    add_trunk = lambda link: "https://openreview.net" + link
+    add_trunk = lambda link: "https://openreview.net" + link  # noqa: E731
     all_pdf_links = list(map(add_trunk, all_pdf_links))
-
     return all_pdf_links
 
 
 def get_iclr_pdf_2018() -> list[str]:
-    """Get ICLR 2018 PDFs. 2018 somehow as all submissions in the html???
+    """Get ICLR 2018 PDFs.
+
+    2018 somehow as all submissions in the html???
     We need to filter by div.
     """
-
     url_oral = (
         "https://openreview.net/group?id=ICLR.cc/2018/Conference#accepted-oral-papers"
     )
@@ -90,11 +101,10 @@ def get_iclr_pdf_2018() -> list[str]:
 
     all_pdf_links = pdf_links_poster + pdf_links_oral
     # filter strings.
-    filter_fun = lambda tag: str(tag).split()[2].split('"')[1]
+    filter_fun = lambda tag: str(tag).split()[2].split('"')[1]  # noqa: E731
     all_pdf_links = list(map(filter_fun, all_pdf_links))
 
-    add_trunk = lambda link: "https://openreview.net" + link
+    add_trunk = lambda link: "https://openreview.net" + link  # noqa: E731
     all_pdf_links = list(map(add_trunk, all_pdf_links))
 
     return all_pdf_links
-

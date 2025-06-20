@@ -125,7 +125,7 @@ def plot_data(data_dict_by_conf, plot_prefix):
                         print(f"Key {label} not found, {e}.")
                         dat = 0
                     data.append((dat / data_dict[label]["page_total"]) * 100)
-                plt.plot(labels, data, label=conf)
+                plt.plot(labels, data, ".-", label=conf)
             plt.title(key[0])
             plt.legend()
             # plt.ylim(0, 105)
@@ -185,8 +185,8 @@ def plot_data(data_dict_by_conf, plot_prefix):
 
 if __name__ == "__main__":
     # PLOT ICML stats.
-    file_ids = [f"icml20{year}" for year in range(16, 25)] + ["ICML.cc_2025_Conference"]
-    pids = [f"{year}" for year in range(16, 26)]
+    file_ids = [f"icml20{year}" for year in range(17, 25)] + ["ICML.cc_2025_Conference"]
+    pids = [f"{year}" for year in range(17, 26)]
     icml_counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
@@ -209,8 +209,8 @@ if __name__ == "__main__":
     structured_aistats_dict = re_structure(pids, aistats_counter_dict)
 
     # PLOT Neurips stats
-    file_ids = [f"nips20{year}" for year in range(16, 25)]
-    pids = [f"{year}" for year in range(16, 25)]
+    file_ids = [f"nips20{year}" for year in range(17, 25)]
+    pids = [f"{year}" for year in range(17, 25)]
     neurips_counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):
@@ -221,10 +221,14 @@ if __name__ == "__main__":
     structured_neurips_dict = re_structure(pids, neurips_counter_dict)
 
     # PLOT ICLR
-    file_ids = ["iclr2016"] + ["ICLR.cc_2017_conference"] + ["iclr2018"] + ["iclr2019"] + [
-        f"ICLR.cc_20{year}_Conference" for year in range(20, 26)
-    ]
-    pids = [f"{year}" for year in range(16, 26)] + ["25"]
+    file_ids = (
+        ["iclr2016"]
+        + ["ICLR.cc_2017_conference"]
+        + ["iclr2018"]
+        + ["iclr2019"]
+        + [f"ICLR.cc_20{year}_Conference" for year in range(20, 26)]
+    )
+    pids = [f"{year}" for year in range(17, 26)] + ["25"]
     iclr_counter_dict = {}
 
     for fid, pid in zip(file_ids, pids):

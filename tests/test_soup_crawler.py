@@ -56,6 +56,7 @@ def test_iclr_pdf_2019() -> None:
 
 
 def test_iclr_pdf_2018() -> None:
+    """Check if the crawler works for ICLR 2018."""
     pdf_list = get_iclr_pdf_2018()
     assert len(pdf_list) == 337
 

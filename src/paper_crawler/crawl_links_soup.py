@@ -137,6 +137,12 @@ def get_nips_pdf(year: int) -> list[str]:
 
 
 def get_iclr_2016_pdf() -> list[str]:
+    """Fetch the list of PDF URLs for accepted papers at ICLR 2016.
+
+    Returns:
+        list[str]: A list of strings, each representing the direct URL
+            to a PDF of an accepted paper.
+    """
     url = "https://www.iclr.cc/archive/www/doku.php%3Fid=iclr2016:accepted-main.html"
     soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
     pdf_soup = list(filter(lambda line: "arxiv" in str(line), soup.find_all("a")))
