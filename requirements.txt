@@ -47,9 +47,9 @@ pypdf==5.1.0
 pytest @ file:///home/conda/feedstock_root/build_artifacts/pytest_1733217473289/work
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
-requests==2.32.3
+requests==2.32.4
 scipy==1.15.1
-setuptools==75.8.0
+setuptools==78.1.1
 six==1.17.0
 sortedcontainers==2.4.0
 soupsieve==2.6

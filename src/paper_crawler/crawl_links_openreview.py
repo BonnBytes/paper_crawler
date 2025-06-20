@@ -8,6 +8,7 @@ from pathlib import Path
 import openreview
 from dotenv import load_dotenv
 from tqdm import tqdm
+import time
 
 from ._argparse_code import _parse_args
 from .crawl_links_soup import process_link
@@ -113,3 +114,4 @@ if __name__ == "__main__":
             print(f"An error occured, {e}.")
     else:
         print(f"Path {path} exists, exiting.")
+
