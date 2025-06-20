@@ -65,7 +65,18 @@ def extract_stats(
     interesting_files = [
         "requirements.txt",
         "noxfile.py",
+        "LICENSE.txt",
+        "license.txt",
+        "License.txt",
         "LICENSE",
+        "License",
+        "license",
+        "COPYING",
+        "copying",
+        "Copying",
+        "COPYING.txt",
+        "copying.txt",
+        "Copying.txt",
         "README.md",
         "readme.md",
         "Readme.md",
@@ -87,7 +98,8 @@ def extract_stats(
         "pixi.toml",
         "Pipfile.lock",
     ]
-    interesting_folders = ["test", "tests", ".github/workflows"]
+    interesting_folders = ["test", "tests", ".github/workflows", ".github",
+                           "doc", "docs"]
 
     result_dict: dict[str, Any] = {}
     result_dict["files"] = {}
