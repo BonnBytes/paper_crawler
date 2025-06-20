@@ -17,6 +17,7 @@ OPENREVIEW_USERNAME=YOUR_OPENREVIEW_ACCOUNT_NAME
 OPENREVIEW_PASSWORD=YOUR_PASSWORD
 ```
 
+This crawler uses the selenium packet, which in turn requires an installed chrome browser.
 
 ### Reusability
 After cloning and navigating into this repository, you can install the code in this repository via pip.
@@ -31,6 +32,15 @@ To aggregate the statistical data we used for the paper, run the command below.
 ``` bash
 ./run_all.sh
 ```
+
+### Run the tests
+Set up a dotenv with your openreview account credentials. Make sure you set the
+`OPENREVIEW_USERNAME` and `OPENREVIEW_PASSWORD` variables correctly. To run the tests type
+``` bash
+nox -s test
+```
+into the console.
+
 
 ### Funding
 

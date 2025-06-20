@@ -32,7 +32,8 @@ dependencies = [
     "openreview-py",
     "pdfx",
     "beautifulsoup4",
-    "python-dotenv"
+    "python-dotenv",
+    "selenium"
 ]
 
 [project.optional-dependencies]
@@ -44,14 +45,11 @@ dev = [
 ]
 
 
-
 [project.urls]
 homepage = "https://github.com/v0lta/position_we_need_more_tests_in_ml"
 download = "https://github.com/v0lta/position_we_need_more_tests_in_ml/releases"
 bug-tracker = "https://github.com/v0lta/position_we_need_more_tests_in_ml/issues"
 source = "https://github.com/v0lta/position_we_need_more_tests_in_ml"
-
-
 
 
 [tool.setuptools.packages.find]
