@@ -2,8 +2,8 @@
 
 import urllib
 
-from src.paper_crawler.crawl_links_selenium import get_iclr_pdf_2018, get_iclr_pdf_2019
-from src.paper_crawler.crawl_links_soup import (
+from paper_crawler.crawl_links_selenium import get_iclr_pdf_2018, get_iclr_pdf_2019
+from paper_crawler.crawl_links_soup import (
     get_iclr_2016_pdf,
     get_icml_2023_pdf,
     get_icml_2024_pdf,
