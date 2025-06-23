@@ -3,8 +3,8 @@
 # import urllib
 # from bs4 import BeautifulSoup
 
-from paper_crawler.filter_and_download_links import process_repo_link
-from paper_crawler.process_pages import extract_stats
+from src.paper_crawler.filter_and_download_links import process_repo_link
+from src.paper_crawler.process_pages import extract_stats
 
 
 def test_requirements_txt() -> None:
@@ -110,3 +110,13 @@ def test_little_python() -> None:
     assert stats["files"]["Readme.rst"] is False
     assert stats["folders"]["test"] is False
     assert stats["folders"]["tests"] is False
+
+
+def test_nested_test_folder_src() -> None:
+    """Make sure we find nested tests."""
+    test_in_src_url = "https://github.com/bd2kccd/causal-compare"
+    loaded_test_in_src = process_repo_link(test_in_src_url)
+    stats_in_src = extract_stats(loaded_test_in_src)
+    assert stats_in_src["folders"]["test"] is False
+    assert stats_in_src["folders"]["test"] is False
+    assert stats_in_src["folders"]["src/test"] is True
