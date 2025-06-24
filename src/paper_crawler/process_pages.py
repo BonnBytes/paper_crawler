@@ -14,13 +14,12 @@ from tqdm import tqdm
 from ._argparse_code import _parse_args
 
 
-def _get_files_and_folders(soup: bs4.BeautifulSoup) -> list[list[str], list[str]]:
+def _get_files_and_folders(
+    soup: bs4.BeautifulSoup,
+) -> tuple[list[str], list[str], list[bs4.element.Tag]]:
     # filter language, find spans first
     folders_and_files = list(
-        filter(
-            lambda table: "folders-and-files" in str(table),
-            soup.find_all("table"),
-        )
+        filter(lambda table: "folders-and-files" in str(table), soup.find_all("table"))
     )[0]
     cells: list[bs4.element.Tag] = list(
         filter(
@@ -129,8 +128,23 @@ def extract_stats(
         result_dict["python"]["uses_python"] = True
 
     def _get_sub_soup(folder: str) -> bs4.BeautifulSoup:
+        cell_tuples = [(cell, cell) for cell in cells]
+        labels_and_cells = [
+            (
+                list(filter(lambda str_el: "label" in str_el, str(tcell[0]).split()))[
+                    0
+                ],
+                tcell[1],
+            )
+            for tcell in cell_tuples
+        ]
+        pass
         folder_link = (
-            str(list(filter(lambda c: folder in str(c), cells))[0].find_all("a")[0])
+            str(
+                list(filter(lambda lc: folder in str(lc[0]), labels_and_cells))[0][
+                    1
+                ].find_all("a")[0]
+            )
             .split("href")[1]
             .split()[0]
             .split('"')[1]
@@ -164,7 +178,18 @@ def extract_stats(
                 if "tests" in src_folders:
                     result_dict["folders"]["src/tests"] = True
             except Exception as e:
-                print(f"src folder not found, {e}")
+                print(f"src folder not found, {e}.")
+        else:
+            try:
+                packet_name = link.split("/")[-1]
+                src_soup = _get_sub_soup(packet_name)
+                src_folders, _, _ = _get_files_and_folders(src_soup)
+                if "test" in src_folders:
+                    result_dict["folders"]["package/test"] = True
+                if "tests" in src_folders:
+                    result_dict["folders"]["package/tests"] = True
+            except Exception as e:
+                print(f"package folder not found, {e}.")
 
     return result_dict
 

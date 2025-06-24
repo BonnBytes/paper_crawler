@@ -9,13 +9,14 @@ tmlr_link = "https://jmlr.org/tmlr/papers/"
 mloss_link = "https://jmlr.org/mloss/"
 
 
-def _parse_links(url: str) -> list[list[str]]:
+def _parse_links(url: str) -> list[list[urllib.parse.ParseResult]]:
     tmlr_soup = BeautifulSoup(urllib.request.urlopen(url), "html.parser")
     github_links = list(
         filter(lambda link: "github" in str(link), tmlr_soup.find_all("a"))
     )
-    github_links = list(map(lambda link: str(link).split('"')[1], github_links))
-    github_links_parsed = [[urllib.parse.urlparse(cl)] for cl in github_links]
+    github_link_strings = [str(github_link) for github_link in github_links]
+    github_links_split = list(map(lambda link: link.split('"')[1], github_link_strings))
+    github_links_parsed = [[urllib.parse.urlparse(cl)] for cl in github_links_split]
     return github_links_parsed
 
 
