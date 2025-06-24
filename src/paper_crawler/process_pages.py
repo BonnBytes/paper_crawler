@@ -210,10 +210,9 @@ if __name__ == "__main__":
         error_counter = 0
         problems = []
         for paper_soup_and_link in (bar := tqdm(paper_pages)):
-            if paper_soup_and_link[1]:
-                bar.set_description(f" {paper_soup_and_link[1]} ")
             # folders and files exists once per page.
             try:
+                bar.set_description(f" {paper_soup_and_link[1]} ")
                 results.append(extract_stats(paper_soup_and_link))
             except Exception as e:
                 #     # print(f"Error: {e}")
