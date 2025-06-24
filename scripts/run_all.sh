@@ -14,7 +14,6 @@ for iclrconf in iclr2019 iclr2018 iclr2016; do
     python -m paper_crawler.crawl_links_soup --id "$iclrconf"
 done
 
-
 # crawl paper links
 for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 icml2017 icml2016 icml2015 icml2014; do
     echo crawling papers from: $icmlconf

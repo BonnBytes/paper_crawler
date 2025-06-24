@@ -1,10 +1,10 @@
 """This module allows parsing the github pages. It extracts file and folder names."""
 
-import pickle
-import time
 from collections import Counter
 from pathlib import Path
 from typing import Any
+import pickle
+import time
 
 import bs4
 from selenium.webdriver import Chrome
@@ -27,7 +27,6 @@ def _get_files_and_folders(
             folders_and_files.find_all("td"),  # type: ignore
         )
     )
-
     folders = []
     files = []
     for cell in cells:
