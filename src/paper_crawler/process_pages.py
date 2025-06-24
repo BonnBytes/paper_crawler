@@ -159,7 +159,7 @@ def extract_stats(
 
         with Chrome(options=chrome_options) as browser:
             browser.get(folder_link)
-            time.sleep(5)
+            time.sleep(4)
             html = browser.page_source
 
         folder_soup = bs4.BeautifulSoup(html, "html.parser")
@@ -177,8 +177,9 @@ def extract_stats(
                     result_dict["folders"]["src/test"] = True
                 if "tests" in src_folders:
                     result_dict["folders"]["src/tests"] = True
-            except Exception as e:
-                print(f"src folder not found, {e}.")
+            except Exception as _:
+                # print(f"src folder not found, {e}.")
+                pass
         else:
             try:
                 packet_name = link.split("/")[-1]
@@ -188,9 +189,9 @@ def extract_stats(
                     result_dict["folders"]["package/test"] = True
                 if "tests" in src_folders:
                     result_dict["folders"]["package/tests"] = True
-            except Exception as e:
-                print(f"package folder not found, {e}.")
-
+            except Exception as _:
+                # print(f"package folder {packet_name}, not found, {e}.")
+                pass
     return result_dict
 
 
@@ -208,7 +209,9 @@ if __name__ == "__main__":
 
         error_counter = 0
         problems = []
-        for paper_soup_and_link in tqdm(paper_pages):
+        for paper_soup_and_link in (bar := tqdm(paper_pages)):
+            if paper_soup_and_link[1]:
+                bar.set_description(f" {paper_soup_and_link[1]} ")
             # folders and files exists once per page.
             try:
                 results.append(extract_stats(paper_soup_and_link))
