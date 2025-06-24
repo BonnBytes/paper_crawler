@@ -177,7 +177,7 @@ def extract_stats(
                     result_dict["folders"]["src/test"] = True
                 if "tests" in src_folders:
                     result_dict["folders"]["src/tests"] = True
-            except Exception as _:
+            except Exception:
                 # print(f"src folder not found, {e}.")
                 pass
         else:
@@ -189,7 +189,7 @@ def extract_stats(
                     result_dict["folders"]["package/test"] = True
                 if "tests" in src_folders:
                     result_dict["folders"]["package/tests"] = True
-            except Exception as _:
+            except Exception:
                 # print(f"package folder {packet_name}, not found, {e}.")
                 pass
     return result_dict
