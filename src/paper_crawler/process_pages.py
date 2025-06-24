@@ -1,14 +1,41 @@
 """This module allows parsing the github pages. It extracts file and folder names."""
 
 import pickle
+import time
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
 import bs4
+from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.options import Options
 from tqdm import tqdm
 
 from ._argparse_code import _parse_args
+
+
+def _get_files_and_folders(
+    soup: bs4.BeautifulSoup,
+) -> tuple[list[str], list[str], list[bs4.element.Tag]]:
+    # filter language, find spans first
+    folders_and_files = list(
+        filter(lambda table: "folders-and-files" in str(table), soup.find_all("table"))
+    )[0]
+    cells: list[bs4.element.Tag] = list(
+        filter(
+            lambda td: "row-name-cell" in str(td),  # type: ignore
+            folders_and_files.find_all("td"),  # type: ignore
+        )
+    )
+
+    folders = []
+    files = []
+    for cell in cells:
+        if "icon-directory" in str(cell):
+            folders.append(cell.text)
+        else:
+            files.append(cell.text)
+    return folders, files, cells
 
 
 def extract_stats(
@@ -31,9 +58,8 @@ def extract_stats(
                 and a boolean value indicating if Python is mentioned on the page.
     """
     # Second position is the page link, use for debugging.
-    soup, _ = paper_soup_and_link
+    soup, link = paper_soup_and_link
 
-    # filter language, find spans first
     python_span = list(
         filter(
             lambda span: "Python" in str(span),
@@ -41,31 +67,23 @@ def extract_stats(
         )
     )
 
-    folders_and_files = list(
-        filter(
-            lambda table: "folders-and-files" in str(table),
-            soup.find_all("table"),
-        )
-    )[0]
-    cells: list[bs4.element.Tag] = list(
-        filter(
-            lambda td: "row-name-cell" in str(td),  # type: ignore
-            folders_and_files.find_all("td"),  # type: ignore
-        )
-    )
-
-    folders = []
-    files = []
-    for cell in cells:
-        if "icon-directory" in str(cell):
-            folders.append(cell.text)
-        else:
-            files.append(cell.text)
+    folders, files, cells = _get_files_and_folders(soup)
 
     interesting_files = [
         "requirements.txt",
         "noxfile.py",
+        "LICENSE.txt",
+        "license.txt",
+        "License.txt",
         "LICENSE",
+        "License",
+        "license",
+        "COPYING",
+        "copying",
+        "Copying",
+        "COPYING.txt",
+        "copying.txt",
+        "Copying.txt",
         "README.md",
         "readme.md",
         "Readme.md",
@@ -87,7 +105,15 @@ def extract_stats(
         "pixi.toml",
         "Pipfile.lock",
     ]
-    interesting_folders = ["test", "tests", ".github/workflows"]
+    interesting_folders = [
+        "test",
+        "tests",
+        ".github/workflows",
+        ".github",
+        "doc",
+        "docs",
+        "src",
+    ]
 
     result_dict: dict[str, Any] = {}
     result_dict["files"] = {}
@@ -101,6 +127,71 @@ def extract_stats(
     if python_span:
         result_dict["python"]["uses_python"] = True
 
+    def _get_sub_soup(folder: str) -> bs4.BeautifulSoup:
+        cell_tuples = [(cell, cell) for cell in cells]
+        labels_and_cells = [
+            (
+                list(filter(lambda str_el: "label" in str_el, str(tcell[0]).split()))[
+                    0
+                ],
+                tcell[1],
+            )
+            for tcell in cell_tuples
+        ]
+        pass
+        folder_link = (
+            str(
+                list(filter(lambda lc: folder in str(lc[0]), labels_and_cells))[0][
+                    1
+                ].find_all("a")[0]
+            )
+            .split("href")[1]
+            .split()[0]
+            .split('"')[1]
+        )
+        folder_link = "https://github.com" + folder_link
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # Opens the browser up in background
+        # fix for ubuntu https://github.com/SeleniumHQ/selenium/issues/15327
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        # chrome_options.add_argument(f"--user-data-dir=./tmp_{time.time()}")
+
+        with Chrome(options=chrome_options) as browser:
+            browser.get(folder_link)
+            time.sleep(4)
+            html = browser.page_source
+
+        folder_soup = bs4.BeautifulSoup(html, "html.parser")
+        return folder_soup
+
+    # see if we found tests, if not look for nested tests.
+    tests_found = result_dict["folders"]["tests"] or result_dict["folders"]["test"]
+    if not tests_found:
+        if result_dict["folders"]["src"]:
+            # beautiful soup into src and looks for test or tests.
+            try:
+                src_soup = _get_sub_soup("src")
+                src_folders, _, _ = _get_files_and_folders(src_soup)
+                if "test" in src_folders:
+                    result_dict["folders"]["src/test"] = True
+                if "tests" in src_folders:
+                    result_dict["folders"]["src/tests"] = True
+            except Exception:
+                # print(f"src folder not found, {e}.")
+                pass
+        else:
+            try:
+                packet_name = link.split("/")[-1]
+                src_soup = _get_sub_soup(packet_name)
+                src_folders, _, _ = _get_files_and_folders(src_soup)
+                if "test" in src_folders:
+                    result_dict["folders"]["package/test"] = True
+                if "tests" in src_folders:
+                    result_dict["folders"]["package/tests"] = True
+            except Exception:
+                # print(f"package folder {packet_name}, not found, {e}.")
+                pass
     return result_dict
 
 
@@ -118,9 +209,10 @@ if __name__ == "__main__":
 
         error_counter = 0
         problems = []
-        for paper_soup_and_link in tqdm(paper_pages):
+        for paper_soup_and_link in (bar := tqdm(paper_pages)):
             # folders and files exists once per page.
             try:
+                bar.set_description(f" {paper_soup_and_link[1]} ")
                 results.append(extract_stats(paper_soup_and_link))
             except Exception as e:
                 #     # print(f"Error: {e}")
