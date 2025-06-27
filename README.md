@@ -17,7 +17,7 @@ OPENREVIEW_USERNAME=YOUR_OPENREVIEW_ACCOUNT_NAME
 OPENREVIEW_PASSWORD=YOUR_PASSWORD
 ```
 
-This crawler uses the selenium packet, which in turn requires an installed chrome browser.
+This crawler utilizes the Selenium package, which in turn requires an installed version of the Chrome browser.
 
 ### Reusability
 After cloning and navigating into this repository, you can install the code in this repository via pip.
@@ -34,14 +34,24 @@ To aggregate the statistical data we used for the paper, run the command below.
 ```
 
 ### Run the tests
-Set up a dotenv with your openreview account credentials. Make sure you set the
-`OPENREVIEW_USERNAME` and `OPENREVIEW_PASSWORD` variables correctly. To run the tests type
+Set up a dotenv with your OpenReview account credentials. Make sure you set the
+`OPENREVIEW_USERNAME` and `OPENREVIEW_PASSWORD` variables are set correctly. To run the tests, type
 ``` bash
 nox -s test
 ```
 into the console.
 
 
+
+
+
 ### Funding
 
 The Bundesministerium für Bildung und Forschung (BMBF) supported research through its "BNTrAInee" (16DHBK1022) and "WestAI" (01IS22094A) projects. 
+The sole responsibility for the content of the paper and this corresponding code lies with the authors.
+<table>
+<tr>
+    <td><img src="https://github.com/Machine-Learning-Foundations/.github/blob/main/profile/img/nrw-logo.png" height="150"></td>
+    <td><img src="https://github.com/Machine-Learning-Foundations/.github/blob/main/profile/img/BMBF_gefoerdert_2017_en.jpg" height="150"></td>
+</tr>
+</table>
