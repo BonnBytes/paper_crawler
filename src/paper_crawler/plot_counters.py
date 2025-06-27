@@ -169,6 +169,7 @@ def plot_data(data_dict_by_conf: dict[str, Any], plot_prefix: str) -> None:
 
     # packaging
     keys = [
+        ("src", True),
         ("setup.py", True),
         ("setup.cfg", True),
         ("pyproject.toml", True),
@@ -279,7 +280,8 @@ if __name__ == "__main__":
         ]
     )
     test_folder = sum(
-        [counter_dict["folders"][(deb, True)] for deb in ["test", "tests"]]
+        [counter_dict["folders"][(deb, True)] for deb in ["test", "tests", "package/test",
+                                                           "package/tests", "src/test", "src/tests"]]
     )
 
     plt.bar(
@@ -296,7 +298,6 @@ if __name__ == "__main__":
     plt.grid()
     plt.show()
 
-    # TODO create line plots.
     confs = {
         "icml": structured_icml_dict,
         "aistats": structured_aistats_dict,
