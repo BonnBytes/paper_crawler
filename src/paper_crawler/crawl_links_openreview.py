@@ -68,8 +68,9 @@ def get_openreview_submissions(venueid: str) -> list[str]:
 
 
 if __name__ == "__main__":
-    load_dotenv()
+    dotenv = load_dotenv()
     args = _parse_args()
+    print(f"dotenv loaded: {dotenv}.")
     storage_id = "_".join(args.id.split("/"))
     storage_file = f"./storage/{storage_id}.json"
     venueid = args.id
