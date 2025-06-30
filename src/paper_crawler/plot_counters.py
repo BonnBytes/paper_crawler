@@ -251,7 +251,7 @@ if __name__ == "__main__":
 
     # PLOT TMLR
 
-    def _bar_plots(conf):
+    def _bar_plots(conf: str) -> None:
         file_ids = [conf]
         pids = ["all"]
         counter_dict = {}
