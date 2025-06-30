@@ -1,10 +1,10 @@
 """This module allows parsing the github pages. It extracts file and folder names."""
 
+import pickle
+import time
 from collections import Counter
 from pathlib import Path
 from typing import Any
-import pickle
-import time
 
 import bs4
 from selenium.webdriver import Chrome

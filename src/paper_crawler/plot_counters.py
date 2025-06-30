@@ -89,9 +89,14 @@ def re_structure(
         data_dict_by_conf[conf_key][("README", True)] = rmdval
 
         # merge tests and test folder
-        testfolderval = data_dict_by_conf[conf_key].pop(
-            ("test", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("tests", True), 0)
+        testfolderval = (
+            data_dict_by_conf[conf_key].pop(("test", True), 0)
+            + data_dict_by_conf[conf_key].pop(("tests", True), 0)
+            + data_dict_by_conf[conf_key].pop(("src/test", True), 0)
+            + data_dict_by_conf[conf_key].pop(("src/tests", True), 0)
+            + data_dict_by_conf[conf_key].pop(("package/test", True), 0)
+            + data_dict_by_conf[conf_key].pop(("package/tests", True), 0)
+        )
         data_dict_by_conf[conf_key][("test-folder", True)] = testfolderval
 
         data_dict_by_conf[conf_key]["page_total"] = counter_dict[conf_key]["page_total"]  # type: ignore
@@ -245,58 +250,89 @@ if __name__ == "__main__":
     structured_iclr_dict = re_structure(pids, iclr_counter_dict)
 
     # PLOT TMLR
-    file_ids = ["tmlr"]
-    pids = ["all"]
-    counter_dict = {}
 
-    for fid, pid in zip(file_ids, pids):
-        with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
-            id_counters = pickle.load(f)
-            counter_dict[pid] = id_counters
+    def _bar_plots(conf):
+        file_ids = [conf]
+        pids = ["all"]
+        counter_dict = {}
 
-    counter_dict = counter_dict["all"]
+        for fid, pid in zip(file_ids, pids):
+            with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
+                id_counters = pickle.load(f)
+                counter_dict[pid] = id_counters
 
-    readme_file_types = [
-        "README.md",
-        "Readme.md",
-        "readme.md",
-        "README.rst",
-        "Readme.rst",
-        "readme.rst",
-    ]
-    readmecout = sum([counter_dict["files"][(rmd, True)] for rmd in readme_file_types])
-    file_total = counter_dict["page_total"]
+        counter_dict = counter_dict["all"]
 
-    dependencies_counter = sum(
-        [
-            counter_dict["files"][(deb, True)]
-            for deb in ["requirements.txt", "environment.yml", "uv.lock"]
+        readme_file_types = [
+            "README.md",
+            "Readme.md",
+            "readme.md",
+            "README.rst",
+            "Readme.rst",
+            "readme.rst",
         ]
-    )
-    packaged_counter = sum(
-        [
-            counter_dict["files"][(deb, True)]
-            for deb in ["setup.py", "setup.cfg", "pyproject.toml", "hatch.toml"]
-        ]
-    )
-    test_folder = sum(
-        [counter_dict["folders"][(deb, True)] for deb in ["test", "tests", "package/test",
-                                                           "package/tests", "src/test", "src/tests"]]
-    )
+        readmecount = sum(
+            [counter_dict["files"][(rmd, True)] for rmd in readme_file_types]
+        )
+        file_total = counter_dict["page_total"]
 
-    plt.bar(
-        ["README", "python", "LICENSE", "dependencies", "packaged", "test-folder"],
-        [
-            round(readmecout / file_total * 100, 1),
-            round(counter_dict["language"]["uses_python", True] / file_total * 100, 1),
-            round(counter_dict["files"]["LICENSE", True] / file_total * 100, 1),
-            round(dependencies_counter / file_total * 100, 1),
-            round(packaged_counter / file_total * 100, 1),
-            round(test_folder / file_total * 100, 1),
-        ],
-    )
-    plt.grid()
-    plt.show()
+        dependencies_counter = sum(
+            [
+                counter_dict["files"][(deb, True)]
+                for deb in ["requirements.txt", "environment.yml", "uv.lock"]
+            ]
+        )
+        packaged_counter = sum(
+            [
+                counter_dict["files"][(deb, True)]
+                for deb in ["setup.py", "setup.cfg", "pyproject.toml", "hatch.toml"]
+            ]
+        )
+        test_folder = sum(
+            [
+                counter_dict["folders"][(deb, True)]
+                for deb in [
+                    "test",
+                    "tests",
+                    "package/test",
+                    "package/tests",
+                    "src/test",
+                    "src/tests",
+                ]
+            ]
+        )
+
+        plt.bar(
+            [
+                "README",
+                "LICENSE",
+                "python",
+                "dependencies",
+                "src",
+                "packaged",
+                "test-folder",
+            ],
+            [
+                round(readmecount / file_total * 100, 1),
+                round(counter_dict["files"]["LICENSE", True] / file_total * 100, 1),
+                round(
+                    counter_dict["language"]["uses_python", True] / file_total * 100, 1
+                ),
+                round(dependencies_counter / file_total * 100, 1),
+                round(counter_dict["folders"][("src", True)] / file_total * 100, 1),
+                round(packaged_counter / file_total * 100, 1),
+                round(test_folder / file_total * 100, 1),
+            ],
+        )
+        plt.title(conf)
+        plt.grid()
+        tikz.save(f"./plots/bar_plot_{conf}.tex")
+        plt.show()
+
+    _bar_plots("tmlr")
+
+    # plot jmlr-mloss
+    _bar_plots("mloss")
 
     confs = {
         "icml": structured_icml_dict,
@@ -304,7 +340,6 @@ if __name__ == "__main__":
         "iclr": structured_iclr_dict,
         "neurips": structured_neurips_dict,
     }
-    counter_dict.keys()
 
     plot_data(confs, "line_plots")
     pass
