@@ -88,6 +88,12 @@ def re_structure(
         )
         data_dict_by_conf[conf_key][("README", True)] = rmdval
 
+        # merge docs
+        docval = data_dict_by_conf[conf_key].pop(("doc", True), 0) + data_dict_by_conf[
+            conf_key
+        ].pop(("docs", True), 0)
+        data_dict_by_conf[conf_key][("docs", True)] = docval
+
         # merge tests and test folder
         testfolderval = (
             data_dict_by_conf[conf_key].pop(("test", True), 0)
@@ -190,6 +196,7 @@ def plot_data(data_dict_by_conf: dict[str, Any], plot_prefix: str) -> None:
         ("noxfile.py", True),
         (".pre-commit-config.yaml", True),
         (".github/workflows", True),
+        ("docs", True),
     ]
     _set_up_plot(keys, f"{plot_prefix}_tests")
 
@@ -250,7 +257,6 @@ if __name__ == "__main__":
     structured_iclr_dict = re_structure(pids, iclr_counter_dict)
 
     # PLOT TMLR
-
     def _bar_plots(conf: str) -> None:
         file_ids = [conf]
         pids = ["all"]
@@ -285,7 +291,7 @@ if __name__ == "__main__":
         packaged_counter = sum(
             [
                 counter_dict["files"][(deb, True)]
-                for deb in ["setup.py", "setup.cfg", "pyproject.toml", "hatch.toml"]
+                for deb in ["setup.py", "pyproject.toml", "hatch.toml"]
             ]
         )
         test_folder = sum(
@@ -302,15 +308,25 @@ if __name__ == "__main__":
             ]
         )
 
+        doc_folder = sum(
+            [
+                counter_dict["folders"][(deb, True)]
+                for deb in [
+                    "doc",
+                    "docs",
+                ]
+            ]
+        )
+
         plt.bar(
             [
                 "README",
                 "LICENSE",
                 "python",
                 "dependencies",
-                "src",
                 "packaged",
                 "test-folder",
+                "docs-folder",
             ],
             [
                 round(readmecount / file_total * 100, 1),
@@ -319,11 +335,12 @@ if __name__ == "__main__":
                     counter_dict["language"]["uses_python", True] / file_total * 100, 1
                 ),
                 round(dependencies_counter / file_total * 100, 1),
-                round(counter_dict["folders"][("src", True)] / file_total * 100, 1),
                 round(packaged_counter / file_total * 100, 1),
                 round(test_folder / file_total * 100, 1),
+                round(doc_folder / file_total * 100, 1),
             ],
         )
+        plt.ylim(0, 100)
         plt.title(conf)
         plt.grid()
         tikz.save(f"./plots/bar_plot_{conf}.tex")
