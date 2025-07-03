@@ -69,7 +69,7 @@ trio-websocket==0.12.2
 typing_extensions==4.13.2
 uritools==4.0.3
 urlextract==1.9.0
-urllib3==2.4.0
+urllib3==2.5.0
 virtualenv==20.29.1
 webcolors==1.12
 websocket-client==1.8.0
