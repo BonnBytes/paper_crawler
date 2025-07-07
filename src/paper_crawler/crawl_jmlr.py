@@ -1,6 +1,7 @@
 """Get jmlr code repo-links."""
 
 import json
+import os
 import urllib.request
 
 from bs4 import BeautifulSoup
@@ -21,6 +22,9 @@ def _parse_links(url: str) -> list[list[urllib.parse.ParseResult]]:
 
 
 if __name__ == "__main__":
+    if not os.path.exists("./storage/"):
+        os.makedirs("./storage/")
+
     tmlr_github_links_parsed = _parse_links(tmlr_link)
     with open("./storage/tmlr.json", "w") as file:
         file.write(json.dumps(tmlr_github_links_parsed))
