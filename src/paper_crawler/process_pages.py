@@ -107,7 +107,7 @@ def extract_stats(
         "Pipfile.lock",
         "GNUmakefile",
         "makefile",
-        "Makefile"
+        "Makefile",
     ]
     interesting_folders = [
         "test",
