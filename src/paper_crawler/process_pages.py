@@ -105,6 +105,9 @@ def extract_stats(
         "pixi.lock",
         "pixi.toml",
         "Pipfile.lock",
+        "GNUmakefile",
+        "makefile",
+        "Makefile"
     ]
     interesting_folders = [
         "test",
