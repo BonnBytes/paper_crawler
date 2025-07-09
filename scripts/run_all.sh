@@ -75,7 +75,7 @@ python -m src.paper_crawler.process_pages --id mloss
 echo processing pages for ICLR
 for iclrconf in ICLR.cc/2025/Conference ICLR.cc/2024/Conference ICLR.cc/2023/Conference ICLR.cc/2022/Conference ICLR.cc/2021/Conference ICLR.cc/2020/Conference ICLR.cc/2017/conference; do
     echo process_pages from $iclrconf
-    python -m src.src.paper_crawler.process_pages --id "$iclrconf"
+    python -m src.paper_crawler.process_pages --id "$iclrconf"
 done
 
 for iclrconf in iclr2019 iclr2018 iclr2016; do
