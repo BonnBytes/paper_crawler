@@ -285,7 +285,12 @@ if __name__ == "__main__":
         dependencies_counter = sum(
             [
                 counter_dict["files"][(deb, True)]
-                for deb in ["requirements.txt", "environment.yml", "environment.yaml", "uv.lock"]
+                for deb in [
+                    "requirements.txt",
+                    "environment.yml",
+                    "environment.yaml",
+                    "uv.lock",
+                ]
             ]
         )
         packaged_counter = sum(
@@ -317,33 +322,38 @@ if __name__ == "__main__":
                 ]
             ]
         )
-        return {"README": readmecount/file_total, "file_total": file_total, "dependencies": dependencies_counter/file_total,
-                "packaged": packaged_counter/file_total, "tests": test_folder/file_total, "docs": doc_folder/file_total,
-                "python": counter_dict["language"]["uses_python", True]/file_total,
-                "LICENSE": counter_dict["files"]["LICENSE", True] / file_total}
+        return {
+            "README": readmecount / file_total,
+            "file_total": file_total,
+            "dependencies": dependencies_counter / file_total,
+            "packaged": packaged_counter / file_total,
+            "tests": test_folder / file_total,
+            "docs": doc_folder / file_total,
+            "python": counter_dict["language"]["uses_python", True] / file_total,
+            "LICENSE": counter_dict["files"]["LICENSE", True] / file_total,
+        }
 
     tmlr_data = _bar_plots("tmlr")
 
     # plot jmlr-mloss
     mloss_data = _bar_plots("mloss")
 
-
     tmlr_and_mloss = {"tmlr": tmlr_data, "mloss": mloss_data}
 
     xticks = [
-                "README",
-                "LICENSE",
-                "python",
-                "dependencies",
-                "packaged",
-                "test-folder",
-                "docs-folder",
-            ]
+        "README",
+        "LICENSE",
+        "python",
+        "dependencies",
+        "packaged",
+        "test-folder",
+        "docs-folder",
+    ]
     x = np.arange(len(xticks))
     width = 0.25  # the width of the bars
     multiplier = 0
 
-    fig, ax = plt.subplots(layout='constrained')
+    fig, ax = plt.subplots(layout="constrained")
     for venue, adoption_rates in tmlr_and_mloss.items():
         offset = width * multiplier
         plt.bar(
@@ -352,11 +362,10 @@ if __name__ == "__main__":
         )
     ax.set_xticks(x + width, xticks)
     ax.set_ylim(0, 100)
-    ax.set_title('Estimated adoption')
+    ax.set_title("Estimated adoption")
     ax.grid()
     tikz.save(f"./plots/bar_plot.tex")
     plt.show()
-
 
     confs = {
         "icml": structured_icml_dict,
