@@ -88,6 +88,18 @@ def re_structure(
         )
         data_dict_by_conf[conf_key][("README", True)] = rmdval
 
+        # merge environment
+        env_val = data_dict_by_conf[conf_key].pop(
+            ("environment.yml", True), 0
+        ) + data_dict_by_conf[conf_key].pop(("environment.yaml", True), 0)
+        data_dict_by_conf[conf_key][("environment", True)] = env_val
+
+        # merge make
+        make_val = data_dict_by_conf[conf_key].pop(
+            ("makefile", True), 0
+        ) + data_dict_by_conf[conf_key].pop(("Makefile", True), 0)
+        data_dict_by_conf[conf_key][("Makefile", True)] = make_val
+
         # merge docs
         docval = data_dict_by_conf[conf_key].pop(("doc", True), 0) + data_dict_by_conf[
             conf_key
@@ -170,7 +182,7 @@ def plot_data(data_dict_by_conf: dict[str, Any], plot_prefix: str) -> None:
     # Requirements
     keys = [
         ("requirements.txt", True),
-        ("environment.yml", True),
+        ("environment", True),
         ("uv.lock", True),
         ("Pipfile.lock", True),
         ("poetry.lock", True),
@@ -197,6 +209,7 @@ def plot_data(data_dict_by_conf: dict[str, Any], plot_prefix: str) -> None:
         (".pre-commit-config.yaml", True),
         (".github/workflows", True),
         ("docs", True),
+        ("Makefile", True),
     ]
     _set_up_plot(keys, f"{plot_prefix}_tests")
 
@@ -280,7 +293,7 @@ if __name__ == "__main__":
         readmecount = sum(
             [counter_dict["files"][(rmd, True)] for rmd in readme_file_types]
         )
-        file_total = counter_dict["page_total"]
+        file_total = float(counter_dict["page_total"])
 
         dependencies_counter = sum(
             [
@@ -346,8 +359,8 @@ if __name__ == "__main__":
         "python",
         "dependencies",
         "packaged",
-        "test-folder",
-        "docs-folder",
+        "tests",
+        "docs",
     ]
     x = np.arange(len(xticks))
     width = 0.25  # the width of the bars
@@ -358,12 +371,17 @@ if __name__ == "__main__":
         offset = width * multiplier
         plt.bar(
             x + offset,
-            [adoption_rates[tick] for tick in xticks],
+            [adoption_rates[tick] * 100.0 for tick in xticks],
+            width=width,
+            label=venue,
         )
+        multiplier += 1
     ax.set_xticks(x + width, xticks)
     ax.set_ylim(0, 100)
+    ax.set_ylabel("Adoption [\%]")
     ax.set_title("Estimated adoption")
     ax.grid()
+    ax.legend(loc="upper right", ncol=2)
     tikz.save(f"./plots/bar_plot.tex")
     plt.show()
 
