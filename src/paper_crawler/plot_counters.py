@@ -95,9 +95,11 @@ def re_structure(
         data_dict_by_conf[conf_key][("environment", True)] = env_val
 
         # merge make
-        make_val = data_dict_by_conf[conf_key].pop(
-            ("makefile", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("Makefile", True), 0)
+        make_val = (
+            data_dict_by_conf[conf_key].pop(("makefile", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Makefile", True), 0)
+            + data_dict_by_conf[conf_key].pop(("GNUmakefile", True), 0)
+        )
         data_dict_by_conf[conf_key][("Makefile", True)] = make_val
 
         # merge docs
@@ -381,7 +383,7 @@ if __name__ == "__main__":
     ax.set_ylabel("Adoption [\%]")
     ax.set_title("Estimated adoption")
     ax.grid()
-    ax.legend(loc="upper right", ncol=2)
+    ax.legend(loc="upper right", ncol=2)  # noqa: F541
     tikz.save(f"./plots/bar_plot.tex")
     plt.show()
 
@@ -393,4 +395,3 @@ if __name__ == "__main__":
     }
 
     plot_data(confs, "line_plots")
-    pass
