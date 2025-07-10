@@ -20,6 +20,8 @@ for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 i
     python -m src.paper_crawler.crawl_links_soup --id "$icmlconf"
 done
 
+python -m src.paper_crawler.crawl_links_soup --id ICML.cc/2025/Conference
+
 # python -m src.paper_crawler.crawl_links_openreview --id NeurIPS.cc/2024/Conference
 for aistatsconf in aistats2025 aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017; do
     echo crawling papers from: $aistatsconf
@@ -57,6 +59,8 @@ for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 i
     python -m src.paper_crawler.filter_and_download_links --id "$icmlconf"
 done
 
+python -m src.paper_crawler.filter_and_download_links --id ICML.cc/2025/Conference
+
 for aistatsconf in aistats2025 aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017; do
     echo looking at links for: $aistatsconf
     python -m src.paper_crawler.filter_and_download_links --id "$aistatsconf"
@@ -89,6 +93,8 @@ for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 i
     python -m src.paper_crawler.process_pages --id "$icmlconf"
 done
 
+python -m src.paper_crawler.process_pages --id ICML.cc/2025/Conference
+
 for aistatsconf in aistats2025 aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017; do
     echo processing pages for: $aistatsconf
     python -m src.paper_crawler.process_pages --id "$aistatsconf"
@@ -99,4 +105,3 @@ for nipsconf in nips2024 nips2023 nips2022 nips2021 nips2020 nips2019 nips2018 n
     echo processing pages for: $nipsconf
     python -m src.paper_crawler.process_pages --id "$nipsconf"
 done
-
