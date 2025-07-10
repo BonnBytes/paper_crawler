@@ -272,7 +272,7 @@ if __name__ == "__main__":
     structured_iclr_dict = re_structure(pids, iclr_counter_dict)
 
     # PLOT TMLR
-    def _bar_plots(conf: str) -> None:
+    def _bar_plots(conf: str) -> dict[str, float]:
         file_ids = [conf]
         pids = ["all"]
         counter_dict = {}
