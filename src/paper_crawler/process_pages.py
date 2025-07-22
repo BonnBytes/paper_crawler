@@ -109,7 +109,7 @@ def extract_stats(
         "GNUmakefile",
         "makefile",
         "Makefile",
-        ".flake8"
+        ".flake8",
     ]
     interesting_folders = [
         "test",

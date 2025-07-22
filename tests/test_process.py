@@ -49,9 +49,9 @@ def test_tests_folder() -> None:
     assert stats["files"]["noxfile.py"] is True
     assert stats["files"]["tox.toml"] is False
     assert stats["files"]["tox.ini"] is False
-    assert stats["files"]["setup.py"] is True
-    assert stats["files"]["setup.cfg"] is True
-    assert stats["files"]["pyproject.toml"] is False
+    assert stats["files"]["setup.py"] is False
+    assert stats["files"]["setup.cfg"] is False
+    assert stats["files"]["pyproject.toml"] is True
     assert stats["files"]["environment.yml"] is False
 
     assert stats["folders"]["test"] is False

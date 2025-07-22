@@ -20,7 +20,7 @@ for icmlconf in icml2024 icml2023 icml2022 icml2021 icml2020 icml2019 icml2018 i
     python -m src.paper_crawler.crawl_links_soup --id "$icmlconf"
 done
 
-python -m src.paper_crawler.crawl_links_soup --id ICML.cc/2025/Conference
+python -m src.paper_crawler.crawl_links_openreview --id ICML.cc/2025/Conference
 
 # python -m src.paper_crawler.crawl_links_openreview --id NeurIPS.cc/2024/Conference
 for aistatsconf in aistats2025 aistats2024 aistats2023 aistats2022 aistats2021 aistats2020 aistats2019 aistats2018 aistats2017; do
