@@ -189,6 +189,7 @@ def plot_data(data_dict_by_conf: dict[str, Any], plot_prefix: str) -> None:
         ("Pipfile.lock", True),
         ("poetry.lock", True),
         ("pixi.lock", True),
+        ("pylock.toml", True),
     ]
     _set_up_plot(keys, f"{plot_prefix}_requirements")
 
