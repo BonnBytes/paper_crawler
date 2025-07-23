@@ -162,6 +162,7 @@ def test_nested_test_folder_packet() -> None:
 
 
 def test_pylock_toml() -> None:
+    """Check if we can find pylock.toml files."""
     test_pylock_url = "https://github.com/BonnBytes/paper_crawler"
     loaded_test_in_pkg = process_repo_link(test_pylock_url)
     stats_in_pkg = extract_stats(loaded_test_in_pkg)

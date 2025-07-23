@@ -216,6 +216,10 @@ def plot_data(data_dict_by_conf: dict[str, Any], plot_prefix: str) -> None:
     ]
     _set_up_plot(keys, f"{plot_prefix}_tests")
 
+    # lint
+    keys = [(".flake8", True)]
+    _set_up_plot(keys, f"{plot_prefix}")
+
 
 if __name__ == "__main__":
     # PLOT ICML stats.
