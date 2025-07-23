@@ -159,3 +159,13 @@ def test_nested_test_folder_packet() -> None:
     assert stats_in_pkg["folders"]["test"] is False
     assert stats_in_pkg["folders"]["test"] is False
     assert stats_in_pkg["folders"]["package/tests"] is True
+
+
+
+def test_pylock_toml() -> None:
+    test_pylock_url = "https://github.com/BonnBytes/paper_crawler"
+    loaded_test_in_pkg = process_repo_link(test_pylock_url)
+    stats_in_pkg = extract_stats(loaded_test_in_pkg)
+    assert stats_in_pkg["folders"]["test"] is False
+    assert stats_in_pkg["folders"]["tests"] is True
+    assert stats_in_pkg["files"]["pylock.toml"] is True
