@@ -15,6 +15,86 @@ np.Inf = np.inf  # type: ignore
 np.float_ = np.float64  # type: ignore
 
 
+def _post_process_dict(
+    val_dict: dict[tuple[str, bool], int],
+) -> dict[tuple[str, bool], int]:
+    """Merge the numbers for common spellings and endings files.
+
+    Args:
+        val_dict (dict): The flat dictionary we are working with.
+
+    Returns:
+        dict: Updated dictionary.
+    """
+    # merge tox
+    tox_val = val_dict.pop(("tox.toml", True), 0) + val_dict.pop(("tox.ini", True), 0)
+    val_dict[("tox", True)] = tox_val
+
+    # merge readme
+    rmd_val = (
+        val_dict.pop(("README.md", True), 0)
+        + val_dict.pop(("README.rst", True), 0)
+        + val_dict.pop(("readme.md", True), 0)
+        + val_dict.pop(("readme.rst", True), 0)
+        + val_dict.pop(("Readme.md", True), 0)
+        + val_dict.pop(("Readme.rst", True), 0)
+    )
+    val_dict[("README", True)] = rmd_val
+
+    # merge environment
+    env_val = val_dict.pop(("environment.yml", True), 0) + val_dict.pop(
+        ("environment.yaml", True), 0
+    )
+    val_dict[("environment", True)] = env_val
+
+    # merge make
+    make_val = (
+        val_dict.pop(("makefile", True), 0)
+        + val_dict.pop(("Makefile", True), 0)
+        + val_dict.pop(("GNUmakefile", True), 0)
+    )
+    val_dict[("Makefile", True)] = make_val
+
+    # merge docs
+    doc_val = val_dict.pop(("doc", True), 0) + val_dict.pop(("docs", True), 0)
+    val_dict[("docs", True)] = doc_val
+
+    # merge tests and test folder
+    testfolder_val = (
+        val_dict.pop(("test", True), 0)
+        + val_dict.pop(("tests", True), 0)
+        + val_dict.pop(("src/test", True), 0)
+        + val_dict.pop(("src/tests", True), 0)
+        + val_dict.pop(("package/test", True), 0)
+        + val_dict.pop(("package/tests", True), 0)
+    )
+    val_dict[("test-folder", True)] = testfolder_val
+
+    # merge licenses
+    license_val = (
+        val_dict.pop(("LICENSE.txt", True), 0)
+        + val_dict.pop(("license.txt", True), 0)
+        + val_dict.pop(("License.txt", True), 0)
+        + val_dict.pop(("LICENSE", True), 0)
+        + val_dict.pop(("License", True), 0)
+        + val_dict.pop(("license", True), 0)
+        + val_dict.pop(("LICENCE.txt", True), 0)
+        + val_dict.pop(("licence.txt", True), 0)
+        + val_dict.pop(("Licence.txt", True), 0)
+        + val_dict.pop(("LICENCE", True), 0)
+        + val_dict.pop(("Licence", True), 0)
+        + val_dict.pop(("licence", True), 0)
+        + val_dict.pop(("COPYING", True), 0)
+        + val_dict.pop(("copying", True), 0)
+        + val_dict.pop(("Copying", True), 0)
+        + val_dict.pop(("COPYING.txt", True), 0)
+        + val_dict.pop(("copying.txt", True), 0)
+        + val_dict.pop(("Copying.txt", True), 0)
+    )
+    val_dict[("LICENSE", True)] = license_val
+    return val_dict
+
+
 def re_structure(
     pids: list[str], counter_dict: dict[str, dict[str, Any]]
 ) -> dict[str, Any]:
@@ -39,7 +119,7 @@ def re_structure(
                 )
                 if test:
                     return test[0][1]
-        raise KeyError("Key not found.")
+        raise KeyError("{data_key} not found.")
 
     data_dict_by_feature: dict[tuple[str, bool], dict[str, int]] = {}
     for conf_key in pids:
@@ -50,7 +130,7 @@ def re_structure(
                         counter_dict[conf_key], data_key
                     )
                 except KeyError as e:
-                    print(f"Key {data_key} not found: {e}")
+                    print(f"Key {data_key} not found for {conf_key}: {e}")
                     data_dict_by_feature[data_key][conf_key] = 0
             else:
                 try:
@@ -58,7 +138,7 @@ def re_structure(
                     key_val = find_key(counter_dict[conf_key], data_key)
                     data_dict_by_feature[data_key][conf_key] = key_val
                 except KeyError as e:
-                    print(f"Key {data_key} not found: {e}.")
+                    print(f"Key {data_key} not found for {conf_key}: {e}.")
                     data_dict_by_feature[data_key][conf_key] = 0
 
     data_dict_by_conf: dict[str, dict[tuple[str, bool], int]] = {}
@@ -71,79 +151,8 @@ def re_structure(
 
     # post-processing
     for conf_key in data_dict_by_conf.keys():
-        # merge tox
-        toxval = data_dict_by_conf[conf_key].pop(
-            ("tox.toml", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("tox.ini", True), 0)
-        data_dict_by_conf[conf_key][("tox", True)] = toxval
-
-        # merge readme
-        rmdval = (
-            data_dict_by_conf[conf_key].pop(("README.md", True), 0)
-            + data_dict_by_conf[conf_key].pop(("README.rst", True), 0)
-            + data_dict_by_conf[conf_key].pop(("readme.md", True), 0)
-            + data_dict_by_conf[conf_key].pop(("readme.rst", True), 0)
-            + data_dict_by_conf[conf_key].pop(("Readme.md", True), 0)
-            + data_dict_by_conf[conf_key].pop(("Readme.rst", True), 0)
-        )
-        data_dict_by_conf[conf_key][("README", True)] = rmdval
-
-        # merge environment
-        env_val = data_dict_by_conf[conf_key].pop(
-            ("environment.yml", True), 0
-        ) + data_dict_by_conf[conf_key].pop(("environment.yaml", True), 0)
-        data_dict_by_conf[conf_key][("environment", True)] = env_val
-
-        # merge make
-        make_val = (
-            data_dict_by_conf[conf_key].pop(("makefile", True), 0)
-            + data_dict_by_conf[conf_key].pop(("Makefile", True), 0)
-            + data_dict_by_conf[conf_key].pop(("GNUmakefile", True), 0)
-        )
-        data_dict_by_conf[conf_key][("Makefile", True)] = make_val
-
-        # merge docs
-        docval = data_dict_by_conf[conf_key].pop(("doc", True), 0) + data_dict_by_conf[
-            conf_key
-        ].pop(("docs", True), 0)
-        data_dict_by_conf[conf_key][("docs", True)] = docval
-
-        # merge tests and test folder
-        testfolderval = (
-            data_dict_by_conf[conf_key].pop(("test", True), 0)
-            + data_dict_by_conf[conf_key].pop(("tests", True), 0)
-            + data_dict_by_conf[conf_key].pop(("src/test", True), 0)
-            + data_dict_by_conf[conf_key].pop(("src/tests", True), 0)
-            + data_dict_by_conf[conf_key].pop(("package/test", True), 0)
-            + data_dict_by_conf[conf_key].pop(("package/tests", True), 0)
-        )
-        data_dict_by_conf[conf_key][("test-folder", True)] = testfolderval
-
-        # merge licenses
-        license_val = (
-            data_dict_by_conf[conf_key].pop(("LICENSE.txt", True), 0)
-            + data_dict_by_conf[conf_key].pop(("license.txt", True), 0)
-            + data_dict_by_conf[conf_key].pop(("License.txt", True), 0)
-            + data_dict_by_conf[conf_key].pop(("LICENSE", True), 0)
-            + data_dict_by_conf[conf_key].pop(("License", True), 0)
-            + data_dict_by_conf[conf_key].pop(("license", True), 0)
-            + data_dict_by_conf[conf_key].pop(("LICENCE.txt", True), 0)
-            + data_dict_by_conf[conf_key].pop(("licence.txt", True), 0)
-            + data_dict_by_conf[conf_key].pop(("Licence.txt", True), 0)
-            + data_dict_by_conf[conf_key].pop(("LICENCE", True), 0)
-            + data_dict_by_conf[conf_key].pop(("Licence", True), 0)
-            + data_dict_by_conf[conf_key].pop(("licence", True), 0)
-            + data_dict_by_conf[conf_key].pop(("COPYING", True), 0)
-            + data_dict_by_conf[conf_key].pop(("copying", True), 0)
-            + data_dict_by_conf[conf_key].pop(("Copying", True), 0)
-            + data_dict_by_conf[conf_key].pop(("COPYING.txt", True), 0)
-            + data_dict_by_conf[conf_key].pop(("copying.txt", True), 0)
-            + data_dict_by_conf[conf_key].pop(("Copying.txt", True), 0)
-        )
-        data_dict_by_conf[conf_key][("LICENSE", True)] = license_val
-
+        data_dict_by_conf[conf_key] = _post_process_dict(data_dict_by_conf[conf_key])
         data_dict_by_conf[conf_key]["page_total"] = counter_dict[conf_key]["page_total"]  # type: ignore
-
     return data_dict_by_conf
 
 
@@ -301,68 +310,34 @@ if __name__ == "__main__":
 
     # PLOT TMLR
     def _bar_plots(conf: str) -> dict[str, float]:
-        file_ids = [conf]
-        pids = ["all"]
-        counter_dict = {}
 
-        for fid, pid in zip(file_ids, pids):
-            with open(f"./storage/{fid}_stored_counters.pkl", "rb") as f:
-                id_counters = pickle.load(f)
-                counter_dict[pid] = id_counters
+        with open(f"./storage/{conf}_stored_counters.pkl", "rb") as f:
+            nested_dict = pickle.load(f)
 
-        counter_dict = counter_dict["all"]
-
-        readme_file_types = [
-            "README.md",
-            "Readme.md",
-            "readme.md",
-            "README.rst",
-            "Readme.rst",
-            "readme.rst",
-        ]
-        readmecount = sum(
-            [counter_dict["files"][(rmd, True)] for rmd in readme_file_types]
+        counter_dict = (
+            nested_dict["files"] + nested_dict["folders"] + nested_dict["language"]
         )
-        file_total = float(counter_dict["page_total"])
+        counter_dict["page_total"] = nested_dict["page_total"]
+
+        counter_dict = _post_process_dict(counter_dict)
+
+        readmecount = counter_dict[("README", True)]
+        file_total = float(counter_dict["page_total"]) # type: ignore
 
         dependencies_counter = sum(
             [
-                counter_dict["files"][(deb, True)]
+                counter_dict[(deb, True)]
                 for deb in [
                     "requirements.txt",
-                    "environment.yml",
-                    "environment.yaml",
+                    "environment",
                     "uv.lock",
                 ]
             ]
         )
         packaged_counter = sum(
             [
-                counter_dict["files"][(deb, True)]
+                counter_dict[(deb, True)]
                 for deb in ["setup.py", "pyproject.toml", "hatch.toml"]
-            ]
-        )
-        test_folder = sum(
-            [
-                counter_dict["folders"][(deb, True)]
-                for deb in [
-                    "test",
-                    "tests",
-                    "package/test",
-                    "package/tests",
-                    "src/test",
-                    "src/tests",
-                ]
-            ]
-        )
-
-        doc_folder = sum(
-            [
-                counter_dict["folders"][(deb, True)]
-                for deb in [
-                    "doc",
-                    "docs",
-                ]
             ]
         )
         return {
@@ -370,10 +345,10 @@ if __name__ == "__main__":
             "file_total": file_total,
             "dependencies": dependencies_counter / file_total,
             "packaged": packaged_counter / file_total,
-            "tests": test_folder / file_total,
-            "docs": doc_folder / file_total,
-            "python": counter_dict["language"]["uses_python", True] / file_total,
-            "LICENSE": counter_dict["files"]["LICENSE", True] / file_total,
+            "tests": counter_dict[("test-folder", True)] / file_total,
+            "docs": counter_dict[("docs", True)] / file_total,
+            "python": counter_dict["uses_python", True] / file_total,
+            "LICENSE": counter_dict["LICENSE", True] / file_total,
         }
 
     tmlr_data = _bar_plots("tmlr")
