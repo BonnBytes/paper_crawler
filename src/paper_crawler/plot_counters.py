@@ -322,7 +322,7 @@ if __name__ == "__main__":
         counter_dict = _post_process_dict(counter_dict)
 
         readmecount = counter_dict[("README", True)]
-        file_total = float(counter_dict["page_total"]) # type: ignore
+        file_total = float(counter_dict["page_total"])  # type: ignore
 
         dependencies_counter = sum(
             [
