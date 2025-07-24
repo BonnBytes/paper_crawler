@@ -119,6 +119,29 @@ def re_structure(
         )
         data_dict_by_conf[conf_key][("test-folder", True)] = testfolderval
 
+        # merge licenses
+        license_val = (
+            data_dict_by_conf[conf_key].pop(("LICENSE.txt", True), 0)
+            + data_dict_by_conf[conf_key].pop(("license.txt", True), 0)
+            + data_dict_by_conf[conf_key].pop(("License.txt", True), 0)
+            + data_dict_by_conf[conf_key].pop(("LICENSE", True), 0)
+            + data_dict_by_conf[conf_key].pop(("License", True), 0)
+            + data_dict_by_conf[conf_key].pop(("license", True), 0)
+            + data_dict_by_conf[conf_key].pop(("LICENCE.txt", True), 0)
+            + data_dict_by_conf[conf_key].pop(("licence.txt", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Licence.txt", True), 0)
+            + data_dict_by_conf[conf_key].pop(("LICENCE", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Licence", True), 0)
+            + data_dict_by_conf[conf_key].pop(("licence", True), 0)
+            + data_dict_by_conf[conf_key].pop(("COPYING", True), 0)
+            + data_dict_by_conf[conf_key].pop(("copying", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Copying", True), 0)
+            + data_dict_by_conf[conf_key].pop(("COPYING.txt", True), 0)
+            + data_dict_by_conf[conf_key].pop(("copying.txt", True), 0)
+            + data_dict_by_conf[conf_key].pop(("Copying.txt", True), 0)
+        )
+        data_dict_by_conf[conf_key][("LICENSE", True)] = license_val
+
         data_dict_by_conf[conf_key]["page_total"] = counter_dict[conf_key]["page_total"]  # type: ignore
 
     return data_dict_by_conf

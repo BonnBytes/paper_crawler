@@ -169,3 +169,4 @@ def test_pylock_toml() -> None:
     assert stats_in_pkg["folders"]["test"] is False
     assert stats_in_pkg["folders"]["tests"] is True
     assert stats_in_pkg["files"]["pylock.toml"] is True
+    assert stats_in_pkg["files"]["LICENCE"] is True
