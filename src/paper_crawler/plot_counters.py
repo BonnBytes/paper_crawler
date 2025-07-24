@@ -119,7 +119,7 @@ def re_structure(
                 )
                 if test:
                     return test[0][1]
-        raise KeyError("{data_key} not found.")
+        raise KeyError(f"{data_key} not found.")
 
     data_dict_by_feature: dict[tuple[str, bool], dict[str, int]] = {}
     for conf_key in pids:
