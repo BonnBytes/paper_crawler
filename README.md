@@ -26,7 +26,7 @@ After cloning and navigating into this repository, you can install the code in t
 pip install .
 ```
 
-### Download the data run
+### Reproduction
 To aggregate the statistical data we used for the paper, run the command below.
 
 ``` bash
