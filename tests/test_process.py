@@ -36,6 +36,22 @@ def test_requirements_txt() -> None:
     assert stats["python"]["uses_python"] is True
 
 
+def test_no_python() -> None:
+    """Ensure repos without Python are flagged."""
+    link = "https://github.com/JuliaGraphs/GraphNeuralNetworks.jl"
+
+    loaded = process_repo_link(link)
+    # check debug information
+    assert loaded[1] == link
+    stats = extract_stats(loaded)
+
+    assert stats["files"]["README.md"] is True
+    assert stats["files"]["LICENSE"] is True
+    assert stats["folders"]["docs"] is True
+    assert stats["folders"]["tests"] is False
+    assert not stats["python"]
+
+
 def test_tests_folder() -> None:
     """Test if the tests folder is found."""
     link = "https://github.com/v0lta/PyTorch-Wavelet-Toolbox"
