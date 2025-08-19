@@ -96,7 +96,7 @@ def _post_process_dict(
 
 
 def re_structure(
-    pids: list[str], counter_dict: dict[str, dict[str, Any]]
+    pids: list[str], counter_dict: dict[str, dict[str, Any]], python_only: bool = False
 ) -> dict[str, Any]:
     """Restructure counter dictionaries remove the top layer.
 
@@ -104,6 +104,7 @@ def re_structure(
         pids (list[str]): A list of plot-conference IDs to process.
         counter_dict (dict): A dictionary containing counters
             for different software features.
+        python_only (bool): remove all repos that dont use Python.
     """
     # restructure data
     software_keys: list[tuple[str, bool]] = []
@@ -153,6 +154,10 @@ def re_structure(
     for conf_key in data_dict_by_conf.keys():
         data_dict_by_conf[conf_key] = _post_process_dict(data_dict_by_conf[conf_key])
         data_dict_by_conf[conf_key]["page_total"] = counter_dict[conf_key]["page_total"]  # type: ignore
+
+    if python_only:
+        pass
+
     return data_dict_by_conf
 
 
@@ -264,7 +269,7 @@ if __name__ == "__main__":
             id_counters = pickle.load(f)
             icml_counter_dict[pid] = id_counters
 
-    structured_icml_dict = re_structure(pids, icml_counter_dict)
+    structured_icml_dict = re_structure(pids, icml_counter_dict, python_only=True)
 
     # PLOT aistats stats.
     file_ids = [f"aistats20{year}" for year in range(17, 26)]
@@ -276,7 +281,7 @@ if __name__ == "__main__":
             id_counters = pickle.load(f)
             aistats_counter_dict[pid] = id_counters
 
-    structured_aistats_dict = re_structure(pids, aistats_counter_dict)
+    structured_aistats_dict = re_structure(pids, aistats_counter_dict, python_only=True)
 
     # PLOT Neurips stats
     file_ids = [f"nips20{year}" for year in range(17, 25)]
@@ -288,7 +293,7 @@ if __name__ == "__main__":
             id_counters = pickle.load(f)
             neurips_counter_dict[pid] = id_counters
 
-    structured_neurips_dict = re_structure(pids, neurips_counter_dict)
+    structured_neurips_dict = re_structure(pids, neurips_counter_dict, python_only=True)
 
     # PLOT ICLR
     file_ids = (
@@ -306,7 +311,7 @@ if __name__ == "__main__":
             id_counters = pickle.load(f)
             iclr_counter_dict[pid] = id_counters
 
-    structured_iclr_dict = re_structure(pids, iclr_counter_dict)
+    structured_iclr_dict = re_structure(pids, iclr_counter_dict, python_only=True)
 
     # PLOT TMLR
     def _bar_plots(conf: str) -> dict[str, float]:

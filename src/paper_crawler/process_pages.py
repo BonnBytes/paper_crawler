@@ -207,6 +207,22 @@ def extract_stats(
     return result_dict
 
 
+def python_filter(
+    stats_list: list[dict[str, dict[str, bool]]],
+) -> list[dict[str, dict[str, bool]]]:
+    """Remove stats from repos that don't use Python.
+
+    Args:
+        stats_list (list[dict[str, dict[str, bool]]]): Stats list for all repos.
+
+    Returns:
+        list[dict[str, dict[str, bool]]]: Filtered list of repos using Python.
+    """
+    return list(
+        filter(lambda fdict: fdict["python"] == {"uses_python": True}, stats_list)
+    )
+
+
 if __name__ == "__main__":
     args = _parse_args()
     id = "_".join(args.id.split("/"))
@@ -230,6 +246,9 @@ if __name__ == "__main__":
                 #     # print(f"Error: {e}")
                 problems.append(e)
                 error_counter += 1
+
+        # remove repos that do not use Python.
+        results = python_filter(results)
 
         # print(f"Problems: {problems}")
         print(f"Problems {error_counter}.")

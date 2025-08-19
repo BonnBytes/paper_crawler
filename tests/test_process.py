@@ -2,9 +2,11 @@
 
 # import urllib
 # from bs4 import BeautifulSoup
+import urllib
 
+from paper_crawler.crawl_jmlr import _parse_links, mloss_link
 from paper_crawler.filter_and_download_links import process_repo_link
-from paper_crawler.process_pages import extract_stats
+from paper_crawler.process_pages import extract_stats, python_filter
 
 
 def test_requirements_txt() -> None:
@@ -170,3 +172,22 @@ def test_pylock_toml() -> None:
     assert stats_in_pkg["folders"]["tests"] is True
     assert stats_in_pkg["files"]["pylock.toml"] is True
     assert stats_in_pkg["files"]["LICENCE"] is True
+
+
+def test_python_filter() -> None:
+    """Check if mloss link crawl code runs."""
+    links = _parse_links(mloss_link)
+    links = links[:5]
+
+    flat_links = []
+    for page_links in links:
+        if page_links:
+            for link in page_links:
+                flat_links.append(link)
+    print(f"found: {len(flat_links)}, repos.")
+    processed = [
+        process_repo_link(urllib.parse.urlunparse(link)) for link in flat_links
+    ]
+    stats = [extract_stats(proc) for proc in processed]
+    filtered = python_filter(stats)
+    assert all([filt["python"]["uses_python"] is True for filt in filtered])

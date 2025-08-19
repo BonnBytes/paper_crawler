@@ -40,7 +40,9 @@ def process_repo_link(repo_link: str) -> Union[tuple[BeautifulSoup, str], None]:
         soup = BeautifulSoup(page, "html.parser")
         # look for the branch picker.
         buttons = soup.find_all("button")
-        has_branch_picker = any(map(lambda bs: "branch-picker" in str(bs), buttons))
+        has_branch_picker = any(
+            map(lambda bs: "picker-repos-header" in str(bs), buttons)
+        )
         if has_branch_picker:
             return (soup, repo_link)
         else:
